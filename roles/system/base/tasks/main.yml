@@ -1,0 +1,30 @@
+- name: Update APT cache
+  apt:
+    update_cache: yes
+  changed_when: False
+
+- name: Install base packages
+  apt:
+    state: latest
+    name:
+      - vim
+      - curl
+      - jq
+      - git
+      - rsync
+      - build-essential
+      - screen
+
+      - xclip
+      - clang
+      - make
+      - entr
+      - net-tools
+      - encfs
+
+- name: Enable unattended upgrade
+  copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";

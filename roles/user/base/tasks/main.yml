@@ -1,0 +1,34 @@
+- name: Create local ~/.local/bin/ dir 
+  file:
+    state: directory
+    path: ~/.local/bin/
+
+- name: Create local ~/.bin/ dir 
+  file:
+    state: directory
+    path: ~/.bin/
+
+- name: Install utilities packages
+  apt:
+    state: latest
+    name:
+      - fzf
+      - tmux
+      - htop
+      - redshift-gtk
+      - feh
+      - dolphin
+      - arandr
+      - xdotool
+      - yad
+      - silversearcher-ag
+
+      - ubuntu-restricted-extras
+      - chromium-browser
+      - firefox
+
+- name: Change key repetition speed
+  lineinfile:
+    name: ~/.profile
+    line: "xset r rate 180 50"
+    state: present

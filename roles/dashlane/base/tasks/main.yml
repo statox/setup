@@ -1,0 +1,13 @@
+- name: Configure npm repository
+  lineinfile:
+    name: ~/.npmrc
+    line: "npm config set @dashlane:registry https://npm.dashlane.com/repository/npm/=true"
+
+- name: Configure npm repo
+  lineinfile:
+    name: ~/.npmrc
+    line: "npm config set always-auth true=true"
+
+- name: '[IMPORTANT] Command to run'
+  debug:
+    msg: 'npm adduser --registry=https://npm.dashlane.com/repository/npm/ --scope=@dashlane --always-auth'

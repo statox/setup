@@ -1,0 +1,21 @@
+- name: Install i3 packages
+  apt:
+    state: present
+    name:
+      - i3
+      - i3lock-fancy
+      - scrot
+      - polybar
+      - flameshot
+
+- name: Enable touchpad settings
+  copy:
+    dest: /etc/X11/xorg.conf.d/90-touchpad.conf
+    src: "{{role_path}}/files/90-touchpad.conf" 
+
+# Necessary to have the touchpad settings activated
+# TODO: Find a way to execute that only when we changed the file
+#- name: Restart display-manager
+#  service:
+#    name: display-manager
+#    state: restarted

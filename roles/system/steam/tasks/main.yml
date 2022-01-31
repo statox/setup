@@ -1,0 +1,29 @@
+- name: Enable multi architecture for Steam
+  lineinfile:
+    dest: /var/lib/dpkg/arch
+    line: "{{item}}"
+    create: yes
+  with_items:
+    - amd64
+    - i386
+
+- name: Accept Steam Licence Agreement (1/2)
+  debconf:
+    name: steam
+    question: steam/question
+    value: "I AGREE"
+    vtype: select
+
+- name: Accept Steam Licence Agreement (2/2)
+  debconf:
+    name: steam
+    question: steam/license
+    value: ""
+    vtype: note
+
+- name: Install Steam
+  apt:
+    state: present
+    name:
+      - steam
+    update_cache: yes

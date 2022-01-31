@@ -1,0 +1,10 @@
+# Options
+#   -C dry run
+
+sudo echo > /dev/null
+NAME=$(hostname)
+FILE="install_$NAME.yml"
+
+[ ! -f $FILE ] && echo 'No file found for this hostname $NAME' && exit 1
+
+ansible-playbook "$FILE" "$@"
