@@ -1,0 +1,17 @@
+- name: Check sudoers.d in included in /etc/sudoers
+  lineinfile:
+    name: /etc/sudoers
+    line: "@includedir /etc/sudoers.d"
+    state: present
+
+- name: Disable password for sudo group
+  copy:
+    dest: /etc/sudoers.d/sudo
+    src: "{{role_path}}/files/sudo" 
+    mode: 0440
+
+- name: Add user to docker group
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: sudo
+    append: yes

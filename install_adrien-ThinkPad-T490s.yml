@@ -9,6 +9,8 @@
       become: yes
     - role: system/i3
       become: yes
+    - role: system/sudo
+      become: yes
     - role: user/base
     - role: user/zsh
     - role: user/nvim
@@ -22,7 +24,6 @@
   # xmodmap -pke
 # Zoom?
 # nvm
-# sudoers
 # docker + docker-compose
 # Firefox user chrome
 # terraform+vault+aws

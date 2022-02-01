@@ -1,0 +1,2 @@
+# Disable asking for password when user is member of the sudo group
+%sudo   ALL=(ALL:ALL) NOPASSWD:ALL
