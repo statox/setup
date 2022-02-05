@@ -16,7 +16,8 @@
     - role: user/nvim
     - role: user/zsh
     - role: dashlane/base
-    - role: dashlane/sdm
+    # TO FIX:
+    # - role: dashlane/sdm
 
 
 # TODO:
