@@ -1,0 +1,13 @@
+- name: Download sdm
+  get_url:
+    url: https://app.strongdm.com/releases/cli/linux
+    dest: /tmp/sdmcli.zip
+
+- name: Extract sdm
+  unarchive:
+    src: /tmp/sdmcli.zip
+    dest: $HOME/.bin
+
+- name: '[IMPORTANT] Command to run'
+  debug:
+    msg: 'sudo sdm install'

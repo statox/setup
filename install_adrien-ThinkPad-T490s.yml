@@ -15,6 +15,7 @@
     - role: user/zsh
     - role: user/nvim
     - role: dashlane/base
+    - role: dashlane/sdm
 
 
 # TODO:
