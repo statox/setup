@@ -1,0 +1,32 @@
+- name: Check if SSH Key file exists (1/2)
+  stat: 
+    path: ~/.ssh/id_ed25519_github
+  register: key_file
+
+- name: 'Check if SSH Key file exists (2/2)'
+  debug:
+    msg: 'The key ~/.ssh/id_ed25519_github will not be overriden. Delete it if you want to create a new SSH key for Github'
+  when: key_file.stat.exists == true
+
+- name: Generate SSH Key
+  shell: "ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519_github"
+  args:
+    creates: "~/.ssh/id_ed25519_github"
+  when: key_file.stat.exists == false
+
+- name: Insert/Update SSH keys in ~/.ssh/config
+  blockinfile:
+    path: ~/.ssh/config
+    create: yes
+    marker: "# {mark} ANSIBLE MANAGED BLOCK FROM STATOX SETUP - github"
+    block: |
+      Host testgithub.com
+          User git
+          Hostname github.com
+          IdentityFile ~/.ssh/id_ed25519_github
+  when: key_file.stat.exists == false
+
+- name: '[IMPORTANT] Configuration to update at https://github.com/settings/keys'
+  debug:
+    msg: 'A new SSH key has been generated, add the public key in Github interface'
+  when: key_file.stat.exists == false
