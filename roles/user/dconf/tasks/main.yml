@@ -1,0 +1,8 @@
+- name: Set dconf values
+  include_tasks: dconf.yml
+  loop:
+    - key: /org/gnome/terminal/legacy/default-show-menubar
+      value: "false"
+  loop_control:
+    loop_var: item
+    index_var: index
