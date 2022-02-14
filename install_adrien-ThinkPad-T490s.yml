@@ -13,6 +13,7 @@
       become: yes
     - role: user/base
     - role: user/dconf
+    - role: user/dotfiles
     - role: user/github
     - role: user/nvim
     - role: user/zsh

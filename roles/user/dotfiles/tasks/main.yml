@@ -1,0 +1,11 @@
+- name: Ensuring the dotfiles repo exists
+  git:
+    repo: 'git@github.com:statox/dotfiles.git'
+    dest: $HOME/.dotfiles
+    update: no
+  register: clone_dotfiles
+
+- name: '[IMPORTANT] Dotfile repository cloned'
+  debug:
+    msg: 'The dotfiles repository was cloned. You should run the setup script'
+  when: clone_dotfiles.changed == true
