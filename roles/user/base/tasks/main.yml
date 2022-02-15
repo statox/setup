@@ -9,6 +9,7 @@
     path: ~/.bin/
 
 - name: Install utilities packages
+  become: yes
   apt:
     state: latest
     name:
@@ -22,6 +23,8 @@
       - xdotool
       - yad
       - silversearcher-ag
+      - simplescreenrecorder
+      - ffmpeg
 
       - ubuntu-restricted-extras
       - chromium-browser
