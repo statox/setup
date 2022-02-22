@@ -6,7 +6,6 @@
       - i3lock-fancy
       - scrot
       - polybar
-      - flameshot
 
 - name: Enable touchpad settings
   copy:

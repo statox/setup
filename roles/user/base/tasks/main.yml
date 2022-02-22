@@ -26,6 +26,7 @@
       - simplescreenrecorder
       - ffmpeg
       - unzip
+      - flameshot
 
       - ubuntu-restricted-extras
       - chromium-browser

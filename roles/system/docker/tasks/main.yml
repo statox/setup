@@ -16,10 +16,6 @@
     path: /usr/share/keyrings/docker-archive-keyring.gpg
   register: key_file
 
-- name: Debug
-  debug:
-    msg: '{{key_file}}'
-
 - name: Add Docker's official GPG key
   shell: >
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
