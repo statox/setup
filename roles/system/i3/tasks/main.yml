@@ -6,6 +6,8 @@
       - i3lock-fancy
       - scrot
       - polybar
+      - dunst
+      - feh
 
 - name: Enable touchpad settings
   copy:

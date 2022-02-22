@@ -1,3 +1,11 @@
+- name: Install utilities packages
+  become: yes
+  apt:
+    state: latest
+    name:
+      - ldap-utils
+      - redis-tools
+
 - name: Configure npm repository
   lineinfile:
     name: ~/.npmrc
