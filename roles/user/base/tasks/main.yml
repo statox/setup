@@ -31,6 +31,18 @@
       - chromium-browser
       - firefox
 
+# Using a community module to use snaps
+# if it is not available, it can be installed with the followig command
+# ansible-galaxy collection install community.general
+# (cf https://docs.ansible.com/ansible/latest/collections/community/general/snap_module.html)
+# On Ubuntu 21.10 with ansible 2.12.1 it is already available
+- name: Install utilities snaps
+  become: yes
+  community.general.snap:
+    name:
+      - slack
+      - postman
+
 - name: Change key repetition speed
   lineinfile:
     name: ~/.profile
