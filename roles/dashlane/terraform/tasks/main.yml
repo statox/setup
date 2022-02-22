@@ -1,0 +1,29 @@
+- name: Create Terraform directory
+  file:
+    path: "{{terraform_dir}}"
+    state: directory
+  register: terraform_directory
+
+- name: Check terraform version
+  shell: "terraform version 2>&1 | head -n 1 | grep -q {{terraform_version}}"
+  failed_when: false
+  changed_when: false
+  register: terraform_versions_match
+
+- name: Download terraform
+  include_tasks: download.yml
+  when: terraform_versions_match.rc != 0
+
+- name: Unarchive Terraform archive
+  unarchive:
+    src: /tmp/terraform-{{terraform_version}}.zip
+    dest: "{{terraform_dir}}"
+    copy: no
+  when: terraform_versions_match.rc != 0 or terraform_directory is changed
+
+- name: Add convenient alias
+  lineinfile:
+    name: ~/.bash_aliases_local
+    line: 'alias tf="terraform"'
+    state: present
+    create: true

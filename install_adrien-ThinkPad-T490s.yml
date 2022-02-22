@@ -20,6 +20,8 @@
     - role: user/nvim
     - role: user/zsh
     - role: dashlane/base
+    - role: dashlane/terraform
+    - role: dashlane/vault
     # TO FIX:
     # - role: dashlane/sdm
 
@@ -31,6 +33,5 @@
   # xmodmap -pke
 # Zoom?
 # nvm
-# docker + docker-compose
 # Firefox user chrome
-# terraform+vault+aws
+# aws-cli

@@ -25,6 +25,7 @@
       - silversearcher-ag
       - simplescreenrecorder
       - ffmpeg
+      - unzip
 
       - ubuntu-restricted-extras
       - chromium-browser

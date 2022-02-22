@@ -1,0 +1,17 @@
+- name: Add Hashicorp apt key
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Add Hashicorp repository
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
+    state: present
+    filename: hashicorp.list
+
+- name: Install vault
+  become: yes
+  apt:
+    state: latest
+    name: vault
+    update_cache: yes
