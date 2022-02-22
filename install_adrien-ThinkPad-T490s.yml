@@ -15,8 +15,8 @@
       become: yes
     - role: user/base
     - role: user/dconf
-    - role: user/dotfiles
     - role: user/github
+    - role: user/dotfiles
     - role: user/nvim
     - role: user/zsh
     - role: dashlane/base
