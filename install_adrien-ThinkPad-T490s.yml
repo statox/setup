@@ -19,6 +19,7 @@
     - role: user/dotfiles
     - role: user/nvim
     - role: user/zsh
+    - role: user/firefox
     - role: dashlane/base
     - role: dashlane/terraform
     - role: dashlane/vault
@@ -33,5 +34,4 @@
   # xmodmap -pke
 # Zoom?
 # nvm
-# Firefox user chrome
 # aws-cli

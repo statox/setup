@@ -1,0 +1,10 @@
+- name: Get the profile name
+  shell: "grep 'Path' ~/.mozilla/firefox/profiles.ini | cut -d '=' -f 2"
+  register: profile_name
+
+- name: Add user chrome
+  copy:
+    backup: true
+    force: true
+    dest: '~/.mozilla/firefox/{{profile_name.stdout}}/chrome/userChrome.css'
+    src: "{{role_path}}/files/userChrome.css"
