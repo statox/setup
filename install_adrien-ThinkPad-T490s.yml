@@ -11,6 +11,8 @@
       become: yes
     - role: system/sudo
       become: yes
+    - role: system/docker
+      become: yes
     - role: user/base
     - role: user/dconf
     - role: user/dotfiles
