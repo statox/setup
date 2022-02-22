@@ -20,6 +20,7 @@
     - role: user/nvim
     - role: user/zsh
     - role: user/firefox
+    - role: user/usql
     - role: dashlane/base
     - role: dashlane/terraform
     - role: dashlane/vault
