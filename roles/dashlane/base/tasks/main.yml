@@ -3,6 +3,13 @@
   apt:
     state: latest
     name:
+      - jq
+      - xmllint
+      - curl
+      - entr
+      - fzf
+      - libxml2-utils
+      - git
       - ldap-utils
       - redis-tools
 
