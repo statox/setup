@@ -22,6 +22,7 @@
     - role: user/firefox
     - role: user/usql
     - role: dashlane/base
+    - role: dashlane/gitlab
     - role: dashlane/terraform
     - role: dashlane/vault
     # TO FIX:

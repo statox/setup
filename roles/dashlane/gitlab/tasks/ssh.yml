@@ -1,0 +1,32 @@
+- name: Check if SSH Key file exists (1/2)
+  stat: 
+    path: ~/.ssh/gitlab.dashlane
+  register: key_file
+
+- name: 'Check if SSH Key file exists (2/2)'
+  debug:
+    msg: 'The key ~/.ssh/gitlab.dashlane will not be overriden. Delete it if you want to create a new SSH key for Gitlab'
+  when: key_file.stat.exists == true
+
+- name: Generate SSH Key
+  shell: "ssh-keygen -t ed25519 -N '' -f ~/.ssh/gitlab.dashlane"
+  args:
+    creates: "~/.ssh/gitlab.dashlane"
+  when: key_file.stat.exists == false
+
+- name: Insert/Update SSH keys in ~/.ssh/config
+  blockinfile:
+    path: ~/.ssh/config
+    create: yes
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - gitlab"
+    block: |
+      Host gitlab.dashlane.com
+          User git
+          Hostname gitlab.dashlane.com
+          IdentityFile ~/.ssh/gitlab.dashlane
+  when: key_file.stat.exists == false
+
+- name: '[IMPORTANT] SSH key configuration to update at https://gitlab.dashlane.com/-/profile/keys'
+  debug:
+    msg: 'A new SSH key has been generated, add the public key in Github interface'
+  when: key_file.stat.exists == false

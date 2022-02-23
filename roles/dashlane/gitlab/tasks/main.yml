@@ -1,0 +1,11 @@
+# To skip any of the tasks add the following to vars/config.local file
+# skip_gitlab_ssh: true
+# skip_gitlab_gpg: true
+
+- name: Setup SSH key for gitlab
+  import_tasks: ssh.yml
+  when: skip_gitlab_ssh != true
+
+- name: Setup GPG key for gitlab
+  import_tasks: gpg.yml
+  when: skip_gitlab_gpg != true
