@@ -27,6 +27,7 @@
       - ffmpeg
       - unzip
       - flameshot
+      - vlc
 
       - ubuntu-restricted-extras
       - chromium-browser
@@ -43,6 +44,7 @@
     name:
       - slack
       - postman
+      - spotify
 
 - name: Change key repetition speed
   lineinfile:
