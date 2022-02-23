@@ -20,7 +20,7 @@
     create: yes
     marker: "# {mark} ANSIBLE MANAGED BLOCK FROM STATOX SETUP - github"
     block: |
-      Host testgithub.com
+      Host github.com
           User git
           Hostname github.com
           IdentityFile ~/.ssh/id_ed25519_github
