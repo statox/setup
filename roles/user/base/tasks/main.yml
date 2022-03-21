@@ -28,6 +28,7 @@
       - unzip
       - flameshot
       - vlc
+      - whois
 
       - ubuntu-restricted-extras
       - chromium-browser

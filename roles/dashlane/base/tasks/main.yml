@@ -4,7 +4,6 @@
     state: latest
     name:
       - jq
-      - xmllint
       - curl
       - entr
       - fzf
