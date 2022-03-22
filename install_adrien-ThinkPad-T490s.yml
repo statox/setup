@@ -13,6 +13,7 @@
       become: yes
     - role: system/docker
       become: yes
+    - role: system/wine
     - role: user/base
     - role: user/dconf
     - role: user/github
