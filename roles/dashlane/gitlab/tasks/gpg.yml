@@ -13,6 +13,7 @@
     src: "{{role_path}}/templates/gen-key-script"
     dest: "/tmp/gen-key-script"
   when: gpgkeys is defined and not gpgkeys.stdout
+  changed_when: false
 
 - name: generate gpg key
   command: "gpg --batch --gen-key /tmp/gen-key-script"
