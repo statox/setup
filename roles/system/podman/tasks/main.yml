@@ -1,0 +1,7 @@
+- name: Install podman
+  apt:
+    state: latest
+    name:
+      - podman
+  become: yes
+
