@@ -8,7 +8,7 @@
   ignore_errors: true
   register: gpgkeys
 
-- name: copy default template for gpg key generation
+- name: copy default template for gpg key generation to /tmp/
   template:
     src: "{{role_path}}/templates/gen-key-script"
     dest: "/tmp/gen-key-script"
