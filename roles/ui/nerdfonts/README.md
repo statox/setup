@@ -6,4 +6,4 @@ Once the files are in `~/.local/share/fonts` we need to refresh the font cache (
 
 Then we need to configure gnome terminal to use this font (it's done in the role `user/dconf`)
 
-After that no need to install more things, in neovim the icons work properly
+After that no need to install more things, in neovim the icons work properly as long as kyazdani42/nvim-web-devicons is installed
