@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
+    echo "Illegal number of parameters"
+    echo "Usage:"
+    echo "run-role [-C] <role-name>"
+    exit 1
+fi
+
+CHECK=false
+for i in "$@"; do
+    case $i in
+        -C|--check)
+            CHECK=true
+            ;;
+        *)
+            ROLE="$i"
+            ;;
+    esac
+done
+
+if [ $CHECK = true ]; then
+    ansible localhost -m include_role -a name="$ROLE" --check
+else
+    ansible localhost -m include_role -a name="$ROLE"
+fi

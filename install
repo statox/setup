@@ -1,10 +1,26 @@
+#!/usr/bin/env bash
 # Options
 #   -C dry run
+
+usage() {
+    echo "Illegal parameters"
+    echo "Usage:"
+    echo "install [-C]"
+    exit 1
+}
+
+if [ "$#" -gt 1 ]; then
+    usage
+fi
+
+if [ "$#" = 1 ] && [ "$1" != "-C" ] && [ "$1" != "--check" ]; then
+    usage
+fi
 
 sudo echo > /dev/null
 NAME=$(hostname)
 FILE="install_$NAME.yml"
 
-[ ! -f $FILE ] && echo 'No file found for this hostname $NAME' && exit 1
+[ ! -f "$FILE" ] && echo "No file found for this hostname $NAME" && exit 1
 
 ansible-playbook "$FILE" "$@"
