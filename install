@@ -1,21 +1,6 @@
 #!/usr/bin/env bash
-# Options
+# All the parameters are passed to ansible-playbook with no validation #YOLO
 #   -C dry run
-
-usage() {
-    echo "Illegal parameters"
-    echo "Usage:"
-    echo "install [-C]"
-    exit 1
-}
-
-if [ "$#" -gt 1 ]; then
-    usage
-fi
-
-if [ "$#" = 1 ] && [ "$1" != "-C" ] && [ "$1" != "--check" ]; then
-    usage
-fi
 
 sudo echo > /dev/null
 NAME=$(hostname)
