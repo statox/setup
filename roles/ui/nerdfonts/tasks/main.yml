@@ -1,0 +1,23 @@
+- name: install fontconfig
+  become: true
+  package:
+    state: present
+    name: fontconfig
+
+- name: ensure local fonts directory is present
+  file:
+    dest: "$HOME/.local/share/fonts"
+    state: directory
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+
+# The font files were downloaded from https://www.nerdfonts.com/font-downloads
+- name: Copy font files
+  copy:
+    dest: "$HOME/.local/share/fonts"
+    src: "{{role_path}}/files/AurulentSansMono"
+  register: installed_font
+
+- name: reset font cache
+  command: fc-cache -f $HOME/.local/share/fonts
+  when: installed_font.changed

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# IMPORTANT
+# Ansible Ad hoc commands can't gather facts https://stackoverflow.com/a/36493897
+# That means that roles using e.g. ansible_env.USER can't be run with this script
+
 if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
     echo "Illegal number of parameters"
     echo "Usage:"

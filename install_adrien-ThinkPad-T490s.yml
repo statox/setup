@@ -16,6 +16,7 @@
     - role: system/podman
     - role: system/wine
     - role: user/base
+    - role: ui/nerdfonts # Must happen before user/dconf
     - role: user/dconf
     - role: user/github
     - role: user/dotfiles
