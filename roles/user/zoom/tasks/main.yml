@@ -1,0 +1,9 @@
+- name: Install zoom deb
+  apt:
+    deb: https://zoom.us/client/latest/zoom_amd64.deb
+  register: zoom_install
+
+- name: '[IMPORTANT] A new version of Zoom has been insalled'
+  debug:
+    msg: 'Restart zoom to finish update'
+  when: zoom_install.changed == true
