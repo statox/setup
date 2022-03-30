@@ -3,6 +3,8 @@
   loop:
     - key: /org/gnome/terminal/legacy/default-show-menubar
       value: "false"
+    - key: /org/gnome/terminal/legacy/theme-variant
+      value: "'dark'" # The single quotes are needed otherwise dconf returns an error
   loop_control:
     loop_var: item
     index_var: index
