@@ -43,3 +43,9 @@
     - docker-ce-cli
     - containerd.io
   notify: restart docker
+
+- name: Add user to docker group
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: docker
+    append: yes
