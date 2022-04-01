@@ -1,0 +1,32 @@
+# IMPORTANT:
+# This role is used to install docker containers. Using a shell command
+# is not the most reliable way (there is a community role to do that) but
+# I want to keep this setup simple and galaxy requires some configuration.
+#
+# HOW TO USE:
+# in the files/ directory of this role add a new directory [app_name]/
+# in [app_name]/ create the docker-compose.yml of the new app to install
+# in the items of this role add [app_name]/
+#
+# HOW IT WORKS:
+# For now docker-compose up returns '[container_name] is up-to-date]' in
+# stderr
+# So the first time the role runs it starts the containers and after that
+# it runs `docker-compose up` again and that does nothing.
+#
+# The -p parameter allows to spawn all the containers under the same stack
+#
+# TODO:
+#
+# - Declare system/docker as a dependency to run only if docker is installed
+# - Make item list a variable to configure from install playbook
+
+- name: Run container
+  become: True
+  shell:
+    cmd: "docker-compose -p 'statox-setup' up -d"
+    chdir: "{{role_path}}/files/{{item}}"
+  with_items:
+    - portainer
+  register: portainer_container
+  changed_when: "'is up-to-date' not in portainer_container.stderr"

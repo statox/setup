@@ -1,7 +1,0 @@
-- name: Run container
-  become: True
-  shell:
-    cmd: "docker-compose up -d"
-    chdir: "{{role_path}}/files/"
-  register: portainer_container
-  changed_when: "'is up-to-date' not in portainer_container.stderr"

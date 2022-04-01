@@ -28,7 +28,7 @@
     - role: dashlane/gitlab
     - role: dashlane/terraform
     - role: dashlane/vault
-    - role: user/portainer # Must happen after system/docker
+    - role: user/docker-apps # Must happen after system/docker
     # TO IMPROVE
     # user/zoom works properly it installs zoom.
     # But it always download the zoom .deb from zoom website before
