@@ -25,6 +25,9 @@
     - role: user/firefox
     - role: user/usql
     - role: user/docker-apps # Must happen after system/docker
+      vars:
+        apps:
+          - portainer
     - role: dashlane/base
     - role: dashlane/gitlab
     - role: dashlane/terraform

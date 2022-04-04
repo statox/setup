@@ -21,12 +21,32 @@
 # - Declare system/docker as a dependency to run only if docker is installed
 # - Make item list a variable to configure from install playbook
 
-- name: Run container
+
+- name: Define variables
+  set_fact:
+    # command: "{{ 'podman' if podman == true else 'docker' }}"
+    docker_apps_home: "{{ ansible_env.HOME }}/.docker-apps"
+
+- name: Create docker-app directory
+  file:
+    state: directory
+    path: "{{ docker_apps_home }}"
+
+- name: Copy dockerfile directories
+  copy:
+    src: "{{role_path}}/files/{{ item }}"
+    dest: "{{ docker_apps_home }}"
+  with_items:
+    "{{ apps }}"
+
+- name: Run containers
   become: True
   shell:
     cmd: "docker-compose -p 'statox-setup' up -d"
-    chdir: "{{role_path}}/files/{{item}}"
+    chdir: "{{ docker_apps_home }}/{{item}}"
+  args:
+    executable: /bin/bash
   with_items:
-    - portainer
-  register: portainer_container
-  changed_when: "'is up-to-date' not in portainer_container.stderr"
+    "{{ apps }}"
+  register: container_creation
+  changed_when: "'is up-to-date' not in container_creation.stderr"
