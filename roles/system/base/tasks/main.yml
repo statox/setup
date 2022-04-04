@@ -30,6 +30,14 @@
       APT::Periodic::Unattended-Upgrade "1";
   notify: Restart unattended-upgrades
 
+- name: Make sure 50unattended-upgrades file exists
+  file:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    state: touch
+    owner: root
+    group: root
+    mode: 644
+
 # Untested - This is not recommended because some packages require manual
 # action during install. Let's test and see if it's ok.
 # A workaround is to set a black list of packages for unattended upgrades
