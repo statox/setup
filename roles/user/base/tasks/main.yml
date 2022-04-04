@@ -29,6 +29,8 @@
       - flameshot
       - vlc
       - whois
+      - gparted
+      - sshpass # Used by ansible for password authenticated ssh
 
       - ubuntu-restricted-extras
       - chromium-browser
