@@ -1,4 +1,6 @@
 # Recreating instructions at https://docs.docker.com/engine/install/ubuntu/
+# If the playbook fails an alternative is to use the script
+# curl -fsSL https://get.docker.com -o get-docker.sh
 
 - name: Install dependencies
   apt:
@@ -30,6 +32,24 @@
   copy:
     dest: /etc/apt/sources.list.d/docker.list
     src: "{{role_path}}/files/docker.list"
+  when: repo_file.stat.exists == false
+
+- name: Get architecture
+  shell: dpkg --print-architecture
+  register: arch
+
+- name: Get ubuntu distribution
+  shell: ". /etc/os-release && echo $ID"
+  register: dist
+
+- name: Get distribution version
+  shell: ". /etc/lsb-release && echo $DISTRIB_CODENAME"
+  register: dist_version
+
+- name: Add Docker's repository
+  template:
+    dest: /etc/apt/sources.list.d/docker.list
+    src: "{{role_path}}/files/docker.list.j2"
   when: repo_file.stat.exists == false
 
 - name: Install docker
