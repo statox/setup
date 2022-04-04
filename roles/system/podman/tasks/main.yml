@@ -5,3 +5,18 @@
       - podman
   become: yes
 
+- name: Install pip (required for podman-compose)
+  become: yes
+  apt:
+    state: present
+    name:
+      - python3-pip
+
+- name: Install podman-compose python package
+  pip:
+    name: podman-compose
+
+- name: '[IMPORTANT] Podman was installed. Create aliases'
+  debug:
+    msg: 'podman and podman-compose were install. You might want to create aliases for these commands'
+  when: key_file.stat.exists == false
