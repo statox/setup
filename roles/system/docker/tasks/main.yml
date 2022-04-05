@@ -37,14 +37,17 @@
 - name: Get architecture
   shell: dpkg --print-architecture
   register: arch
+  changed_when: false
 
 - name: Get ubuntu distribution
   shell: ". /etc/os-release && echo $ID"
   register: dist
+  changed_when: false
 
 - name: Get distribution version
   shell: ". /etc/lsb-release && echo $DISTRIB_CODENAME"
   register: dist_version
+  changed_when: false
 
 - name: Add Docker's repository
   template:
