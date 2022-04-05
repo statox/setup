@@ -1,0 +1,36 @@
+# The container uses port 53 which creates conflicts
+# There is a workaround in the doc
+# https://github.com/pi-hole/docker-pi-hole/blob/5bae002db39/README.md#installing-on-ubuntu
+# https://discourse.pi-hole.net/t/docker-unable-to-bind-to-port-53/45082/14
+
+
+- name: Disable stub resolver
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '#?DNSStubListener='
+    line: DNSStubListener=no
+  become: true
+  register: disable_stub
+
+- name: Replace /etc/resolv.conf by a file automatically updated
+  file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+  become: true
+  register: simlink_conf
+
+- name: Stop systemd-resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+  become: true
+  when: disable_stub.changed or simlink_conf.changed
+
+- name: Install Docker container
+  import_role:
+    name: user/docker-apps
+  vars:
+    apps:
+      - pihole

@@ -1,0 +1,24 @@
+# IMPORTANT
+# This playbook is still a work in progress.
+# 06/04/22:
+# - The sudo manipulation must be done manually (same action as in system/sudo)
+# - A task requires a reboot which has to be done manually
+# - Stuff should be passed as parameter to the roles
+---
+- hosts: raspberry
+  become: false
+  vars_files:
+    - "./vars/config.local"
+
+  roles:
+    - role: system/base
+      become: yes
+    - role: system/docker
+      become: yes
+    - role: raspberry/base # Requires reboot
+    - role: user/docker-apps # Must happen after system/docker
+      vars:
+        apps:
+          - portainer
+    - role: raspberry/pihole
+

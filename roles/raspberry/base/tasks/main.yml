@@ -1,0 +1,11 @@
+- name: Install utilities packages for raspberry
+  become: yes
+  apt:
+    state: latest
+    name:
+      - linux-modules-extra-raspi
+  register: reboot_required
+
+- name: Unconditionally reboot the machine with all defaults
+  reboot:
+  when: reboot_required.changed
