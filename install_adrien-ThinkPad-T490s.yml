@@ -24,6 +24,7 @@
     - role: user/zsh
     - role: user/firefox
     - role: user/usql
+    - role: user/warpd
     - role: user/docker-apps # Must happen after system/docker
       vars:
         apps:

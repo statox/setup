@@ -1,0 +1,37 @@
+# warpd is a A modal keyboard-driven virtual pointer
+# https://github.com/rvaiya/warpd
+
+---
+- name: Installing warpd dependencies
+  become: true
+  apt:
+    state: latest
+    name:
+      - libxi-dev
+      - libxinerama-dev
+      - libxft-dev
+      - libxfixes-dev
+      - libxtst-dev
+      - libx11-dev
+  register: installation
+
+- name: Clone warpd repo
+  git:
+    repo: 'https://github.com/rvaiya/warpd.git'
+    update: no
+    dest: "{{ ansible_env.HOME }}/.bin/warpd"
+    depth: 1
+  register: clone_repo
+
+- name: Install warpd
+  shell:
+    cmd: make
+    chdir: "{{ ansible_env.HOME }}/.bin/warpd"
+  when: clone_repo.changed
+
+- name: Install warpd
+  make:
+    chdir: "{{ ansible_env.HOME }}/.bin/warpd"
+    target: install
+  become: yes
+  when: clone_repo.changed
