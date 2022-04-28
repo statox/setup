@@ -1,0 +1,33 @@
+# Tasks to install https://tuple.app/downloads/linux
+# A screen sharing tool
+# (For now it doesn't work on Ubuntu 21.10 with i3wm because
+# of a X error)
+
+- name: Install flatpak
+  become: yes
+  apt:
+    state: latest
+    name:
+      - flatpak
+
+# Using a community module to use flatpak
+# if it is not available, it can be installed with the followig command
+# ansible-galaxy collection install community.general
+# (cf https://docs.ansible.com/ansible/latest/collections/community/general/flatpak_module.html)
+# On Ubuntu 21.10 with ansible 2.12.1 it is already available
+- name: Add the flathub flatpak repository (needed by tuple.app flatpak)
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    method: user
+
+- name: Update flatpaks
+  shell:
+    cmd: flatpak update --noninteractive
+
+- name: Install the tuple.app flatpak
+  community.general.flatpak:
+    name:  https://tuple.app/tuple.flatpakref
+    state: present
+    method: user
