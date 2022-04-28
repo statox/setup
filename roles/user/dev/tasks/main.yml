@@ -1,0 +1,6 @@
+- name: Install dev utilities packages
+  become: yes
+  apt:
+    state: latest
+    name:
+      - shellcheck
