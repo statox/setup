@@ -1,0 +1,38 @@
+# Monica: Personal CRM https://github.com/monicahq/monica/
+# Docker file inspired from https://lyz-code.github.io/blue-book/linux/monica/
+# Environement variable available https://github.com/monicahq/monica/blob/main/.env.example
+
+version: "3.4"
+
+services:
+  app:
+    image: monica:latest
+    depends_on:
+      - db
+    ports:
+      - 8080:80
+    environment:
+      # Must be 32 characters long exactly.
+      # generate with `openssl rand -base64 32 | cut -c 1-32` for instance
+      - APP_KEY=CHANGE_ME
+      - DB_HOST=db
+    volumes:
+      - data:/var/www/monica/storage
+    restart: unless-stopped
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=homestead
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  data:
+    name: data
+  mysql:
+    name: mysql
