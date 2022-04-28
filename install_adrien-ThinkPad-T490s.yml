@@ -30,10 +30,10 @@
       vars:
         apps:
           - portainer
-    - role: dashlane/base
-    - role: dashlane/gitlab
-    - role: dashlane/terraform
-    - role: dashlane/vault
+    - role: work/base
+    - role: work/gitlab
+    - role: work/terraform
+    - role: work/vault
     # TO IMPROVE
     # user/zoom works properly it installs zoom.
     # But it always download the zoom .deb from zoom website before
