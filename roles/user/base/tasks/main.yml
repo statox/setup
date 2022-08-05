@@ -30,6 +30,7 @@
       - vlc
       - whois
       - gparted
+      - xsel
       - sshpass # Used by ansible for password authenticated ssh
 
       - ubuntu-restricted-extras
