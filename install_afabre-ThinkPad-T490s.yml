@@ -23,7 +23,6 @@
     - role: user/nvim
     - role: user/zsh
     - role: user/firefox
-    #  #- role: user/usql
     - role: user/dev
     - role: user/docker-apps # Must happen after system/docker
       vars:

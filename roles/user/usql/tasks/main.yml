@@ -1,8 +1,0 @@
-- name: Check if usql executable is present
-  shell: "which usql"
-  register: result
-  ignore_errors: true
-
-- name: Install usql
-  shell: "{{role_path}}/files/install_usql.sh"
-  when: result.rc != 0
