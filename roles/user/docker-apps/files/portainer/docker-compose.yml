@@ -3,10 +3,10 @@ version: "3"
 services:
     portainer:
         container_name: portainer
-        image: portainer/portainer-ce:2.11.1
+        image: portainer/portainer-ce:latest
         ports:
           - '8000:8000'
-          - '9000:9000'
+          - '9443:9443'
         restart: always
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock

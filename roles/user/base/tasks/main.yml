@@ -32,6 +32,7 @@
       - gparted
       - xsel
       - sshpass # Used by ansible for password authenticated ssh
+      - nnn
 
       - ubuntu-restricted-extras
       - chromium-browser

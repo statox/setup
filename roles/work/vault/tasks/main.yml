@@ -5,7 +5,7 @@
 
 - name: Add Hashicorp repository
   apt_repository:
-    repo: deb [arch=amd64] https://apt.releases.hashicorp.com impish main
+    repo: deb [arch=amd64] https://apt.releases.hashicorp.com jammy main
     state: present
     filename: hashicorp.list
 

@@ -19,6 +19,11 @@
     name:
       - miro
 
+- name: 'Install warp client'
+  become: yes
+  apt:
+    deb: https://pkg.cloudflareclient.com/uploads/cloudflare_warp_2022_12_542_1_amd64_c310bd6dd5.deb
+
 - name: Setup tuple app
   import_tasks: tuple.yml
 
