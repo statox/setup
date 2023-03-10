@@ -1,5 +1,9 @@
+# TODO
+# This playbook needs a fix
+# The profile is not read properly the first time it runs
+# it must be set manually with the output of the dconf comand.
 - name: Read current terminal profile
-  shell: "dconf list /org/gnome/terminal/legacy/profiles:/ | head -1  | grep . || echo ':11111111-1111-1111-1111-111111111111/'"
+  shell: "dconf list /org/gnome/terminal/legacy/profiles:/ | head -1  | grep . || echo ':b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'"
   register: term_profile
   changed_when: no
 
@@ -12,6 +16,8 @@
       value: "'dark'" # The single quotes are needed otherwise dconf returns an error
     - key: /org/gnome/terminal/legacy/profiles:/{{term_profile.stdout}}font
       value: "'AurulentSansMono Nerd Font 12'"
+    - key: /org/gnome/terminal/legacy/profiles:/{{term_profile.stdout}}scrollbar-policy
+      value: "'never'"
   loop_control:
     loop_var: item
     index_var: index
