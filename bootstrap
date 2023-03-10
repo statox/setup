@@ -9,8 +9,7 @@
 # Install process following this documentation
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
 
-apt update && apt upgrade
-apt install curl git
+apt install curl
 
 # Python3 should be already installed but not pip
 curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
