@@ -8,6 +8,7 @@
       - polybar
       - dunst
       - feh
+      - rofi
 
 - name: Enable touchpad settings
   copy:

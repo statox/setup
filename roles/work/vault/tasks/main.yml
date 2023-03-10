@@ -1,9 +1,11 @@
 - name: Add Hashicorp apt key
+  become: true
   apt_key:
     url: https://apt.releases.hashicorp.com/gpg
     state: present
 
 - name: Add Hashicorp repository
+  become: true
   apt_repository:
     repo: deb [arch=amd64] https://apt.releases.hashicorp.com jammy main
     state: present
