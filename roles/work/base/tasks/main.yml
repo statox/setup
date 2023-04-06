@@ -19,13 +19,21 @@
     name:
       - miro
 
+- name: Install unconfined utilities snaps (edge channel)
+  become: yes
+  community.general.snap:
+    channel: edge
+    # Might need to run this command `sudo snap connect mysql-workbench-community:password-manager-service`
+    name: mysql-workbench-community
+    classic: true
+
 - name: 'Install warp client'
   become: yes
   apt:
     deb: https://pkg.cloudflareclient.com/uploads/cloudflare_warp_2022_12_542_1_amd64_c310bd6dd5.deb
 
-- name: Setup tuple app
-  import_tasks: tuple.yml
+# - name: Setup tuple app
+#   import_tasks: tuple.yml
 
 - name: Configure npm repository
   lineinfile:
