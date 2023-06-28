@@ -13,13 +13,6 @@
       - ldap-utils
       - redis-tools
 
-- name: Install utilities snaps (edge channel)
-  become: yes
-  community.general.snap:
-    channel: edge
-    name:
-      - miro
-
 - name: Install unconfined utilities snaps (edge channel)
   become: yes
   community.general.snap:
