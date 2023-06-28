@@ -1,0 +1,23 @@
+- name: Add Cloudflare apt key
+  become: true
+  apt_key:
+    url: https://pkg.cloudflareclient.com/pubkey.gpg
+    state: present
+
+- name: Add Cloudflare repository
+  become: true
+  apt_repository:
+    repo: deb [arch=amd64] https://pkg.cloudflareclient.com/ jammy main
+    state: present
+    filename: cloudflare.list
+
+- name: Install cloudflare warp
+  become: yes
+  apt:
+    state: latest
+    name: cloudflare-warp
+    update_cache: yes
+
+- name: '[IMPORTANT] enroll warp'
+  debug:
+    msg: 'warp-cli teams-enroll dashlane'

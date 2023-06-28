@@ -1,0 +1,47 @@
+---
+- hosts: local
+  become: false
+  vars_files:
+    - "./vars/config.local"
+
+  roles:
+    - role: system/base
+      become: yes
+    - role: system/i3
+      become: yes
+    - role: system/sudo
+      become: yes
+    #- role: system/docker
+    #  become: yes
+    - role: system/podman
+    - role: system/wine
+    - role: user/base
+    - role: ui/nerdfonts # Must happen before user/dconf
+    - role: user/dconf
+    - role: user/github
+    - role: user/dotfiles
+    - role: user/nvim
+    - role: user/zsh
+      #- role: user/firefox
+    - role: user/dev
+    #- role: user/docker-apps # Must happen after system/docker
+    #  vars:
+    #    apps:
+    #      - portainer
+    # - role: work/base
+      #- role: work/gitlab
+    - role: work/terraform
+    - role: work/vault
+    - role: work/cloudflare-warp
+
+    # TODO: Check how to cache the deb file
+    # These roles are not idempotent they should be run only once.
+    # - role: user/zoom
+    # - role: work/aws
+    # - role: work/sdm
+
+
+# TODO:
+# nvm
+# aws-cli
+# autokey to remap <alt>+hjkl? https://www.statox.fr/notes/keyboard_remap_arrow_keys/
