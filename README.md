@@ -43,3 +43,6 @@ This is a collection of ansible scripts I use to setup a new computer.
 - work/gitlab seems broken
 - Check how to automatically setup Firefox sync
 - zsh is not automatically enabled
+- nvm, node and npm install missing
+- Ubuntu 22.04 Jammy is hardcoded in several installations
+- MysqlWorkbench installation seems to work fine the first time but fails when run again
