@@ -3,6 +3,7 @@
   apt:
     state: latest
     name:
+      - graphviz # for dot
       - jq
       - curl
       - entr
