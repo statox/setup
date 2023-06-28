@@ -7,6 +7,7 @@ This is a collection of ansible scripts I use to setup a new computer.
 1. `sudo apt install git`
 1. Clone this repo
 1. Run `sudo ./bootstrap` to install dependencies
+1. If needed update the `inventory` file
 1. Create a file for the new PC
 
        touch "install_$(hostname).yml"
