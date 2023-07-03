@@ -7,6 +7,12 @@
   register: term_profile
   changed_when: no
 
+- name: Install dconf-editor
+  become: true
+  package:
+    state: latest
+    name: dconf-editor
+
 - name: Set dconf values
   include_tasks: dconf.yml
   loop:
