@@ -23,6 +23,7 @@
       - entr
       - net-tools
       - encfs
+      - brightnessctl
 
 - name: Enable unattended upgrade
   copy:
