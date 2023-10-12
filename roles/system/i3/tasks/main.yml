@@ -5,6 +5,7 @@
       - i3
       - i3lock-fancy
       - scrot
+      - picom         # Compositor, automatically adds transparency to rofi
       - polybar
       - dunst
       - feh
