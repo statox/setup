@@ -1,4 +1,4 @@
-- name: Ensuring the dotfiles repo exists
+- name: Ensure the dotfiles repo exists
   git:
     repo: 'git@github.com:statox/dotfiles.git'
     dest: $HOME/.dotfiles
@@ -9,3 +9,20 @@
   debug:
     msg: 'The dotfiles repository was cloned. You should run the setup script'
   when: clone_dotfiles.changed == true
+
+- name: Create directory for tmux tpm (TODO probably should be somewhere else)
+  file:
+    path: $HOME/.tmux/plugins/tpm
+    state: directory
+    mode: '0755'
+
+- name: Install tmux tpm (TODO probably should be somewhere else)
+  git:
+    repo: 'git@github.com:tmux-plugins/tpm.git'
+    dest: $HOME/.tmux/plugins/tpm
+    update: no
+  register: clone_tpm
+
+- name: 'Install tmux plugins'
+  shell: $HOME/.tmux/plugins/tpm/bin/install_plugins
+  when: clone_tpm.changed == true
