@@ -42,7 +42,7 @@
 - name: Run containers
   become: True
   shell:
-    cmd: "docker-compose -p 'statox-setup' up -d"
+    cmd: "docker compose up -d"
     chdir: "{{ docker_apps_home }}/{{item}}"
   args:
     executable: /bin/bash
