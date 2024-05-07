@@ -14,8 +14,9 @@
       - rsync
       - build-essential
       - screen
-      - flatpak
-      - mysql-server
+      - fzf
+      - tmux
+      - htop
 
       - xclip
       - clang
@@ -23,7 +24,6 @@
       - entr
       - net-tools
       - encfs
-      - brightnessctl
 
 - name: Enable unattended upgrade
   copy:
@@ -44,12 +44,12 @@
 # Untested - This is not recommended because some packages require manual
 # action during install. Let's test and see if it's ok.
 # A workaround is to set a black list of packages for unattended upgrades
-# - name: Configure unattended upgrade - regular packages
-  # lineinfile:
-    # path: /etc/apt/apt.conf.d/50unattended-upgrades
-    # search_string: '${distro_id}:${distro_codename}-updates'
-    # line: '	"${distro_id}:${distro_codename}-updates";'
-  # notify: Restart unattended-upgrades
+- name: Configure unattended upgrade - regular packages
+  lineinfile:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    search_string: '${distro_id}:${distro_codename}-updates'
+    line: '	"${distro_id}:${distro_codename}-updates";'
+  notify: Restart unattended-upgrades
 
 - name: Configure unattended upgrade - remove unused kernel packages
   lineinfile:

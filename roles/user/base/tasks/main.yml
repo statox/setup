@@ -14,10 +14,10 @@
     state: latest
     name:
       - blueman
-      - fzf
-      - tmux
-      - htop
       - redshift-gtk
+      - brightnessctl
+      - flatpak
+      # - mysql-server
       - feh
       - dolphin
       - arandr
