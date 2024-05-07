@@ -13,6 +13,7 @@
   apt:
     state: latest
     name:
+      - blueman
       - fzf
       - tmux
       - htop
