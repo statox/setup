@@ -152,6 +152,8 @@ services:
     ports:
       - ${LOGSTASH_PORT}:9600
       - ${LOGSTASH_HTTP_INPUT_PORT}:${LOGSTASH_HTTP_INPUT_PORT}
+    # Using root user because the "certs" volume is owned by root and I didn't find a way to change it
+    # but there is a startup warning saying that running as root will be prevented in future versions
     user: root
     volumes:
       - logstashdata01:/usr/share/logstash/data
@@ -164,6 +166,8 @@ services:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTIC_HOSTS=https://es01:9200
       - LOGSTASH_HTTP_INPUT_PORT=${LOGSTASH_HTTP_INPUT_PORT}
+      - LOGGER_USER=${LOGGER_USER}
+      - LOGGER_PASSWORD=${LOGGER_PASSWORD}
     healthcheck:
       test: bin/logstash -t
       interval: 30s
