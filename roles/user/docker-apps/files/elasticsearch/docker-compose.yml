@@ -169,8 +169,9 @@ services:
       - LOGGER_USER=${LOGGER_USER}
       - LOGGER_PASSWORD=${LOGGER_PASSWORD}
     healthcheck:
-      test: bin/logstash -t
-      interval: 30s
-      timeout: 10s
-      retries: 200
+      # test: bin/logstash -t # This fails because it seems the env variable are not populated, using the curl check instead but should try to fix
+      test: curl --fail http://localhost:9600 || exit 1
+      interval: 240s
+      timeout: 120s
+      retries: 3
     mem_limit: ${MEM_LIMIT_LOGSTASH}
