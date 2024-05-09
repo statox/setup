@@ -10,4 +10,4 @@ LOGSTASH_ENDPOINT='http://raccoon.statox.fr:8888'
 LOGGER_USER='logger'
 LOGGER_PASSWORD='CHANGEME'
 
-curl -v -k -H 'Content-Type: application/json' --user "$LOGGER_USER:$LOGGER_PASSWORD" -XPOST "$LOGSTASH_ENDPOINT/test/_doc" --data '{"foo": 6}'
+curl -v -k -H 'Content-Type: application/json' --user "$LOGGER_USER:$LOGGER_PASSWORD" -XPOST "$LOGSTASH_ENDPOINT/api.statox.fr/_doc" --data '{"content": "This is a test content"}'
