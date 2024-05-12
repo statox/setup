@@ -234,33 +234,33 @@ services:
       timeout: 15s
       retries: 5
 
-  filebeat:
-    depends_on:
-      es01:
-        condition: service_healthy
-    container_name: filebeat
-    restart: unless-stopped
-    image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
-    user: root
-    # --strict.perms=false same issue as for metricbeat
-    command: -environment container --strict.perms=false
-    volumes:
-      - certs:/usr/share/filebeat/certs
-      - filebeatdata01:/usr/share/filebeat/data
-      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    environment:
-      - ELASTIC_USER=elastic
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_HOSTS=https://es01:9200
-      - KIBANA_HOSTS=http://kibana:5601
-      - LOGSTASH_HOSTS=http://logstash:9600
-    configs:
-      - source: filebeat.yml
-        target: /usr/share/filebeat/filebeat.yml
-    mem_limit: ${MEM_LIMIT_BEATS}
-    healthcheck:
-      test: filebeat --strict.perms=false test config
-      interval: 30s
-      timeout: 15s
-      retries: 5
+  #filebeat:
+  #  depends_on:
+  #    es01:
+  #      condition: service_healthy
+  #  container_name: filebeat
+  #  restart: unless-stopped
+  #  image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
+  #  user: root
+  #  # --strict.perms=false same issue as for metricbeat
+  #  command: -environment container --strict.perms=false
+  #  volumes:
+  #    - certs:/usr/share/filebeat/certs
+  #    - filebeatdata01:/usr/share/filebeat/data
+  #    - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+  #    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #  environment:
+  #    - ELASTIC_USER=elastic
+  #    - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+  #    - ELASTIC_HOSTS=https://es01:9200
+  #    - KIBANA_HOSTS=http://kibana:5601
+  #    - LOGSTASH_HOSTS=http://logstash:9600
+  #  configs:
+  #    - source: filebeat.yml
+  #      target: /usr/share/filebeat/filebeat.yml
+  #  mem_limit: ${MEM_LIMIT_BEATS}
+  #  healthcheck:
+  #    test: filebeat --strict.perms=false test config
+  #    interval: 30s
+  #    timeout: 15s
+  #    retries: 5
