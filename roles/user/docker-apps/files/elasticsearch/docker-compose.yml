@@ -282,3 +282,14 @@ services:
     restart: unless-stopped
     volumes:
       - ./files/nginx/conf/:/etc/nginx/conf.d/:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          # Check that the http to https redirection is working, should be a good enough
+          # sign that nginx is running properly
+          "curl -s http://kibana.statox.fr | grep -q '301 Moved Permanently'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
