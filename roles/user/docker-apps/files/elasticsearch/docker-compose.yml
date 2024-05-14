@@ -136,15 +136,15 @@ services:
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
-    ports:
-      - ${KIBANA_PORT}:5601
+    expose:
+      - 5601
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=https://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-      - SERVER_PUBLICBASEURL=${KIBANA_HOST}:${KIBANA_PORT}
+      - SERVER_PUBLICBASEURL=${KIBANA_HOST}
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
       - XPACK_REPORTING_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
       - XPACK_SECURITY_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
@@ -169,7 +169,7 @@ services:
     expose:
       - 9600
     ports:
-      - ${LOGSTASH_HTTP_INPUT_PORT}:${LOGSTASH_HTTP_INPUT_PORT}
+      - ${LOGSTASH_HTTP_INPUT_PORT}:8888
     # Using root user because the "certs" volume is owned by root and I didn't find a way to change it
     # but there is a startup warning saying that running as root will be prevented in future versions
     user: root
@@ -267,3 +267,19 @@ services:
   #    interval: 30s
   #    timeout: 15s
   #    retries: 5
+
+  # nginx used for SSL termination for Kibana UI
+  # Note: Cloudflare is configured in encryption mode "strict" (NOT full)
+  # Which means that we can have a self signed certicate between cloudflare and
+  # the origin (here nginx). So the Dockerfile generates a self signed certificate
+  # valid for 10 years to let future me handle renewal if needed
+  # https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes
+  webserver:
+    container_name: nginx
+    build: ./files/nginx/builder/
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - ./files/nginx/conf/:/etc/nginx/conf.d/:ro
