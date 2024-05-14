@@ -42,7 +42,7 @@
 - name: Run containers
   become: True
   shell:
-    cmd: "docker compose up -d"
+    cmd: "docker compose up -d --build"
     chdir: "{{ docker_apps_home }}/{{item}}"
   args:
     executable: /bin/bash
