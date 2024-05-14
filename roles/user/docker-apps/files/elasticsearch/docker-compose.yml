@@ -168,8 +168,7 @@ services:
         condition: service_healthy
     expose:
       - 9600
-    ports:
-      - ${LOGSTASH_HTTP_INPUT_PORT}:8888
+      - ${LOGSTASH_HTTP_INPUT_PORT}
     # Using root user because the "certs" volume is owned by root and I didn't find a way to change it
     # but there is a startup warning saying that running as root will be prevented in future versions
     user: root
