@@ -275,6 +275,11 @@ services:
   # https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes
   webserver:
     container_name: nginx
+    depends_on:
+      kibana:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
     build: ./files/nginx/builder/
     ports:
       - 80:80
@@ -290,6 +295,6 @@ services:
           # sign that nginx is running properly
           "curl -s http://kibana.statox.fr | grep -q '301 Moved Permanently'",
         ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      interval: 60s
+      timeout: 30s
+      retries: 10
