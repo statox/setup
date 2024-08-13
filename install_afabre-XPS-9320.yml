@@ -23,6 +23,7 @@
     - role: user/zsh
       #- role: user/firefox
     - role: user/dev
+    - role: user/arduino
     # - role: work/base
     #- role: work/gitlab
     - role: work/terraform
