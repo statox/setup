@@ -17,7 +17,19 @@ services:
       - ${TRANSMISSION_DATA_DIR}/downloads:/downloads
       - ${TRANSMISSION_DATA_DIR}/watch/folder:/watch
     ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
+      - ${TRANSMISSION_UI_PORT}:9091
+      - ${TRANSMISSION_TORRENT_PORT}:51413
+      - ${TRANSMISSION_TORRENT_PORT}:51413/udp
     restart: unless-stopped
+
+  # Webserver to expose files which will be copied from TRANSMISSION_DATA_DIR
+  webserver:
+    container_name: nginx
+    build: ./files/nginx/builder/
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - ./files/nginx/conf/:/etc/nginx/conf.d/:ro
+      - ${TRANSMISSION_DATA_DIR}/downloads/complete:/www/data
