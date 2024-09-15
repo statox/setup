@@ -1,9 +1,9 @@
-- name: Create local ~/.local/bin/ dir 
+- name: Create local ~/.local/bin/ dir
   file:
     state: directory
     path: ~/.local/bin/
 
-- name: Create local ~/.bin/ dir 
+- name: Create local ~/.bin/ dir
   file:
     state: directory
     path: ~/.bin/
@@ -34,6 +34,7 @@
       - xsel
       - sshpass # Used by ansible for password authenticated ssh
       - nnn
+      - clamav
 
       - ubuntu-restricted-extras
       - chromium-browser
