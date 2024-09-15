@@ -9,3 +9,6 @@ raccoon.statox.fr ansible_connection=ssh ansible_user=ubuntu ansible_ssh_pass=CH
 
 [panda]
 panda.statox.fr ansible_connection=ssh ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/panda
+
+[ours]
+ours.statox.fr ansible_connection=ssh ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ours
