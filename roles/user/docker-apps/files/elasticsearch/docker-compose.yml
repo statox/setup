@@ -1,9 +1,9 @@
 # https://www.elastic.co/blog/getting-started-with-the-elastic-stack-and-docker-compose
 
 networks:
- default:
-   name: elastic
-   external: false
+  default:
+    name: elastic
+    external: false
 
 volumes:
   certs:
@@ -189,11 +189,7 @@ services:
     healthcheck:
       # test: bin/logstash -t # This fails because it seems the env variable are not populated,
       # using the curl check instead but should try to fix
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s http://localhost:9600 | grep -q 'green'",
-        ]
+      test: ["CMD-SHELL", "curl -s http://localhost:9600 | grep -q 'green'"]
       interval: 30s
       timeout: 20s
       retries: 10
@@ -288,8 +284,7 @@ services:
     volumes:
       - ./files/nginx/conf/:/etc/nginx/conf.d/:ro
     healthcheck:
-      test:
-        [
+      test: [
           "CMD-SHELL",
           # Check that the http to https redirection is working, should be a good enough
           # sign that nginx is running properly
