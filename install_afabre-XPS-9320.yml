@@ -11,6 +11,8 @@
       become: yes
     - role: system/sudo
       become: yes
+    - role: system/docker
+      become: yes
     - role: system/podman
     - role: system/wine
     - role: user/base
@@ -35,8 +37,6 @@
     # - role: user/zoom
     # - role: work/aws
     # - role: work/sdm
-
-
 # TODO:
 # nvm
 # aws-cli
