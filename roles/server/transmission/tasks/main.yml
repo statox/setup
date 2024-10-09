@@ -21,7 +21,7 @@
   user:
     name: remote
     # Use mkpasswd --method=sha-512 to generate the password hash
-    password: "$6$HWk8SfaiPX.kFVXq$tfKYSvWWhO8bhCIQVLB1PXL30AcwfunMNl6PPix0MILLVb.7As0Mtt4vimSF7zjCJqOB5Ky4cu8AWYb/zrOui0"
+    password: "{{ remote_user_password_hash }}"
     comment: "Access transmission downloads from NAS"
     create_home: false
 

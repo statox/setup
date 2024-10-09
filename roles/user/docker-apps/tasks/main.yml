@@ -7,46 +7,24 @@
 # in the files/ directory of this role add a new directory [app_name]/
 # in [app_name]/ create the docker-compose.yml of the new app to install
 # in the items of this role add [app_name]/
-#
-# HOW IT WORKS:
-# For now docker-compose up returns '[container_name] is up-to-date]' in
-# stderr
-# So the first time the role runs it starts the containers and after that
-# it runs `docker-compose up` again and that does nothing.
-#
-# The -p parameter allows to spawn all the containers under the same stack
-#
-# TODO:
-#
-# - Declare system/docker as a dependency to run only if docker is installed
-# - Make item list a variable to configure from install playbook
-
 
 - name: Define variables
   set_fact:
-    # command: "{{ 'podman' if podman == true else 'docker' }}"
     docker_apps_home: "{{ ansible_env.HOME }}/.docker-apps"
 
-- name: Create docker-app directory
+- name: Ensure docker apps directory exists
   file:
     state: directory
     path: "{{ docker_apps_home }}"
 
-- name: Copy dockerfile directories
-  copy:
-    src: "{{role_path}}/files/{{ item }}"
-    dest: "{{ docker_apps_home }}"
-  with_items:
-    "{{ apps }}"
+- name: Copy docker apps directories
+  include_tasks: copy-directory.yml
+  loop: "{{ apps }}"
+  loop_control:
+    loop_var: app_name
 
-- name: Run containers
-  become: True
-  shell:
-    cmd: "docker compose up -d --build"
-    chdir: "{{ docker_apps_home }}/{{item}}"
-  args:
-    executable: /bin/bash
-  with_items:
-    "{{ apps }}"
-  register: container_creation
-  changed_when: "'is up-to-date' not in container_creation.stderr"
+- name: Run docker apps containers
+  include_tasks: run-app-containers.yml
+  loop: "{{ apps }}"
+  loop_control:
+    loop_var: app_name

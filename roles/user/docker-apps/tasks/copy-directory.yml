@@ -1,0 +1,38 @@
+# The goal of this role is to find the files for a docker app and
+# either copy them directly or if they are template (filename ending with .j2)
+# inject the values and then copy them
+
+- name: Define variables
+  set_fact:
+    local_app_path: "{{role_path}}/files/{{ app_name }}"
+    remote_app_path: "{{ docker_apps_home }}/{{ app_name }}"
+
+- name: Create docker app directory for {{ app_name }}
+  file:
+    state: directory
+    path: "{{ remote_app_path }}"
+
+- name: Copy docker directory for {{ app_name }}
+  copy:
+    src: "{{ local_app_path }}"
+    dest: "{{ docker_apps_home }}"
+
+- name: Find all templates for {{ app_name }}
+  find:
+    path: "{{ local_app_path }}"
+    recurse: yes
+    hidden: true
+    file_type: file
+  register: found_templates
+  # Execute task on the ansible controller instead of the target
+  delegate_to: localhost
+
+- name: Copy and replace template files
+  template:
+    src: "{{ file.path }}"
+    dest: "{{ remote_app_path }}/{{ file.path | relpath(local_app_path) | regex_replace('.j2','') }}"
+  loop: "{{ found_templates.files }}"
+  loop_control:
+    loop_var: file
+  when: >
+    file.path.endswith('.j2')
