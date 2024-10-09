@@ -30,6 +30,9 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
+      # TODO: I might want to configure the ELK keystore in the setup container to store S3 snapshots repo secrets
+      # if so mounting a single file could work like this:
+      # - ${PWD}/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore
     user: "0"
     command: >
       bash -c '
@@ -81,6 +84,13 @@ services:
       timeout: 5s
       retries: 120
 
+  # TODO The S3 snapshots repository is still configured "manually", automate that
+  # - Start the container and connect to it
+  # - Add the keys to the keystore (The keys are in the Dashlane note "Raccoon - ELK - secrets")
+  #   - s3.client.default.access_key
+  #   - s3.client.default.secret_key
+  # - Restart the container so that the keystore is loaded
+  # - Configure the repository and the policy from Kibana
   es01:
     depends_on:
       setup:
