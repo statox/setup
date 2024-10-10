@@ -37,18 +37,20 @@ touch "install_$(hostname).yml"
 
 The secrets are stored in [`/vars/secrets.yml.enc`](vars/secrets.yml.enc) which is managed with the built-in [`ansible-vault`](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-files-with-ansible-vault).
 
+**The key for the file is in my Dashlane secure note "statox-setup secret file"**
+
+The script [`/vars/get-vault-password.sh`](/vars/get-vault-password.sh) is a helper which calls [dcli](https://github.com/Dashlane/dashlane-cli) to get the password from the secure note. This script can be used with the `--vault-password-file` parameter of `ansible-vault` to automatically unlock the password if dcli is available.
+
 ```bash
 # The vault was not created with a --vault-id param
-ansible-vault view vars/secrets.yml.enc
+ansible-vault view --vault-password-file vars/get-vault-password.sh vars/secrets.yml.enc
 ```
-
-**The key for the file is in my Dashlane secure note "statox-setup secret file"**
 
 To run a playbook using this the secrets:
 
-- `ansible-playbook -e @vars/secrets.yml.enc --ask-vault-pass install_raccoon.yml`
+- `ansible-playbook -e @vars/secrets.yml.enc --vault-password-file vars/get-vault-password.sh install_raccoon.yml`
 - The variables in `vars/secrets.yml.enc` can be used as regular Ansible variables `{{ transmission_user }}`
-- Note that for my docker-apps module I can create `*.j2` template files using the `{{ encrypted_variable }}` syntax, the module will copy the template and inject the variable
+- Note that for the docker-apps module we can create `*.j2` template files using the `{{ encrypted_variable }}` syntax, the module will copy the template and inject the variable
 
 ## TODO
 
