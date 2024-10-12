@@ -28,6 +28,7 @@
     project_src: "{{ docker_apps_home }}"
     files:
       - docker-compose.transmission.yml
+      - docker-compose.elasticsearch.yml
       - docker-compose.webserver.yml
     state: absent
 
@@ -36,6 +37,7 @@
     project_src: "{{ docker_apps_home }}"
     files:
       - docker-compose.transmission.yml
+      - docker-compose.elasticsearch.yml
       - docker-compose.webserver.yml
   register: output
 

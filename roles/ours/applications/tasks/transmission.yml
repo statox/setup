@@ -24,7 +24,3 @@
     password: "{{ remote_user_password_hash }}"
     comment: "Access transmission downloads from NAS"
     create_home: false
-
-- name: "====================== DEBUG ============================"
-  debug:
-    msg: "password hash: {{ remote_user_password_hash }}"
