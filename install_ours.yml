@@ -15,4 +15,5 @@
       vars:
         apps:
           - portainer
-    - role: server/transmission
+    - role: ours/applications
+      become: yes
