@@ -74,20 +74,21 @@ services:
       timeout: 5s
       retries: 120
 
-  # TODO The S3 snapshots repository is still configured "manually", automate that
-  # - Start the container and connect to it
-  # - Add the keys to the keystore (The keys are in the Dashlane note "Raccoon - ELK - secrets")
-  #   - s3.client.default.access_key
-  #   - s3.client.default.secret_key
-  # - Restart the container so that the keystore is loaded
-  # - Configure the repository and the policy from Kibana
+  # TODO The S3 snapshots repository is configured "semi manually", automate that
+  # - The build process adds the AWS access key and secret key to the key store
+  # - We still need to configure the repository and the policy from Kibana
   es01:
     depends_on:
       setup:
         condition: service_healthy
     container_name: es01
     restart: unless-stopped
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    build:
+      dockerfile: ./elasticsearch/builder/es/Dockerfile
+      args:
+        - STACK_VERSION=${STACK_VERSION}
+        - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+        - AWS_SECRET_KEY=${AWS_SECRET_KEY}
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data

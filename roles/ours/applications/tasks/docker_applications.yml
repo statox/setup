@@ -34,6 +34,7 @@
 
 - name: Create and start services
   community.docker.docker_compose_v2:
+    # build: always # Need to re-enable when editing Dockerfiles
     project_src: "{{ docker_apps_home }}"
     files:
       - docker-compose.transmission.yml
