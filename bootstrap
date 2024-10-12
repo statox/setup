@@ -19,3 +19,9 @@ python3 /tmp/get-pip.py --user
 
 # Install ansible with pip
 python3 -m pip install --user ansible
+
+# Once ansible is installed install the plugins (not tested on a new setup)
+# TODO There is probably a better way to do that
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.docker
+ansible-galaxy install ypid.wine
