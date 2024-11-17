@@ -1,0 +1,64 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+metricbeat.modules:
+  - module: elasticsearch
+    xpack.enabled: true
+    period: 5m
+    hosts: ${ELASTIC_HOSTS}
+    ssl.certificate_authorities: "certs/ca/ca.crt"
+    ssl.certificate: "certs/es01/es01.crt"
+    ssl.key: "certs/es01/es01.key"
+    username: ${ELASTIC_USER}
+    password: ${ELASTIC_PASSWORD}
+    ssl.enabled: true
+
+  - module: logstash
+    xpack.enabled: true
+    period: 10m
+    hosts: ${LOGSTASH_HOSTS}
+
+  - module: kibana
+    metricsets:
+      - stats
+    period: 10m
+    hosts: ${KIBANA_HOSTS}
+    username: ${ELASTIC_USER}
+    password: ${ELASTIC_PASSWORD}
+    xpack.enabled: true
+
+  - module: docker
+    metricsets:
+      - "container"
+      - "cpu"
+      - "diskio"
+      - "healthcheck"
+      - "info"
+      - "memory"
+      - "network"
+    hosts: ["unix:///var/run/docker.sock"]
+    period: 10m
+    enabled: true
+
+processors:
+  - add_cloud_metadata: ~
+  - add_host_metadata: ~
+  - add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts: ${ELASTIC_HOSTS}
+  username: ${ELASTIC_USER}
+  password: ${ELASTIC_PASSWORD}
+  ssl:
+    certificate: "certs/es01/es01.crt"
+    certificate_authorities: "certs/ca/ca.crt"
+    key: "certs/es01/es01.key"
+
+# Remember to run the asset setup in the container to get the dashboards in kibana
+# > metricbeat setup
+# https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-installation-configuration.html#setup-assets
+setup.kibana:
+  host: ${KIBANA_HOSTS}
+  username: ${ELASTIC_USER}
+  password: ${ELASTIC_PASSWORD}
