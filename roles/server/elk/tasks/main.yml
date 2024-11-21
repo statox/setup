@@ -24,6 +24,7 @@
 
 # ansible-galaxy collection install community.docker
 - name: Tear down existing services
+  become: yes
   community.docker.docker_compose_v2:
     project_src: "{{ docker_app_home }}"
     files:
@@ -31,6 +32,7 @@
     state: absent
 
 - name: Create and start services
+  become: yes
   community.docker.docker_compose_v2:
     # build: always # Need to re-enable when editing Dockerfiles
     project_src: "{{ docker_app_home }}"

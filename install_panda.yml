@@ -15,11 +15,6 @@
       vars:
         apps:
           - portainer
-    - role: server/common_setup
-      become: yes
     - role: server/traefik
-      become: yes
     - role: server/transmission
-      become: yes
     - role: server/elk
-      become: yes
