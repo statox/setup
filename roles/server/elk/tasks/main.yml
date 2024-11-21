@@ -1,34 +1,7 @@
-# Clamav can be used to check the downloaded files
-- name: Install clamav
-  become: yes
-  apt:
-    state: latest
-    name:
-      - clamav
-
-- name: Copy SSH configuration file to allow password connection for user "remote"
-  become: yes
-  copy:
-    src: "{{ role_path }}/files/ssh/70-remote-user.conf"
-    dest: /etc/ssh/sshd_config.d/70-remote-user.conf
-    owner: root
-    group: root
-    mode: "644"
-  notify: Restart sshd
-
-- name: Create user "remote" to allow access from NAS
-  become: yes
-  user:
-    name: remote
-    # Use mkpasswd --method=sha-512 to generate the password hash
-    password: "{{ remote_user_password_hash }}"
-    comment: "Access transmission downloads from NAS"
-    create_home: false
-
 - name: Define variables
   set_fact:
     local_docker_path: "{{role_path}}/files/docker/"
-    docker_app_home: "{{ ansible_env.HOME }}/.docker-apps/transmission"
+    docker_app_home: "{{ ansible_env.HOME }}/.docker-apps/elk"
 
 - name: Ensure docker apps directory exists
   file:

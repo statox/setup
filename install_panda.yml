@@ -15,5 +15,9 @@
       vars:
         apps:
           - portainer
-    - role: panda/applications
+    - role: server/traefik
+      become: yes
+    - role: server/transmission
+      become: yes
+    - role: server/elk
       become: yes

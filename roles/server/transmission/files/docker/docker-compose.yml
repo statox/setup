@@ -1,3 +1,7 @@
+networks:
+  reverse-proxy:
+    external: true
+
 services:
   transmission:
     image: lscr.io/linuxserver/transmission:latest
@@ -21,15 +25,25 @@ services:
       - ${TRANSMISSION_TORRENT_PORT}:51413
       - ${TRANSMISSION_TORRENT_PORT}:51413/udp
     restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission.rule=Host(`transmission.statox.fr`)"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      - "traefik.http.routers.transmission.tls=true"
 
-  # Webserver to expose files which will be copied from TRANSMISSION_DATA_DIR
-  webserver:
-    container_name: nginx
-    build: ./files/nginx/builder/
-    ports:
-      - 80:80
-      - 443:443
+  transmission-webserver:
+    container_name: transmission-webserver
+    image: nginx:latest
     restart: unless-stopped
     volumes:
-      - ./files/nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ${TRANSMISSION_DATA_DIR}/downloads/complete:/www/data
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission-webserver.rule=Host(`media.statox.fr`)"
+      - "traefik.http.routers.transmission-webserver.entrypoints=websecure"
+      - "traefik.http.routers.transmission-webserver.tls=true"

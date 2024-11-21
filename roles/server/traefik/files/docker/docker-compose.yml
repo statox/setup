@@ -1,0 +1,32 @@
+networks:
+  reverse-proxy:
+    name: reverse-proxy
+    driver: bridge
+
+services:
+  reverse-proxy:
+    image: traefik:v3.2
+    container_name: reverse-proxy
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      # - "--log.level=DEBUG"
+      # - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.websecure.address=:443"
+      # Not using a certificatesresolvers to generate certificates because Cloudflare
+      # doesn the SSL termination. And if we use tls=true in the containers labels
+      # traefik will have a self signed certificate which is good enough as we'll have
+      # Client -> SSL -> Cloudflare certicate
+      # Cloudflare -> SSL -> Traefik self signed
+      # Traefik -> No SSL but internal traffic -> Container
+    ports:
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - reverse-proxy
