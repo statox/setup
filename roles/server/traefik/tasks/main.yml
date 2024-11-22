@@ -1,45 +1,5 @@
-- name: Define variables
-  set_fact:
+- name: install traefik docker app
+  import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: traefik
     local_docker_path: "{{role_path}}/files/docker/"
-    docker_app_home: "{{ ansible_env.HOME }}/.docker-apps/traefik"
-
-- name: Ensure docker apps directory exists
-  file:
-    state: directory
-    path: "{{ docker_app_home }}"
-
-- name: Copy docker apps directory
-  copy:
-    src: "{{ local_docker_path }}"
-    dest: "{{ docker_app_home }}"
-
-- name: Copy templates to remote host
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ docker_app_home }}/{{ item.path | regex_replace('.j2','') }}"
-  with_filetree: "{{ local_docker_path }}"
-  when:
-    - item.state == 'file'
-    - item.path | regex_search('.j2$')
-
-# ansible-galaxy collection install community.docker
-- name: Tear down existing services
-  become: yes
-  community.docker.docker_compose_v2:
-    project_src: "{{ docker_app_home }}"
-    files:
-      - docker-compose.yml
-    state: absent
-
-- name: Create and start services
-  become: yes
-  community.docker.docker_compose_v2:
-    # build: always # Need to re-enable when editing Dockerfiles
-    project_src: "{{ docker_app_home }}"
-    files:
-      - docker-compose.yml
-  register: output
-
-- name: Show results
-  debug:
-    var: output
