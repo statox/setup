@@ -81,6 +81,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 120
+    networks:
+      - reverse-proxy
 
   # TODO The S3 snapshots repository is configured "semi manually", automate that
   # - The build process adds the AWS access key and secret key to the key store
