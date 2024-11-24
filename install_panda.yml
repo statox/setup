@@ -13,6 +13,8 @@
       become: yes
     - role: server/traefik
     - role: server/portainer
+      vars:
+      portainer_ui_domain: "panda-portainer.statox.fr"
     - role: server/transmission
       vars:
         transmission_ui_domain: "transmission.statox.fr"

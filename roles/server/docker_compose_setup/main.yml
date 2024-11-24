@@ -8,10 +8,6 @@
     msg: "Variable '{{ local_docker_path }}' is not defined"
   when: local_docker_path is undefined
 
-- name: "[debug]"
-  debug:
-    msg: "local_docker_path: {{ local_docker_path }} app_name: {{ app_name }}"
-
 - name: Define variables
   set_fact:
     # local_docker_path: "{{role_path}}/files/docker/"

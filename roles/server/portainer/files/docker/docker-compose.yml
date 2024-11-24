@@ -19,7 +19,7 @@ services:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`panda-portainer.statox.fr`)"
+      - "traefik.http.routers.portainer.rule=Host(`${PORTAINER_UI_DOMAIN}`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.services.portainer.loadbalancer.server.scheme=https"
