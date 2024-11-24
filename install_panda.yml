@@ -14,9 +14,13 @@
     - role: server/traefik
     - role: server/portainer
       vars:
-      portainer_ui_domain: "panda-portainer.statox.fr"
+        portainer_ui_domain: "panda-portainer.statox.fr"
     - role: server/transmission
       vars:
         transmission_ui_domain: "transmission.statox.fr"
         transmission_media_domain: "media.statox.fr"
     - role: server/elk
+      vars:
+        elastic_cluster_domain: "elk.statox.fr"
+        kibana_domain: "kibana.statox.fr"
+        logstash_domain: "logs.statox.fr"
