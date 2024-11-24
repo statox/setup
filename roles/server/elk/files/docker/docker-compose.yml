@@ -141,9 +141,11 @@ services:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.es01.rule=Host(`elk2.statox.fr`)"
+      - "traefik.http.routers.es01.rule=Host(`elk.statox.fr`)"
       - "traefik.http.routers.es01.entrypoints=websecure"
       - "traefik.http.routers.es01.tls=true"
+      # scheme=https is needed because elastic is configured with security enabled
+      - "traefik.http.services.es01.loadbalancer.server.scheme=https"
 
   kibana:
     depends_on:
@@ -181,7 +183,7 @@ services:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kibana.rule=Host(`kibana2.statox.fr`)"
+      - "traefik.http.routers.kibana.rule=Host(`kibana.statox.fr`)"
       - "traefik.http.routers.kibana.entrypoints=websecure"
       - "traefik.http.routers.kibana.tls=true"
 
@@ -223,9 +225,10 @@ services:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.logstash.rule=Host(`logs2.statox.fr`)"
+      - "traefik.http.routers.logstash.rule=Host(`logs.statox.fr`)"
       - "traefik.http.routers.logstash.entrypoints=websecure"
       - "traefik.http.routers.logstash.tls=true"
+      - "traefik.http.services.logstash.loadbalancer.server.port=${LOGSTASH_HTTP_INPUT_PORT}"
 
   # metricbeat:
   #   depends_on:

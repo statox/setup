@@ -14,12 +14,17 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.websecure.address=:443"
+      # Keep insecureSkipVerify because some containers (like es01) expect
+      # https but use a self signed certificate
+      - "--serversTransport.insecureSkipVerify=true"
       # Not using a certificatesresolvers to generate certificates because Cloudflare
       # doesn the SSL termination. And if we use tls=true in the containers labels
       # traefik will have a self signed certificate which is good enough as we'll have
-      # Client -> SSL -> Cloudflare certicate
-      # Cloudflare -> SSL -> Traefik self signed
-      # Traefik -> No SSL but internal traffic -> Container
+      # Client     ->             SSL               -> Cloudflare certicate
+      # Cloudflare ->             SSL               -> Traefik self signed
+      # Traefik    -> No SSL but internal traffic   -> Container
+      #               Excepted in some cases like
+      #               for es01 where we use https
     ports:
       - "443:443"
       # The Web UI (enabled by --api.insecure=true)
