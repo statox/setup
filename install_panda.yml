@@ -5,16 +5,12 @@
     - "./vars/config.local"
 
   roles:
-    # - role: system/base
-    #   become: yes
-    # - role: system/sudo
-    #   become: yes
-    # - role: system/docker
-    #   become: yes
-    # - role: user/docker-apps # Must happen after system/docker
-    #   vars:
-    #     apps:
-    #       - portainer
+    - role: system/base
+      become: yes
+    - role: system/sudo
+      become: yes
+    - role: system/docker
+      become: yes
     - role: server/traefik
     - role: server/portainer
     - role: server/transmission
