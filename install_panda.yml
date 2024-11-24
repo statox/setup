@@ -16,5 +16,6 @@
     #     apps:
     #       - portainer
     - role: server/traefik
+    - role: server/portainer
     - role: server/transmission
     - role: server/elk
