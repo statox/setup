@@ -10,7 +10,7 @@ services:
     # Enables the web UI and tells Traefik to listen to docker
     command:
       # - "--log.level=DEBUG"
-      # - "--api.insecure=true"
+      - "--api.dashboard=true" # The dashboard is exposed with traefik itself, see labels
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.websecure.address=:443"
@@ -30,8 +30,16 @@ services:
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
     volumes:
-      - "./letsencrypt:/letsencrypt"
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - reverse-proxy
+    labels:
+      # Use traefik to expose its own dashboard with a basic auth
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik_https.rule=Host(`panda-traefik.statox.fr`)"
+      - "traefik.http.routers.traefik_https.entrypoints=websecure"
+      - "traefik.http.routers.traefik_https.tls=true"
+      - "traefik.http.routers.traefik_https.service=api@internal"
+      - "traefik.http.routers.traefik_https.middlewares=traefik-basic-auth"
+      - "traefik.http.middlewares.traefik-basic-auth.basicauth.users=${PANDA_TRAEFIK_ACCESS}"
