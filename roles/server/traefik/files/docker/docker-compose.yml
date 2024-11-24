@@ -37,7 +37,7 @@ services:
     labels:
       # Use traefik to expose its own dashboard with a basic auth
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik_https.rule=Host(`panda-traefik.statox.fr`)"
+      - "traefik.http.routers.traefik_https.rule=Host(`${TRAEFIK_DASHBOARD_DOMAIN}`)"
       - "traefik.http.routers.traefik_https.entrypoints=websecure"
       - "traefik.http.routers.traefik_https.tls=true"
       - "traefik.http.routers.traefik_https.service=api@internal"

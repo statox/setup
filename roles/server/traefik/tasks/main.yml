@@ -1,3 +1,8 @@
+- name: Fail if traefik_dashboard_domain is undefined
+  fail:
+    msg: "Variable '{{ traefik_dashboard_domain }}' is not defined"
+  when: traefik_dashboard_domain is undefined
+
 - name: install traefik docker app
   import_tasks: ../../docker_compose_setup/main.yml
   vars:

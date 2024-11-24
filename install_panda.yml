@@ -12,6 +12,8 @@
     - role: system/docker
       become: yes
     - role: server/traefik
+      vars:
+        traefik_dashboard_domain: "panda-traefik.statox.fr"
     - role: server/portainer
       vars:
         portainer_ui_domain: "panda-portainer.statox.fr"
