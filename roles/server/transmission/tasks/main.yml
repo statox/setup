@@ -1,3 +1,13 @@
+- name: Fail if transmission_ui_domain is undefined
+  fail:
+    msg: "Variable '{{ transmission_ui_domain }}' is not defined"
+  when: transmission_ui_domain is undefined
+
+- name: Fail if transmission_media_domain is undefined
+  fail:
+    msg: "Variable '{{ transmission_media_domain }}' is not defined"
+  when: transmission_media_domain is undefined
+
 # Clamav can be used to check the downloaded files
 - name: Install clamav
   become: yes

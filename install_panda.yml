@@ -14,4 +14,7 @@
     - role: server/traefik
     - role: server/portainer
     - role: server/transmission
+      vars:
+        transmission_ui_domain: "transmission.statox.fr"
+        transmission_media_domain: "media.statox.fr"
     - role: server/elk

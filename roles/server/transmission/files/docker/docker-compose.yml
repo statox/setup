@@ -21,15 +21,15 @@ services:
       - ${TRANSMISSION_DATA_DIR}/downloads:/downloads
       - ${TRANSMISSION_DATA_DIR}/watch/folder:/watch
     ports:
-      - ${TRANSMISSION_UI_PORT}:9091
-      - ${TRANSMISSION_TORRENT_PORT}:51413
-      - ${TRANSMISSION_TORRENT_PORT}:51413/udp
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     restart: unless-stopped
     networks:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`transmission.statox.fr`)"
+      - "traefik.http.routers.transmission.rule=Host(`${TRANSMISSION_UI_DOMAIN}`)"
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls=true"
 
@@ -44,6 +44,6 @@ services:
       - reverse-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.transmission-webserver.rule=Host(`media.statox.fr`)"
+      - "traefik.http.routers.transmission-webserver.rule=Host(`${TRANSMISSION_MEDIA_DOMAIN}`)"
       - "traefik.http.routers.transmission-webserver.entrypoints=websecure"
       - "traefik.http.routers.transmission-webserver.tls=true"

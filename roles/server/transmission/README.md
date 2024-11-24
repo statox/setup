@@ -27,7 +27,16 @@ This role needs other roles to have run:
     drwxr-xr-x  5 root   remote 4096 Apr 30 18:05 transmission
     ```
 
-Nginx is configured to have `/films` password protected and exposing the download directory:
+- It also requires 2 variables to let traefik know on which domain each container should be exposed
+
+```yaml
+- role: server/transmission
+  vars:
+    transmission_ui_domain: "transmission.statox.fr"
+    transmission_media_domain: "media.statox.fr"
+```
+
+Nginx is configured to have `/` password protected and exposing the download directory:
 
 - The password protection is configured in the `htpasswd` file in the nginx builder directory. (The format is documented [here](https://httpd.apache.org/docs/2.4/misc/password_encryptions.html))
 - The format I have used is `username:[passwordhash]` with `[passwordhash]` generated with `openssl passwd -apr1 myPassword`
