@@ -1,0 +1,27 @@
+# https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
+
+- name: Install ufw
+  apt:
+    state: present
+    name:
+      - ufw
+    update_cache: yes
+
+- name: Enable ufw
+  ufw:
+    state: enabled
+
+- name: Allow outgoing
+  ufw:
+    direction: outgoing
+    default: allow
+
+- name: Deny incoming
+  ufw:
+    direction: incoming
+    default: deny
+
+- name: Deny routed
+  ufw:
+    direction: routed
+    default: deny
