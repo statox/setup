@@ -1,0 +1,47 @@
+# Setup the ufw firewall on servers
+# https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
+#
+
+- name: Fail if open_ports list is undefined
+  fail:
+    msg: "Variable '{{ open_ports }}' is not defined"
+  when: open_ports is undefined
+
+- name: Install ufw
+  apt:
+    state: present
+    name:
+      - ufw
+    update_cache: yes
+
+- name: Allow SSH
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow ports
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+  loop: "{{ open_ports }}"
+
+- name: Allow outgoing
+  # We might want to be more restrictive but whitelist for outgoing
+  # is painful to maintain. For now I'll consider this is good enough
+  ufw:
+    direction: outgoing
+    default: allow
+
+- name: Deny incoming
+  ufw:
+    direction: incoming
+    default: deny
+
+- name: Deny routed
+  ufw:
+    direction: routed
+    default: deny
+
+- name: Enable ufw
+  ufw:
+    state: enabled
