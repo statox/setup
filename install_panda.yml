@@ -11,6 +11,12 @@
       become: yes
     - role: system/docker
       become: yes
+    - role: server/firewall
+      become: yes
+      vars:
+        open_ports:
+          - 80
+          - 443
     - role: server/traefik
       vars:
         traefik_dashboard_domain: "panda-traefik.statox.fr"
