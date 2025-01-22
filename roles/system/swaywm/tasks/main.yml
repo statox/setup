@@ -1,0 +1,32 @@
+# IMPORTANT This is a WORK IN PROGRESS
+#
+# I tried to migrate my i3 setup to sway and encountered some issues
+# so this role is not ready at all
+#
+# Issues:
+# - Starting swaywm from the default display manager didn't properly setup the environment
+#   variable required by sway so I had to change the display manager
+#     sudo systemctl set-default multi-user
+#     # To reset: sudo systemctl set-default graphical
+#   And I had to start sway from my .profile file
+#
+# - Espanso needs a dedicated sway version
+# - polybar needs to be migrated to another bar tool
+# - flameshot started but couldn't take a screenshot
+# - And probably other stuff I forgot
+
+- name: Install swaywm and other wm packages
+  apt:
+    state: present
+    name:
+      - sway
+      - gammastep
+      - swaylock
+      # - wofi
+      # - flameshot
+
+- name: Add user to video and input group (Required by brightnessctl)
+  user:
+    name: "{{ ansible_env.USER }}"
+    groups: video,input
+    append: yes
