@@ -6,6 +6,3 @@ localhost    ansible_connection=local
 
 [panda]
 panda.statox.fr ansible_connection=ssh ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/panda
-
-[ours]
-ours.statox.fr ansible_connection=ssh ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ours
