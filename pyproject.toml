@@ -1,0 +1,9 @@
+[project]
+name = "statox-setup"
+version = "1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ansible>=10.7.0",
+]

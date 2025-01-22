@@ -2,11 +2,10 @@
 
 This is a collection of ansible scripts I use to setup my workstation as well as some of my servers. It is useful only to me, don't expect the cleanest code.
 
-## How to use
+## How to use this repo
 
-1. `sudo apt install git`
-1. Clone this repo
 1. Run `sudo ./bootstrap` to install dependencies
+   - This installs [uv](https://docs.astral.sh/uv/) which is used to install and run ansible
 1. If needed update the `inventory` file
 1. Update the `vars/config.local` file
 1. Create a file for the new PC
@@ -30,7 +29,8 @@ touch "install_$(hostname).yml"
 ```
 
 1. Add the roles as needed taking inspiration from the existing files
-1. Run `./install` (`-C` allows to run in dry mode)
+1. Run `./run install_[host].yml` (`-C` allows to run in dry mode)
+   - This uses `uv` to invoke the `ansible-playbook` installed in the local environment
 1. ⚠ Check the logs some tasks add a message saying what to do next
 
 ## Playbooks using secrets
@@ -43,12 +43,12 @@ The script [`/vars/get-vault-password.sh`](/vars/get-vault-password.sh) is a hel
 
 ```bash
 # The vault was not created with a --vault-id param
-ansible-vault view --vault-password-file vars/get-vault-password.sh vars/secrets.yml.enc
+uv run -- ansible-vault view --vault-password-file vars/get-vault-password.sh vars/secrets.yml.enc
 ```
 
 To run a playbook using this the secrets:
 
-- `ansible-playbook -e @vars/secrets.yml.enc --vault-password-file vars/get-vault-password.sh install_raccoon.yml`
+- `./run install_raccoon.yml -e @vars/secrets.yml.enc --vault-password-file vars/get-vault-password.sh`
 - The variables in `vars/secrets.yml.enc` can be used as regular Ansible variables `{{ transmission_user }}`
 - Note that for the docker-apps module we can create `*.j2` template files using the `{{ encrypted_variable }}` syntax, the module will copy the template and inject the variable
 

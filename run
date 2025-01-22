@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Check if the script is being run with sudo
+if [ "$(id -u)" = "0" ]; then
+    echo "This script should not be run with sudo."
+    exit 1
+fi
+
+# Check if uv command exists
+command -v uv >/dev/null 2>&1 || {
+    echo "The 'uv' command is not found. Please run the bootstrap script first."
+    exit 1
+}
+
+# Get the playbook file name
+playbook_file="$1"
+
+# Check if the playbook file exists
+if [ ! -f "$playbook_file" ]; then
+    echo "Error: $playbook_file does not exist in the current directory."
+    exit 1
+fi
+
+# Remove the first argument (playbook_file) from the remaining arguments
+shift
+ansible_args="$*"
+
+# Run ansible-playbook from the uv dependencies
+ansible_command="uv run -- ansible-playbook"
+
+# Execute the constructed ansible command
+eval "$ansible_command" "$ansible_args" "$playbook_file"

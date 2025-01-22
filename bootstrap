@@ -6,22 +6,25 @@
 #
 # This script installs the dependencies necessary to run the playbooks
 #
-# Install process following this documentation
-# https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+# We use uv to manage the python dependencies and install ansible
+# then we use ./run to access ansible easily
+# The idea is to avoid installing ansible at the user level and keep install
+# at the project level
 
-sudo apt install curl
+command -v curl >/dev/null 2>&1 || {
+    echo "The 'curl' command is not found. Please install it."
+    exit 1
+}
+
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Get uv in the path
+source "$HOME/.local/bin/env"
 
 cp inventory.sample inventory
 
-# Python3 should be already installed but not pip
-curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-python3 /tmp/get-pip.py --user
-
-# Install ansible with pip
-python3 -m pip install --user ansible
-
 # Once ansible is installed install the plugins (not tested on a new setup)
 # TODO There is probably a better way to do that
-ansible-galaxy collection install community.general
-ansible-galaxy collection install community.docker
-ansible-galaxy install ypid.wine
+uv run -- ansible-galaxy collection install community.general
+uv run -- ansible-galaxy collection install community.docker
+uv run -- ansible-galaxy install ypid.wine
