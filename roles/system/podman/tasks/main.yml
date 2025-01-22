@@ -17,13 +17,12 @@
     name: podman-compose
   register: pip_install
 
-- name: '[IMPORTANT] Podman was installed. Create aliases'
+- name: "[IMPORTANT] Podman was installed. Create aliases"
   debug:
-    msg: 'podman and podman-compose were installed. You might want to create aliases for these commands'
+    msg: "podman and podman-compose were installed. You might want to create aliases for these commands"
   when: pip_install.changed
-
-- name: Install the podman desktop flatpak
-  community.general.flatpak:
-    name:  https://dl.flathub.org/repo/appstream/io.podman_desktop.PodmanDesktop.flatpakref
-    state: present
-    method: user
+#- name: Install the podman desktop flatpak
+#  community.general.flatpak:
+#    name:  https://dl.flathub.org/repo/appstream/io.podman_desktop.PodmanDesktop.flatpakref
+#    state: present
+#    method: user
