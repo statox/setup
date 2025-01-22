@@ -15,7 +15,6 @@
       become: yes
       vars:
         open_ports:
-          - 80
           - 443
     - role: server/traefik
       vars:
