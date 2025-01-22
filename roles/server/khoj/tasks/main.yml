@@ -1,0 +1,5 @@
+- name: install portainer docker app
+  import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: khoj
+    local_docker_path: "{{role_path}}/files/docker/"
