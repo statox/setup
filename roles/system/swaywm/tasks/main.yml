@@ -5,14 +5,21 @@
 #
 # Issues:
 # - Starting swaywm from the default display manager didn't properly setup the environment
-#   variable required by sway so I had to change the display manager
+#   variable (like $WAYLAND_DISPLAY or $XDG_CURRENT_DESKTOP which wasn't set to 'sway')
+#   required by sway so I had to change the display manager
 #     sudo systemctl set-default multi-user
 #     # To reset: sudo systemctl set-default graphical
-#   And I had to start sway from my .profile file
+#   And I had to start sway from my .zprofile file with:
+#     export XDG_CURRENT_DESKTOP='sway'
+#     [ "$(tty)" = "/dev/tty1" ] && exec sway
+
 #
 # - Espanso needs a dedicated sway version
 # - polybar needs to be migrated to another bar tool
 # - flameshot started but couldn't take a screenshot
+# - redshift has to be replaced with gammastep
+# - i3-fancy-lock has to be replaced with swaylock
+# - picom probably doesn't work anymore
 # - And probably other stuff I forgot
 
 - name: Install swaywm and other wm packages
