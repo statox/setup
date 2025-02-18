@@ -1,3 +1,6 @@
+# /!\ This fails when running on a new machine (because sudo is not yet configured to
+# skip the password and the playbook doesn't accept a password)
+# So we need to manually copy the file in the sudo directory
 - name: Check sudoers.d in included in /etc/sudoers
   lineinfile:
     name: /etc/sudoers
