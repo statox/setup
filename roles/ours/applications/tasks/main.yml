@@ -1,5 +1,0 @@
-- name: Setup context for transmission
-  import_tasks: ./transmission.yml
-
-- name: Setup the docker containers
-  import_tasks: ./docker_applications.yml
