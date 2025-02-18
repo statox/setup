@@ -12,14 +12,20 @@
       - rofi
 
 - name: Enable touchpad settings
+  # IMPORTANT This settings are not applied read next task comment
   copy:
     dest: /etc/X11/xorg.conf.d/90-touchpad.conf
     src: "{{role_path}}/files/90-touchpad.conf" 
   register: settings
 
 # Necessary to have the touchpad settings activated
-- name: Restart display-manager
-  service:
-    name: display-manager
-    state: restarted
-  when: settings.changed
+# /!\ When doing that during the first run on a new computer (i.e when
+# i3 is was just installed by the previous step) we lose the ansible
+# process.
+# So this is disabled by default and needs to be re-enabled when
+# tweaking the touchpad.conf file
+#- name: Restart display-manager
+#  service:
+#    name: display-manager
+#    state: restarted
+#  when: settings.changed
