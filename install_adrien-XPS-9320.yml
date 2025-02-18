@@ -18,6 +18,7 @@
     #- role: system/podman
     #- role: system/wine
     - role: user/base
+    - role: user/nodejs
     - role: ui/nerdfonts # Must happen before user/dconf
     - role: user/dconf
     - role: user/espanso
@@ -40,6 +41,5 @@
     # - role: work/aws
     # - role: work/sdm
 # TODO:
-# nvm
 # aws-cli
 # autokey to remap <alt>+hjkl? https://www.statox.fr/notes/keyboard_remap_arrow_keys/

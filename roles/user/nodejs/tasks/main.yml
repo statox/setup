@@ -1,0 +1,12 @@
+- name: Check if nodejs is installed
+  command: which node
+  register: node_installed
+  ignore_errors: true # We rely on the fact that command fails to trigger the install
+
+- name: Install nvm
+  shell: "{{role_path}}/files/install_nvm.sh"
+  when: node_installed.failed
+
+- name: Install node stable
+  shell: ". $HOME/.config/nvm/nvm.sh && nvm install stable"
+  when: node_installed.failed
