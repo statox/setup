@@ -1,12 +1,3 @@
-- name: Install espanso deb
-  become: yes
-  apt:
-    deb: https://github.com/federico-terzi/espanso/releases/download/v2.1.8/espanso-debian-x11-amd64.deb
-
-  register: espanso_install
-
-- name: 'Register espanso service'
-  shell: |
-    espanso service register
-    espanso service start
-  when: espanso_install.changed == true
+# TODO Turn that into a custom role and reuse it for nvim
+- name: Install espanso
+  shell: "{{role_path}}/files/install_espanso.sh"
