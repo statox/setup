@@ -23,7 +23,7 @@ source "$HOME/.local/bin/env"
 
 cp inventory.sample inventory
 
-# Once ansible is installed install the plugins (not tested on a new setup)
+# Once ansible is installed install the plugins
 # TODO There is probably a better way to do that
 uv run -- ansible-galaxy collection install community.general
 uv run -- ansible-galaxy collection install community.docker
