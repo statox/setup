@@ -10,6 +10,7 @@
       - dunst
       - feh
       - rofi
+      - pavucontrol
 
 - name: Enable touchpad settings
   # IMPORTANT This settings are not applied read next task comment
