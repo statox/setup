@@ -5,9 +5,3 @@
     name:
       - shellcheck
       - ripgrep
-
-# TODO: Create a LSP section to install LSP servers
-# tsserver
-# npm install -g typescript typescript-language-server
-# ansiblels
-# npm install -g @ansible/ansible-language-server
