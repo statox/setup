@@ -22,7 +22,7 @@
     - role: ui/nerdfonts # Must happen before user/dconf
     - role: user/dconf
     - role: user/espanso
-    - role: user/github
+    - role: user/github # Must happen before dotfiles
     - role: user/dotfiles
     - role: user/nvim
     - role: user/zsh
