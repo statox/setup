@@ -31,10 +31,23 @@
     msg: 'A new SSH key has been generated, add the public key in Github interface'
   when: key_file.stat.exists == false
 
-- name: We are pausing until you add the key to your Github profile
+- name: We are pausing until you add the SSH key to your Github profile
         (This will not pause next time the playbook is run, unless the key file is deleted)
   pause:
     prompt: "Do you want to continue? ('yes'/'y' to continue, otherwise stop the playbook)"
   register: confirm_continue
   failed_when: confirm.user_input not in ['yes', 'y', 'Y']
   when: key_file.stat.exists == false
+
+- name: check existing secret key
+  shell: gpg --list-secret-keys | grep 'me@statox.fr'
+  register: gpg_key_check
+  failed_when: false
+  changed_when: false
+
+- name: We are pausing until you add the GPG key to your keyring. See the secure note 'Github GPG key' in Dashlane
+  pause:
+    prompt: "Do you want to continue? ('yes'/'y' to continue, otherwise stop the playbook)"
+  register: confirm_continue
+  failed_when: confirm.user_input not in ['yes', 'y', 'Y']
+  when: gpg_key_check.rc != 0
