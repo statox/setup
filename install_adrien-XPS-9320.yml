@@ -29,9 +29,9 @@
       #- role: user/firefox
     - role: user/dev
     - role: user/arduino
+    - role: user/terraform
     # - role: work/base
     #- role: work/gitlab
-    #- role: work/terraform
     #- role: work/vault
     #- role: work/cloudflare-warp
 

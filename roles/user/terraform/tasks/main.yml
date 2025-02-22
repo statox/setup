@@ -1,0 +1,27 @@
+# Use `tfenv install` and `tfenv use latest` after running this script
+# to have an terraform available in path
+
+- name: Checkout tfenv
+  git:
+    repo: 'https://github.com/tfutils/tfenv.git'
+    dest: "$HOME/.tfenv"
+    depth: 1
+
+- name: Add tfenv executable to bin path
+  file:
+    src:  "$HOME/.tfenv/bin/tfenv"
+    dest: "$HOME/.bin/tfenv"
+    state: link
+
+- name: Add terraform executable to bin path
+  file:
+    src:  "$HOME/.tfenv/bin/terraform"
+    dest: "$HOME/.bin/terraform"
+    state: link
+
+- name: Add convenient alias
+  lineinfile:
+    name: ~/.bash_aliases_local
+    line: 'alias tf="terraform"'
+    state: present
+    create: true
