@@ -10,12 +10,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - TRANSMISSION_WEB_HOME= #optional
-      - USER=${TRANSMISSION_USER} #optional
-      - PASS=${TRANSMISSION_PASSWORD} #optional
-      - WHITELIST= #optional
-      - PEERPORT= #optional
-      - HOST_WHITELIST= #optional
+      - USER=${TRANSMISSION_USER}
+      - PASS=${TRANSMISSION_PASSWORD}
     volumes:
       - ${TRANSMISSION_DATA_DIR}/data:/config
       - ${TRANSMISSION_DATA_DIR}/downloads:/downloads
@@ -48,3 +44,24 @@ services:
       - "traefik.http.routers.transmission-webserver.rule=Host(`${TRANSMISSION_MEDIA_DOMAIN}`)"
       - "traefik.http.routers.transmission-webserver.entrypoints=websecure"
       - "traefik.http.routers.transmission-webserver.tls=true"
+
+  # The container can't be accessed through a Cloudflare proxied DNS record because Cloudflare
+  # SSH needs special config https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/
+
+  transmission-sftp:
+    container_name: transmission-sftp
+    image: atmoz/sftp
+    volumes:
+      - ${TRANSMISSION_DATA_DIR}/downloads/complete:/home/remote/downloads
+      - ./sftp/users.conf:/etc/sftp/users.conf:ro
+      - ./sftp/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+      - ./sftp/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      # No Host() rule because the ssh router can't handle it
+      # cf. https://community.traefik.io/t/routing-ssh-traffic-with-traefik-v2/717/6
+      - "traefik.tcp.routers.transmission-sftp.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.transmission-sftp.entrypoints=ssh"
+      - "traefik.tcp.services.transmission-sftp.loadbalancer.server.port=22"

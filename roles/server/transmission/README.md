@@ -1,6 +1,6 @@
 # Transmission + webserver
 
-This role installs transmission to get torrents and nginx to expose the download directory to easily share the files.
+This role installs transmission to get torrents, nginx to expose the download directory to easily share the files via HTTP and atmoz/sftp to access them viw SFTP.
 
 ## Dependencies
 
@@ -12,8 +12,7 @@ This role needs other roles to have run:
 ## Tooling
 
 - Both transmission and Nginx are installed through docker containers
-- SSH: The role create a user `remote` to allow sshing to the directory where transmission stores its downloaded files
-  - We also add a configuration file for sshd to make sure the authentication by password is allowed for `remote`
+- atmoz/sftp installs an Alpine linux docker container with a `remote` user configured and a volume mount to access the directory where transmission stores its downloaded files
 
 ## Usage
 
@@ -43,5 +42,6 @@ Nginx is configured to have `/` password protected and exposing the download dir
 
 The secrets are stored in the `vars/secrets.yml.enc` ansible-vault file
 
-- To ssh with remote we setup a password hash when creating the user, the hash was generated with mkpasswd --method=sha-512
-  - TODO improve that to have the password in a vault file in the repo and dynamically create the hash
+
+- The user configured for sftp access is `remote`, its password is stored in the ansible-vault file and injected in `users.conf` which is then read by the atmoz/sftp container.
+- We also provide some SSH host key files to the container so that recreating the container doesn't change the host keys and avoid giving MITM alerts to clients

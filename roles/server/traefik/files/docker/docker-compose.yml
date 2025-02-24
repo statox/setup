@@ -11,6 +11,8 @@ services:
       - "443:443"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
+      # For the ssh entrypoint
+      - "2222:2222"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock

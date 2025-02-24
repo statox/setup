@@ -16,6 +16,7 @@
       vars:
         open_ports:
           - 443
+          - 2222
     - role: server/traefik
       vars:
         traefik_dashboard_domain: "panda-traefik.statox.fr"

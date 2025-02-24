@@ -19,8 +19,13 @@ providers:
 entryPoints:
   websecure:
     address: ":443"
+  ssh:
+    address: ":2222"
 
 # Keep insecureSkipVerify because some containers (like es01) expect
 # https but use a self signed certificate
 serversTransport:
   insecureSkipVerify: true
+
+# accesslog:
+#   addInternals: true
