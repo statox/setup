@@ -11,14 +11,9 @@
     - "./vars/config.local"
 
   roles:
-    - role: system/base
-      become: yes
-    - role: system/docker
-      become: yes
-    - role: raspberry/base # Requires reboot
-    - role: user/docker-apps # Must happen after system/docker
-      vars:
-        apps:
-          - portainer
+    # - role: system/base
+    #   become: yes
+    # - role: system/docker
+    #   become: yes
+    # - role: raspberry/portainer
     - role: raspberry/pihole
-
