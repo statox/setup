@@ -11,13 +11,23 @@
 # The idea is to avoid installing ansible at the user level and keep install
 # at the project level
 
-command -v curl >/dev/null 2>&1 || {
-    echo "The 'curl' command is not found. Please install it."
+# Ideally we want to use curl, but on some installs we
+# only have wget. Detect and use what's available.
+CURL=
+if type curl >/dev/null; then
+    CURL="curl -LsSf"
+elif type wget >/dev/null; then
+    echo 'curl not found trying to use wget instead'
+    CURL="wget -q -O-"
+fi
+if [ -z "$CURL" ]; then
+    echo "The installer needs either curl or wget to download files."
+    echo "Please install either curl or wget to proceed."
     exit 1
-}
+fi
 
 # Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+$CURL https://astral.sh/uv/install.sh | sh
 # Get uv in the path
 source "$HOME/.local/bin/env"
 
