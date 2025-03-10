@@ -1,0 +1,10 @@
+# Local DNS records resolved by pihole
+# See this thread https://discourse.pi-hole.net/t/local-dns-from-file-for-docker/59216/10
+#
+# These records should appear in the web interface. For some reason they don't
+
+# /!\ THIS WON'T WORK /!\
+# Don't try to create a name for the pihole machine itself
+# 192.168.1.131 pi-portainer.local
+
+192.168.1.159 marmite.home

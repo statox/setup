@@ -1,4 +1,5 @@
-# The container uses port 53 which creates conflicts
+# The container uses port 53 which creates conflicts with Ubuntu (17.10+)'s default
+# caching DNS stub resolver.
 # There is a workaround in the doc
 # https://github.com/pi-hole/docker-pi-hole/blob/5bae002db39/README.md#installing-on-ubuntu
 # https://discourse.pi-hole.net/t/docker-unable-to-bind-to-port-53/45082/14
@@ -28,9 +29,8 @@
   become: true
   when: disable_stub.changed or simlink_conf.changed
 
-- name: Install Docker container
-  import_role:
-    name: user/docker-apps
+- name: install Pihole docker app
+  import_tasks: ../../../server/docker_compose_setup/main.yml
   vars:
-    apps:
-      - pihole
+    app_name: pihole
+    local_docker_path: "{{role_path}}/files/docker/"
