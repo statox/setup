@@ -1,0 +1,27 @@
+---
+- hosts: local
+  become: false
+  vars_files:
+    - "./vars/config.local"
+
+  roles:
+    - role: system/sudo
+      become: yes
+    - role: system/base
+      become: yes
+    - role: system/firewall
+      become: yes
+    - role: system/i3
+      become: yes
+    - role: system/docker
+      become: yes
+    - role: user/base
+    - role: user/nodejs
+    - role: ui/nerdfonts # Must happen before user/dconf
+    - role: user/dconf
+      #- role: user/espanso
+    - role: user/github # Must happen before dotfiles
+    - role: user/dotfiles
+    - role: user/nvim
+    - role: user/zsh
+    - role: user/dev
