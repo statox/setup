@@ -5,3 +5,4 @@
     name:
       - shellcheck
       - ripgrep
+      - python3-venv # To be able to install ruff with Mason
