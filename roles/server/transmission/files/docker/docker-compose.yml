@@ -65,3 +65,28 @@ services:
       - "traefik.tcp.routers.transmission-sftp.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.transmission-sftp.entrypoints=ssh"
       - "traefik.tcp.services.transmission-sftp.loadbalancer.server.port=22"
+
+# DO NOT COMMIT /!\
+# First remember to commit the jellyfin.statox.fr record in provisioning
+# root - 7qf&$7jLoyd!jR
+  transmission-jellyfin:
+    image: jellyfin/jellyfin
+    container_name: transmission-jellyfin
+    networks:
+      - reverse-proxy
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - type: bind
+        source: ${TRANSMISSION_DATA_DIR}
+        target: /media
+        read_only: true
+    restart: 'unless-stopped'
+    # Optional - alternative address used for autodiscovery
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://$JELLYFIN_DOMAIN
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission-jellyfin.rule=Host(`${JELLYFIN_DOMAIN}`)"
+      - "traefik.http.routers.transmission-jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.transmission-jellyfin.tls=true"

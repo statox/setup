@@ -1,0 +1,15 @@
+- name: Fail if glance_github_token is undefined
+  fail:
+    msg: "Variable '{{ glance_github_token }}' is not defined"
+  when: glance_github_token is undefined
+
+- name: Fail if glance_domain is undefined
+  fail:
+    msg: "Variable '{{ glance_domain }}' is not defined"
+  when: glance_domain is undefined
+
+- name: install glance docker app
+  import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: glance
+    local_docker_path: "{{role_path}}/files/docker/"

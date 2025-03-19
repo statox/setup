@@ -1,0 +1,158 @@
+- name: Home
+  # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+  hide-desktop-navigation: true
+  columns:
+    # - size: small
+    #   widgets:
+    #     - type: calendar
+    #       first-day-of-week: monday
+
+    - size: full
+      widgets:
+        - type: group
+          widgets:
+            - type: hacker-news
+            - type: lobsters
+            - type: rss
+              title: Tildes
+              limit: 30
+              cache: 1h
+              feeds:
+                - url: https://tildes.net/topics.rss
+                  title: tildes.net
+            - type: rss
+              title: ArsTechnica
+              limit: 30
+              cache: 1h
+              feeds:
+                - url: https://feeds.arstechnica.com/arstechnica/technology-lab
+                  title: Technology
+                - url: https://feeds.arstechnica.com/arstechnica/tech-policy
+                  title: Law
+                - url: https://feeds.arstechnica.com/arstechnica/science
+                  title: Science
+            - type: rss
+              title: Hackaday
+              limit: 30
+              cache: 1h
+              feeds:
+                - url: https://hackaday.com/blog/feed/
+                  title: hackaday.com
+            - type: rss
+              title: Le blob
+              limit: 30
+              cache: 1h
+              feeds:
+                - url: https://leblob.fr/rss/blob
+                  title: Le Blob
+
+        - type: bookmarks
+          groups:
+            - title: Blogs
+              color: 92 100 31
+              links:
+                - title: 25wf
+                  url: https://25.wf
+                - title: arp242
+                  url: https://arp242.net
+                - title: Ben Knoble
+                  url: https://benknoble.github.io
+                - title: Galaxy Kate
+                  url: https://www.galaxykate.com/
+                - title: JVNS
+                  url: https://jvns.ca
+                - title: Kev Q
+                  url: https://kevq.uk/
+                - title: Nicolas Hoizey
+                  url: https://nicolas-hoizey.com
+                - title: Rachel by the Bay
+                  url: http://rachelbythebay.com/w/
+                - title: Sericaia
+                  url: https://sericaia.me
+                - title: TonyCodes
+                  url: https://tonycodes.com
+                - title: Tonsky
+                  url: https://tonsky.me/
+                - title: UglyDuck
+                  url: https://uglyduck.ca/
+
+        - type: videos
+          title: France Inter
+          channels:
+            - UCJldRgT_D7Am-ErRHQZ90uw # France Inter
+        - type: videos
+          title: Aymeric Lompret
+          playlists:
+            - PL9wDNu3ZrVQ5iAj77ot9CnDYWnZbbcc5v # Aymeric Lompret - La derniere
+        - type: videos
+          title: La derniere
+          playlists:
+            - PL9wDNu3ZrVQ4N-MrQP2hNlPgpt7KOW-2E # La derniere
+
+
+        - type: split-column
+          max-columns: 3
+          widgets:
+          - type: repository
+            cache: 1h
+            repository: statox/api.statox.fr
+            pull-requests-limit: 10
+            commits-limit: 2
+            issues-limit: -1
+            token: ${GITHUB_TOKEN}
+
+          - type: repository
+            cache: 1h
+            repository: statox/apps.statox.fr
+            pull-requests-limit: 10
+            commits-limit: 2
+            issues-limit: -1
+            token: ${GITHUB_TOKEN}
+
+          - type: repository
+            cache: 1h
+            repository: statox/blog
+            pull-requests-limit: 10
+            commits-limit: 2
+            issues-limit: -1
+            token: ${GITHUB_TOKEN}
+
+        - type: bookmarks
+          groups:
+            - title: Dashboards
+              color: 10 70 50
+              links:
+                - title: IOT Dashboard
+                  url: https://kibana.statox.fr/app/dashboards#/view/2993b516-b09b-4826-a1b2-e40834834627?_g=(time:(from:now-12h,to:now))
+                - title: Home Tracker
+                  url: https://apps.statox.fr/home-tracker
+            - title: Infra
+              color: 200 50 50
+              links:
+                - title: Kibana
+                  url: https://kibana.statox.fr/
+                - title: Portainer Panda
+                  url: https://panda-portainer.statox.fr/
+                - title: Transmission
+                  url: http://transmission.statox.fr/
+
+    - size: small
+      widgets:
+        - type: weather
+          location: Paris, France
+          units: metric
+          hour-format: 24h
+          # hide-location: true
+
+        - type: monitor
+          cache: 1m
+          title: Services
+          sites:
+            - title: Apps
+              url: https://apps.statox.fr
+            - title: API
+              url: https://api.statox.fr/health/getRemoteTime
+            - title: Blog
+              url: https://statox.fr
+            - title: Kibana
+              url: https://kibana.statox.fr

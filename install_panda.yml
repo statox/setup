@@ -32,3 +32,6 @@
         elastic_cluster_domain: "elk.statox.fr"
         kibana_domain: "kibana.statox.fr"
         logstash_domain: "logs.statox.fr"
+    - role: server/glance
+      vars:
+        glance_domain: "glance.statox.fr"
