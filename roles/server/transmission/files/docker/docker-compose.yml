@@ -66,9 +66,7 @@ services:
       - "traefik.tcp.routers.transmission-sftp.entrypoints=ssh"
       - "traefik.tcp.services.transmission-sftp.loadbalancer.server.port=22"
 
-# DO NOT COMMIT /!\
-# First remember to commit the jellyfin.statox.fr record in provisioning
-# root - 7qf&$7jLoyd!jR
+  # TODO Some configurations where done manually we can probably improve that
   transmission-jellyfin:
     image: jellyfin/jellyfin
     container_name: transmission-jellyfin

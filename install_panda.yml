@@ -27,6 +27,7 @@
       vars:
         transmission_ui_domain: "transmission.statox.fr"
         transmission_media_domain: "media.statox.fr"
+        jellyfin_domain: "jellyfin.statox.fr"
     - role: server/elk
       vars:
         elastic_cluster_domain: "elk.statox.fr"
