@@ -18,6 +18,7 @@
       - brightnessctl
       - flatpak
       # - mysql-server
+      # - default-mysql-client # Install only the mysql client
       - feh
       - dolphin
       - arandr
