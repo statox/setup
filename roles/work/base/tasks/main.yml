@@ -12,6 +12,7 @@
       - git
       - ldap-utils
       - redis-tools
+      - sshfs
 
 - name: Install unconfined utilities snaps (edge channel)
   become: yes
