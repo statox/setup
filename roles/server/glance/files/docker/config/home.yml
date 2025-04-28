@@ -51,6 +51,8 @@
             - title: Blogs
               color: 92 100 31
               links:
+                - title: Edit this list on Github
+                  url: https://github.com/statox/setup/blob/master/roles/server/glance/files/docker/config/home.yml#L49
                 - title: 25wf
                   url: https://25.wf
                 - title: arp242
@@ -75,20 +77,6 @@
                   url: https://tonsky.me/
                 - title: UglyDuck
                   url: https://uglyduck.ca/
-
-        - type: videos
-          title: France Inter
-          channels:
-            - UCJldRgT_D7Am-ErRHQZ90uw # France Inter
-        - type: videos
-          title: Aymeric Lompret
-          playlists:
-            - PL9wDNu3ZrVQ5iAj77ot9CnDYWnZbbcc5v # Aymeric Lompret - La derniere
-        - type: videos
-          title: La derniere
-          playlists:
-            - PL9wDNu3ZrVQ4N-MrQP2hNlPgpt7KOW-2E # La derniere
-
 
         - type: split-column
           max-columns: 3
@@ -135,6 +123,20 @@
                   url: https://panda-portainer.statox.fr/
                 - title: Transmission
                   url: http://transmission.statox.fr/
+
+        - type: videos
+          title: France Inter
+          channels:
+            - UCJldRgT_D7Am-ErRHQZ90uw # France Inter
+        - type: videos
+          title: Aymeric Lompret
+          playlists:
+            - PL9wDNu3ZrVQ5iAj77ot9CnDYWnZbbcc5v # Aymeric Lompret - La derniere
+        - type: videos
+          title: La derniere
+          playlists:
+            - PL9wDNu3ZrVQ4N-MrQP2hNlPgpt7KOW-2E # La derniere
+
 
     - size: small
       widgets:
