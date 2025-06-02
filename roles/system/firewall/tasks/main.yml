@@ -1,3 +1,4 @@
+# TODO Merge with roles/server/firewall/tasks/main.yml
 # https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
 
 - name: Install ufw
@@ -7,9 +8,11 @@
       - ufw
     update_cache: yes
 
-- name: Enable ufw
+- name: Allow ports
   ufw:
-    state: enabled
+    rule: allow
+    port: "{{ item }}"
+  loop: "{{ open_ports }}"
 
 - name: Allow outgoing
   ufw:
@@ -25,3 +28,7 @@
   ufw:
     direction: routed
     default: deny
+
+- name: Enable ufw
+  ufw:
+    state: enabled

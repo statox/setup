@@ -11,6 +11,9 @@
       become: yes
     - role: system/firewall
       become: yes
+      vars:
+        open_ports:
+          - 22 # Needed by IT 😕
     - role: system/i3
       become: yes
     - role: system/docker
