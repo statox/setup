@@ -13,6 +13,8 @@ services:
       - "8080:8080"
       # For the ssh entrypoint
       - "2222:2222"
+      # For mysql entrypoint
+      - "3306:3306"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock

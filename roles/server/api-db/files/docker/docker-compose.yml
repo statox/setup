@@ -1,0 +1,27 @@
+networks:
+  # Used by traefik to expose the public services
+  reverse-proxy:
+    external: true
+
+services:
+  mysql:
+    image: mysql:8.4.5
+    restart: unless-stopped
+    container_name: api-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${APIDB_ROOT_PASSWORD}
+      MYSQL_DATABASE: api
+      MYSQL_USER: ${APIDB_USER_NAME}
+      MYSQL_PASSWORD: ${APIDB_USER_PASSWORD}
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    expose:
+      - 3306
+    networks:
+      - reverse-proxy
+    labels:
+        - "traefik.enable=true"
+        # tcp router seems to not work well with a specific hostname, so using * instead
+        - "traefik.tcp.routers.api-db.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.api-db.entrypoints=mysql"
+        - "traefik.tcp.services.api-db.loadbalancer.server.port=3306"
