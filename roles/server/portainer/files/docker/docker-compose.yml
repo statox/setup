@@ -5,7 +5,7 @@ networks:
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:lts
     expose:
       - 9443
     restart: always
