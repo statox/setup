@@ -2,6 +2,10 @@ networks:
   # Used by traefik to expose the public services
   reverse-proxy:
     external: true
+  # Connect db and snapshotter
+  api-db:
+    name: api-db
+    driver: bridge
 
 services:
   mysql:
@@ -19,9 +23,26 @@ services:
       - 3306
     networks:
       - reverse-proxy
+      - api-db
     labels:
         - "traefik.enable=true"
         # tcp router seems to not work well with a specific hostname, so using * instead
         - "traefik.tcp.routers.api-db.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.api-db.entrypoints=mysql"
         - "traefik.tcp.services.api-db.loadbalancer.server.port=3306"
+        # Since the container has 2 networks we need to specify which one should be used by traefik
+        - "traefik.docker.network=reverse-proxy"
+
+  snapshotter:
+    container_name: api-db-snapshotter
+    restart: unless-stopped
+    build:
+      dockerfile: ./builder/snapshotter/Dockerfile
+    networks:
+      - api-db
+    environment:
+      MYSQL_DATABASE: api
+      MYSQL_USER: ${APIDB_USER_NAME}
+      MYSQL_PASSWORD: ${APIDB_USER_PASSWORD}
+      AWS_ACCESS_KEY_ID: ${APIDB_SNAPSHOT_S3_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${APIDB_SNAPSHOT_S3_SECRET_KEY}

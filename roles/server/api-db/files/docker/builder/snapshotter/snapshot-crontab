@@ -1,0 +1,3 @@
+# The snapshot-script.sh file is copied in the container at build time
+# Run every day a 3:30
+30 3 * * * /snapshot-script.sh >> /var/log/cron.log 2>&1
