@@ -59,3 +59,40 @@
     name: ~/.profile
     line: "xset r rate 180 50"
     state: present
+
+
+# Install wezterm via its APT repo
+#
+- name: Download Wezterm GPG key
+  ansible.builtin.get_url:
+    url: https://apt.fury.io/wez/gpg.key
+    dest: /tmp/wezterm.gpg
+    mode: '0644'
+
+- name: Convert GPG key to keyring format
+  ansible.builtin.command:
+    cmd: "gpg --yes --dearmor -o /usr/share/keyrings/wezterm.gpg /tmp/wezterm.gpg"
+  become: true
+  args:
+    creates: /usr/share/keyrings/wezterm.gpg
+
+- name: Ensure permissions are correct on the keyring
+  ansible.builtin.file:
+    path: /usr/share/keyrings/wezterm.gpg
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add wezterm APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/wezterm.gpg] https://apt.fury.io/wez/ * *"
+    filename: wezterm
+    state: present
+  become: true
+
+- name: Install wezterm package
+  become: yes
+  apt:
+    state: latest
+    name:
+      - wezterm
