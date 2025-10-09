@@ -17,8 +17,6 @@
       - redshift-gtk
       - brightnessctl
       - flatpak
-      # - mysql-server
-      # - default-mysql-client # Install only the mysql client
       - feh
       - dolphin
       - arandr
@@ -36,6 +34,7 @@
       - sshpass # Used by ansible for password authenticated ssh
       - nnn
       - clamav
+      - btop
 
       - ubuntu-restricted-extras
       - chromium-browser
