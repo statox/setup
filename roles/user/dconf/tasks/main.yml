@@ -1,20 +1,21 @@
+---
 # TODO
 # This playbook needs a fix
 # The profile is not read properly the first time it runs
 # it must be set manually with the output of the dconf comand.
 - name: Read current terminal profile
-  shell: "dconf list /org/gnome/terminal/legacy/profiles:/ | head -1  | grep . || echo ':b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'"
+  ansible.builtin.shell: "dconf list /org/gnome/terminal/legacy/profiles:/ | head -1  | grep . || echo ':b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'"
   register: term_profile
-  changed_when: no
+  changed_when: false
 
 - name: Install dconf-editor
   become: true
-  package:
+  ansible.builtin.package:
     state: latest
     name: dconf-editor
 
 - name: Set dconf values
-  include_tasks: dconf.yml
+  ansible.builtin.include_tasks: dconf.yml
   loop:
     - key: /org/gnome/terminal/legacy/default-show-menubar
       value: "false"

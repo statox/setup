@@ -1,3 +1,4 @@
+---
 # IMPORTANT This is a WORK IN PROGRESS
 #
 # I tried to migrate my i3 setup to sway and encountered some issues
@@ -23,7 +24,7 @@
 # - And probably other stuff I forgot
 
 - name: Install swaywm and other wm packages
-  apt:
+  ansible.builtin.apt:
     state: present
     name:
       - sway
@@ -33,7 +34,7 @@
       # - flameshot
 
 - name: Add user to video and input group (Required by brightnessctl)
-  user:
+  ansible.builtin.user:
     name: "{{ ansible_env.USER }}"
     groups: video,input
-    append: yes
+    append: true

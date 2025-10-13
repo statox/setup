@@ -1,3 +1,4 @@
+---
 # TODO Handle installing arduino IDE AppImage
 # https://support.arduino.cc/hc/en-us/articles/360019833020-Download-and-install-Arduino-IDE
 
@@ -11,15 +12,15 @@
 # in the future)
 
 - name: Check if arduino-cli configuration file exists
-  stat:
+  ansible.builtin.stat:
     path: ~/.arduino15/arduino-cli.yaml
   register: arduino_cli_yaml
 
 - name: Install arduino-cli
-  shell: >
+  ansible.builtin.shell: >
     curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.bin sh
   when: arduino_cli_yaml.stat.exists == false
 
 - name: Add arduino-cli configuration file
-  shell: arduino-cli config init
+  ansible.builtin.shell: arduino-cli config init
   when: arduino_cli_yaml.stat.exists == false

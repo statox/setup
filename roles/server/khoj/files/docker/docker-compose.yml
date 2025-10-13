@@ -1,3 +1,4 @@
+---
 # IMPORTANT: This is a WORK IN PROGRESS
 #
 # I tested the install on panda, it works but
@@ -11,13 +12,11 @@ networks:
   reverse-proxy:
     external: true
   khoj_network:
-
 volumes:
   khoj_config:
   khoj_db:
   khoj_models:
   khoj_search:
-
 services:
   database:
     image: ankane/pgvector

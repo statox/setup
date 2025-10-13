@@ -1,21 +1,22 @@
+---
 # The goal of this role is to stop a docker if it is running
 # and rebuild and restart it
 
 - name: Define variables
-  set_fact:
+  ansible.builtin.set_fact:
     remote_app_path: "{{ docker_apps_home }}/{{ app_name }}"
 
 - name: Stop app {{ app_name }}
-  become: True
-  shell:
+  become: true
+  ansible.builtin.shell:
     cmd: "docker compose down"
     chdir: "{{ remote_app_path }}"
   args:
     executable: /bin/bash
 
 - name: Build and restart {{ app_name }}
-  become: True
-  shell:
+  become: true
+  ansible.builtin.shell:
     cmd: "docker compose up -d --build"
     chdir: "{{ remote_app_path }}"
   args:

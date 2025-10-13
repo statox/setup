@@ -1,3 +1,4 @@
+---
 # IMPORTANT:
 # This role is used to install docker containers. Using a shell command
 # is not the most reliable way (there is a community role to do that) but
@@ -9,22 +10,22 @@
 # in the items of this role add [app_name]/
 
 - name: Define variables
-  set_fact:
+  ansible.builtin.set_fact:
     docker_apps_home: "{{ ansible_env.HOME }}/.docker-apps"
 
 - name: Ensure docker apps directory exists
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ docker_apps_home }}"
 
 - name: Copy docker apps directories
-  include_tasks: copy-directory.yml
+  ansible.builtin.include_tasks: copy-directory.yml
   loop: "{{ apps }}"
   loop_control:
     loop_var: app_name
 
 - name: Run docker apps containers
-  include_tasks: run-app-containers.yml
+  ansible.builtin.include_tasks: run-app-containers.yml
   loop: "{{ apps }}"
   loop_control:
     loop_var: app_name

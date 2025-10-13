@@ -1,23 +1,24 @@
+---
 - name: Add Cloudflare apt key
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://pkg.cloudflareclient.com/pubkey.gpg
     state: present
 
 - name: Add Cloudflare repository
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb [arch=amd64] https://pkg.cloudflareclient.com/ jammy main
     state: present
     filename: cloudflare.list
 
 - name: Install cloudflare warp
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name: cloudflare-warp
-    update_cache: yes
+    update_cache: true
 
-- name: '[IMPORTANT] enroll warp'
-  debug:
-    msg: 'warp-cli teams-enroll dashlane'
+- name: "[IMPORTANT] enroll warp"
+  ansible.builtin.debug:
+    msg: "warp-cli teams-enroll dashlane"

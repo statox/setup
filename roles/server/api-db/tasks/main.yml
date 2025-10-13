@@ -1,21 +1,21 @@
+---
 - name: Fail if apidb_root_password is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ apidb_root_password }}' is not defined"
   when: apidb_root_password is undefined
 
 - name: Fail if apidb_user_password is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ apidb_user_password }}' is not defined"
   when: apidb_user_password is undefined
 
 - name: Fail if apidb_user_name is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ apidb_user_name }}' is not defined"
   when: apidb_user_name is undefined
 
 - name: install postgres docker app
-  import_tasks: ../../docker_compose_setup/main.yml
+  ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: api-db
     local_docker_path: "{{role_path}}/files/docker/"
-

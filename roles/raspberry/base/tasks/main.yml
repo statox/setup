@@ -1,11 +1,12 @@
+---
 - name: Install utilities packages for raspberry
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - linux-modules-extra-raspi
   register: reboot_required
 
 - name: Unconditionally reboot the machine with all defaults
-  reboot:
+  ansible.builtin.reboot:
   when: reboot_required.changed

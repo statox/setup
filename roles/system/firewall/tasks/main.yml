@@ -1,34 +1,35 @@
+---
 # TODO Merge with roles/server/firewall/tasks/main.yml
 # https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
 
 - name: Install ufw
-  apt:
+  ansible.builtin.apt:
     state: present
     name:
       - ufw
-    update_cache: yes
+    update_cache: true
 
 - name: Allow ports
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ item }}"
   loop: "{{ open_ports }}"
 
 - name: Allow outgoing
-  ufw:
+  community.general.ufw:
     direction: outgoing
     default: allow
 
 - name: Deny incoming
-  ufw:
+  community.general.ufw:
     direction: incoming
     default: deny
 
 - name: Deny routed
-  ufw:
+  community.general.ufw:
     direction: routed
     default: deny
 
 - name: Enable ufw
-  ufw:
+  community.general.ufw:
     state: enabled

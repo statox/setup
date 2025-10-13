@@ -1,5 +1,6 @@
+---
 - name: install portainer docker app
-  import_tasks: ../../../server/docker_compose_setup/main.yml
+  ansible.builtin.import_tasks: ../../../server/docker_compose_setup/main.yml
   vars:
     app_name: portainer
     local_docker_path: "{{role_path}}/files/docker/"

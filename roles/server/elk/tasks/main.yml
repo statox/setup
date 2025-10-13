@@ -1,20 +1,21 @@
+---
 - name: Fail if elastic_cluster_domain is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ elastic_cluster_domain }}' is not defined"
   when: elastic_cluster_domain is undefined
 
 - name: Fail if kibana_domain is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ kibana_domain }}' is not defined"
   when: kibana_domain is undefined
 
 - name: Fail if logstash_domain is undefined
-  fail:
+  ansible.builtin.fail:
     msg: "Variable '{{ logstash_domain }}' is not defined"
   when: logstash_domain is undefined
 
 - name: install elk docker app
-  import_tasks: ../../docker_compose_setup/main.yml
+  ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: elk
     local_docker_path: "{{role_path}}/files/docker/"

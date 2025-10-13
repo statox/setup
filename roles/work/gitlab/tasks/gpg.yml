@@ -1,35 +1,36 @@
+---
 # Inspired by this role but simplified for now
 # https://github.com/juju4/ansible-gpgkey_generate
 
 # Note: matching on realname or email doesn't allow to create multiple keys. alternative?
 - name: check existing secret key
-  shell: "gpg --list-secret-keys | grep '{{ gpg_useremail }}'"
+  ansible.builtin.shell: "gpg --list-secret-keys | grep '{{ gpg_useremail }}'"
   changed_when: false
   ignore_errors: true
   register: gpgkeys
 
 - name: copy default template for gpg key generation to /tmp/
-  template:
+  ansible.builtin.template:
     src: "{{role_path}}/templates/gen-key-script"
     dest: "/tmp/gen-key-script"
   when: gpgkeys is defined and not gpgkeys.stdout
   changed_when: false
 
 - name: generate gpg key
-  command: "gpg --batch --gen-key /tmp/gen-key-script"
+  ansible.builtin.command: "gpg --batch --gen-key /tmp/gen-key-script"
   when: gpgkeys is defined and not gpgkeys.stdout
   register: genkey
 
 - name: Get public key ID
-  shell: "gpg --list-secret-keys --keyid-format LONG {{gpg_useremail}} | grep sec | sed -e 's;^.*/;;' -e 's; .*;;'"
+  ansible.builtin.shell: "gpg --list-secret-keys --keyid-format LONG {{gpg_useremail}} | grep sec | sed -e 's;^.*/;;' -e 's; .*;;'"
   register: public_key_id
   when: genkey.changed
 
 - name: Export public key
-  shell: "gpg --armor --export {{public_key_id.stdout}} > ./gpg.gitlab.pub"
+  ansible.builtin.shell: "gpg --armor --export {{public_key_id.stdout}} > ./gpg.gitlab.pub"
   when: genkey.changed
 
-- name: '[IMPORTANT] GPG key configuration to update at https://gitlab.dashlane.com/-/profile/gpg_keys'
-  debug:
-    msg: 'A new GPG key has been generated, copy the public key from ./gpg.gitlab.pub to the Gitlab interface'
+- name: "[IMPORTANT] GPG key configuration to update at https://gitlab.dashlane.com/-/profile/gpg_keys"
+  ansible.builtin.debug:
+    msg: "A new GPG key has been generated, copy the public key from ./gpg.gitlab.pub to the Gitlab interface"
   when: genkey.changed

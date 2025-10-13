@@ -1,6 +1,7 @@
+---
 - name: Install utilities packages
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - graphviz # for dot
@@ -26,23 +27,23 @@
 #   import_tasks: tuple.yml
 
 - name: Configure npm repository
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: ~/.npmrc
     line: "npm config set @dashlane:registry https://npm.dashlane.com/repository/npm/=true"
 
 - name: Configure npm repo
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: ~/.npmrc
     line: "npm config set always-auth true=true"
 
-- name: '[IMPORTANT] Command to run'
-  debug:
-    msg: 'npm adduser --registry=https://npm.dashlane.com/repository/npm/ --scope=@dashlane --always-auth'
+- name: "[IMPORTANT] Command to run"
+  ansible.builtin.debug:
+    msg: "npm adduser --registry=https://npm.dashlane.com/repository/npm/ --scope=@dashlane --always-auth"
 
 - name: Remove Zoom routes from vpn
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/NetworkManager/dispatcher.d/10-update-vpn-route
-    create: yes
+    create: true
     marker: "# {mark} ANSIBLE MANAGED BLOCK FROM STATOX SETUP - Zoom"
     block: |
       # Block added to remove Zoom routes from VPN for better performances

@@ -1,10 +1,11 @@
+---
 - name: Update APT cache
-  apt:
-    update_cache: yes
-  changed_when: False
+  ansible.builtin.apt:
+    update_cache: true
+  changed_when: false
 
 - name: Install base packages
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - vim
@@ -26,7 +27,7 @@
       - encfs
 
 - name: Enable unattended upgrade
-  copy:
+  ansible.builtin.copy:
     dest: /etc/apt/apt.conf.d/20auto-upgrades
     content: |
       APT::Periodic::Update-Package-Lists "1";
@@ -34,7 +35,7 @@
   notify: Restart unattended-upgrades
 
 - name: Make sure 50unattended-upgrades file exists
-  file:
+  ansible.builtin.file:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
     state: touch
     owner: root
@@ -45,22 +46,22 @@
 # action during install. Let's test and see if it's ok.
 # A workaround is to set a black list of packages for unattended upgrades
 - name: Configure unattended upgrade - regular packages
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
-    search_string: '${distro_id}:${distro_codename}-updates'
-    line: '	"${distro_id}:${distro_codename}-updates";'
+    search_string: "${distro_id}:${distro_codename}-updates"
+    line: "\t\"${distro_id}:${distro_codename}-updates\";"
   notify: Restart unattended-upgrades
 
 - name: Configure unattended upgrade - remove unused kernel packages
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
-    search_string: 'Unattended-Upgrade::Remove-Unused-Kernel-Packages'
+    search_string: "Unattended-Upgrade::Remove-Unused-Kernel-Packages"
     line: 'Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";'
   notify: Restart unattended-upgrades
 
 - name: Configure unattended upgrade - remove unused dependencies
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
-    search_string: 'Unattended-Upgrade::Remove-Unused-Dependencies'
+    search_string: "Unattended-Upgrade::Remove-Unused-Dependencies"
     line: 'Unattended-Upgrade::Remove-Unused-Dependencies "true";'
   notify: Restart unattended-upgrades

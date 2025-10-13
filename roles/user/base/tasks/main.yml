@@ -1,16 +1,17 @@
+---
 - name: Create local ~/.local/bin/ dir
-  file:
+  ansible.builtin.file:
     state: directory
     path: ~/.local/bin/
 
 - name: Create local ~/.bin/ dir
-  file:
+  ansible.builtin.file:
     state: directory
     path: ~/.bin/
 
 - name: Install utilities packages
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - blueman
@@ -55,11 +56,10 @@
       - spotify
 
 - name: Change key repetition speed
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: ~/.profile
     line: "xset r rate 180 50"
     state: present
-
 
 # Install wezterm via its APT repo
 #
@@ -67,7 +67,7 @@
   ansible.builtin.get_url:
     url: https://apt.fury.io/wez/gpg.key
     dest: /tmp/wezterm.gpg
-    mode: '0644'
+    mode: "0644"
 
 - name: Convert GPG key to keyring format
   ansible.builtin.command:
@@ -81,7 +81,7 @@
     path: /usr/share/keyrings/wezterm.gpg
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Add wezterm APT repository
   ansible.builtin.apt_repository:
@@ -92,7 +92,7 @@
 
 - name: Install wezterm package
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - wezterm

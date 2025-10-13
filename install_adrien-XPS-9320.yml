@@ -25,7 +25,7 @@
     - role: user/dotfiles
     - role: user/nvim
     - role: user/zsh
-      #- role: user/firefox
+    #- role: user/firefox
     - role: user/dev
     - role: user/arduino
     - role: user/terraform

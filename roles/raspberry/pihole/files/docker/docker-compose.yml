@@ -1,3 +1,4 @@
+---
 # For some reason I can't get pihole to resolve pi.hole or the other local names
 # supposed to work. It only resolve them to the container's IP instead of the host.
 # So for now I access the web UI through the IP address directly
@@ -16,15 +17,15 @@ services:
       # Uncomment the below if using Pi-hole as your DHCP Server
       #- "67:67/udp"
     environment:
-      TZ: 'Europe/Paris'
+      TZ: "Europe/Paris"
       # Password to access the web interface.
       FTLCONF_webserver_api_password: ${PIHOLE_WEBUI_PASSWORD}
       # If using Docker's default `bridge` network setting the dns listening mode should be set to 'all'
-      FTLCONF_dns_listeningMode: 'all'
+      FTLCONF_dns_listeningMode: "all"
       # Upstream servers to use (opendns and cloudflare)
       # /!\ Changes in the WebUI will be overriden by this setting on restart
-      FTLCONF_dns_upstreams: '208.67.222.222;208.67.220.220;1.1.1.1'
+      FTLCONF_dns_upstreams: "208.67.222.222;208.67.220.220;1.1.1.1"
     volumes:
       # List of local DNS records
-      - './custom.list:/etc/pihole/hosts/custom.list'
+      - "./custom.list:/etc/pihole/hosts/custom.list"
     restart: unless-stopped

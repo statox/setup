@@ -1,3 +1,4 @@
+---
 # Tasks to install https://tuple.app/downloads/linux
 # A screen sharing tool
 # (For now it doesn't work on Ubuntu 21.10 with i3wm because
@@ -5,7 +6,7 @@
 
 - name: Install flatpak
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - flatpak
@@ -23,11 +24,11 @@
     method: user
 
 - name: Update flatpaks
-  shell:
+  ansible.builtin.shell:
     cmd: flatpak update --noninteractive
 
 - name: Install the tuple.app flatpak
   community.general.flatpak:
-    name:  https://tuple.app/tuple.flatpakref
+    name: https://tuple.app/tuple.flatpakref
     state: present
     method: user

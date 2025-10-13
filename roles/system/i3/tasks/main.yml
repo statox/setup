@@ -1,11 +1,12 @@
+---
 - name: Install i3 packages
-  apt:
+  ansible.builtin.apt:
     state: present
     name:
       - i3
       - i3lock-fancy
       - scrot
-      - picom         # Compositor, automatically adds transparency to rofi
+      - picom # Compositor, automatically adds transparency to rofi
       - polybar
       - dunst
       - feh
@@ -14,9 +15,9 @@
 
 - name: Enable touchpad settings
   # IMPORTANT This settings are not applied read next task comment
-  copy:
+  ansible.builtin.copy:
     dest: /etc/X11/xorg.conf.d/90-touchpad.conf
-    src: "{{role_path}}/files/90-touchpad.conf" 
+    src: "{{role_path}}/files/90-touchpad.conf"
   register: settings
 
 # Necessary to have the touchpad settings activated

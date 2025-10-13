@@ -1,5 +1,6 @@
+---
 - name: Install podman
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - podman
@@ -7,18 +8,18 @@
 
 - name: Install pip (required for podman-compose)
   become: true
-  apt:
+  ansible.builtin.apt:
     state: present
     name:
       - python3-pip
 
 - name: Install podman-compose python package
-  pip:
+  ansible.builtin.pip:
     name: podman-compose
   register: pip_install
 
 - name: "[IMPORTANT] Podman was installed. Create aliases"
-  debug:
+  ansible.builtin.debug:
     msg: "podman and podman-compose were installed. You might want to create aliases for these commands"
   when: pip_install.changed
 #- name: Install the podman desktop flatpak

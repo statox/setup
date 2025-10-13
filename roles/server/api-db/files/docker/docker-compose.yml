@@ -1,3 +1,4 @@
+---
 networks:
   # Used by traefik to expose the public services
   reverse-proxy:
@@ -25,13 +26,13 @@ services:
       - reverse-proxy
       - api-db
     labels:
-        - "traefik.enable=true"
-        # tcp router seems to not work well with a specific hostname, so using * instead
-        - "traefik.tcp.routers.api-db.rule=HostSNI(`*`)"
-        - "traefik.tcp.routers.api-db.entrypoints=mysql"
-        - "traefik.tcp.services.api-db.loadbalancer.server.port=3306"
-        # Since the container has 2 networks we need to specify which one should be used by traefik
-        - "traefik.docker.network=reverse-proxy"
+      - "traefik.enable=true"
+      # tcp router seems to not work well with a specific hostname, so using * instead
+      - "traefik.tcp.routers.api-db.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.api-db.entrypoints=mysql"
+      - "traefik.tcp.services.api-db.loadbalancer.server.port=3306"
+      # Since the container has 2 networks we need to specify which one should be used by traefik
+      - "traefik.docker.network=reverse-proxy"
 
   snapshotter:
     container_name: api-db-snapshotter

@@ -1,13 +1,14 @@
+---
 - name: Download sdm
-  get_url:
+  ansible.builtin.get_url:
     url: https://app.strongdm.com/releases/cli/linux
     dest: /tmp/sdmcli.zip
 
 - name: Extract sdm
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/sdmcli.zip
     dest: $HOME/.bin
 
-- name: '[IMPORTANT] Command to run'
-  debug:
-    msg: 'sudo sdm install'
+- name: "[IMPORTANT] Command to run"
+  ansible.builtin.debug:
+    msg: "sudo sdm install"

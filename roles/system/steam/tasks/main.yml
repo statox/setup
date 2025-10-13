@@ -1,29 +1,30 @@
+---
 - name: Enable multi architecture for Steam
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /var/lib/dpkg/arch
     line: "{{item}}"
-    create: yes
+    create: true
   with_items:
     - amd64
     - i386
 
 - name: Accept Steam Licence Agreement (1/2)
-  debconf:
+  ansible.builtin.debconf:
     name: steam
     question: steam/question
     value: "I AGREE"
     vtype: select
 
 - name: Accept Steam Licence Agreement (2/2)
-  debconf:
+  ansible.builtin.debconf:
     name: steam
     question: steam/license
     value: ""
     vtype: note
 
 - name: Install Steam
-  apt:
+  ansible.builtin.apt:
     state: present
     name:
       - steam
-    update_cache: yes
+    update_cache: true

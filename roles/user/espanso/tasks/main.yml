@@ -1,3 +1,4 @@
+---
 # TODO Turn that into a custom role and reuse it for nvim
 - name: Install espanso
-  shell: "{{role_path}}/files/install_espanso.sh"
+  ansible.builtin.shell: "{{role_path}}/files/install_espanso.sh"

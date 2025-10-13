@@ -1,19 +1,20 @@
+---
 - name: Add Hashicorp apt key
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://apt.releases.hashicorp.com/gpg
     state: present
 
 - name: Add Hashicorp repository
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb [arch=amd64] https://apt.releases.hashicorp.com jammy main
     state: present
     filename: hashicorp.list
 
 - name: Install vault
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name: vault
-    update_cache: yes
+    update_cache: true

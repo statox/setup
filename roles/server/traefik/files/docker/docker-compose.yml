@@ -1,3 +1,4 @@
+---
 networks:
   reverse-proxy:
     name: reverse-proxy

@@ -1,11 +1,12 @@
+---
 - name: install fontconfig
   become: true
-  package:
+  ansible.builtin.package:
     state: present
     name: fontconfig
 
 - name: ensure local fonts directory is present
-  file:
+  ansible.builtin.file:
     dest: "$HOME/.local/share/fonts"
     state: directory
     owner: "{{ ansible_env.USER }}"
@@ -13,11 +14,11 @@
 
 # The font files were downloaded from https://www.nerdfonts.com/font-downloads
 - name: Copy font files
-  copy:
+  ansible.builtin.copy:
     dest: "$HOME/.local/share/fonts"
     src: "{{role_path}}/files/AurulentSansMono"
   register: installed_font
 
 - name: reset font cache
-  command: fc-cache -f $HOME/.local/share/fonts
+  ansible.builtin.command: fc-cache -f $HOME/.local/share/fonts
   when: installed_font.changed

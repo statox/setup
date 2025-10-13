@@ -1,6 +1,7 @@
+---
 - name: Install dev utilities packages
   become: true
-  apt:
+  ansible.builtin.apt:
     state: latest
     name:
       - shellcheck

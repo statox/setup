@@ -1,20 +1,21 @@
+---
 # /!\ This fails when running on a new machine (because sudo is not yet configured to
 # skip the password and the playbook doesn't accept a password)
 # So we need to manually copy the file in the sudo directory
 - name: Check sudoers.d in included in /etc/sudoers
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: /etc/sudoers
     line: "@includedir /etc/sudoers.d"
     state: present
 
 - name: Disable password for sudo group
-  copy:
+  ansible.builtin.copy:
     dest: /etc/sudoers.d/sudo
-    src: "{{role_path}}/files/sudo" 
-    mode: 0440
+    src: "{{role_path}}/files/sudo"
+    mode: "0440"
 
 - name: Add user to sudo group
-  user:
+  ansible.builtin.user:
     name: "{{ lookup('env','USER') }}"
     groups: sudo
-    append: yes
+    append: true
