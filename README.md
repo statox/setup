@@ -25,7 +25,7 @@ touch "install_$(hostname).yml"
 
  roles:
    - role: system/base
-     become: yes
+     become: true
 ```
 
 1. Add the roles as needed taking inspiration from the existing files

@@ -1,10 +1,10 @@
 - name: Install Wine
   import_role:
     name: common/ypid.wine
-  become: yes
+  become: true
 
 - name: Install Play on linux
-  become: yes
+  become: true
   apt:
     state: latest
     name:

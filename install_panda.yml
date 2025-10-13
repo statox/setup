@@ -6,13 +6,13 @@
 
   roles:
     - role: system/base
-      become: yes
+      become: true
     - role: system/sudo
-      become: yes
+      become: true
     - role: system/docker
-      become: yes
+      become: true
     - role: server/firewall
-      become: yes
+      become: true
       vars:
         open_ports:
           - 443

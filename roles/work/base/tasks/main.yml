@@ -1,5 +1,5 @@
 - name: Install utilities packages
-  become: yes
+  become: true
   apt:
     state: latest
     name:
@@ -15,7 +15,7 @@
       - sshfs
 
 - name: Install unconfined utilities snaps (edge channel)
-  become: yes
+  become: true
   community.general.snap:
     channel: edge
     # Might need to run this command `sudo snap connect mysql-workbench-community:password-manager-service`

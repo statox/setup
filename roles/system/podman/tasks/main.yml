@@ -3,10 +3,10 @@
     state: latest
     name:
       - podman
-  become: yes
+  become: true
 
 - name: Install pip (required for podman-compose)
-  become: yes
+  become: true
   apt:
     state: present
     name:

@@ -1,5 +1,5 @@
 - name: Install utilities packages for raspberry
-  become: yes
+  become: true
   apt:
     state: latest
     name:

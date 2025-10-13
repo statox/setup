@@ -6,18 +6,18 @@
 
   roles:
     - role: system/sudo
-      become: yes
+      become: true
     - role: system/base
-      become: yes
+      become: true
     - role: system/firewall
-      become: yes
+      become: true
       vars:
         open_ports:
           - 22 # Needed by IT 😕
     - role: system/i3
-      become: yes
+      become: true
     - role: system/docker
-      become: yes
+      become: true
     - role: user/base
     - role: user/nodejs
     - role: ui/nerdfonts # Must happen before user/dconf

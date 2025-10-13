@@ -9,7 +9,7 @@
     path: ~/.bin/
 
 - name: Install utilities packages
-  become: yes
+  become: true
   apt:
     state: latest
     name:
@@ -47,7 +47,7 @@
 # (cf https://docs.ansible.com/ansible/latest/collections/community/general/snap_module.html)
 # On Ubuntu 21.10 with ansible 2.12.1 it is already available
 - name: Install utilities snaps
-  become: yes
+  become: true
   community.general.snap:
     name:
       - slack
@@ -91,7 +91,7 @@
   become: true
 
 - name: Install wezterm package
-  become: yes
+  become: true
   apt:
     state: latest
     name:

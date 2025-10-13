@@ -1,5 +1,5 @@
 - name: Install dev utilities packages
-  become: yes
+  become: true
   apt:
     state: latest
     name:

@@ -10,7 +10,7 @@
 
 # Clamav can be used to check the downloaded files
 - name: Install clamav
-  become: yes
+  become: true
   apt:
     state: latest
     name:

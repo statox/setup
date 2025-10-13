@@ -12,7 +12,7 @@
     filename: cloudflare.list
 
 - name: Install cloudflare warp
-  become: yes
+  become: true
   apt:
     state: latest
     name: cloudflare-warp

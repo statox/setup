@@ -4,7 +4,7 @@
 # of a X error)
 
 - name: Install flatpak
-  become: yes
+  become: true
   apt:
     state: latest
     name:

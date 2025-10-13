@@ -12,7 +12,7 @@
     filename: hashicorp.list
 
 - name: Install vault
-  become: yes
+  become: true
   apt:
     state: latest
     name: vault
