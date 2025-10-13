@@ -35,6 +35,7 @@
       - nnn
       - clamav
       - btop
+      - intel-gpu-tools # Provides `sudo intel_gpu_top` to monitor integrated intel GPU chipset
 
       - ubuntu-restricted-extras
       - chromium-browser
