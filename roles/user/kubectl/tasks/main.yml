@@ -1,0 +1,45 @@
+# Recreating instructions at https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+
+- name: Install dependencies
+  become: true
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+
+- name: Check if the key exists
+  stat:
+    path: /usr/share/keyrings/kubernetes-apt-keyring.gpg
+  register: key_file
+
+- name: Add Kubernetes' official GPG key
+  become: true
+  shell: >
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg
+  when: key_file.stat.exists == false
+
+- name: Check if the repo source exists
+  stat:
+    path: /etc/apt/sources.list.d/kubernetes.list
+  register: repo_file
+
+- name: Add Kubernetes' repository
+  become: true
+  copy:
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    src: "{{role_path}}/files/kubernetes.list"
+  when: repo_file.stat.exists == false
+
+- name: Install kubectl
+  become: true
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  loop:
+    - kubectl
