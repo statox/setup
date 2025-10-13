@@ -28,7 +28,7 @@
   become: true
   when: disable_stub.changed or simlink_conf.changed
 
-- name: install Pihole docker app
+- name: Install Pihole docker app
   ansible.builtin.import_tasks: ../../../server/docker_compose_setup/main.yml
   vars:
     app_name: pihole

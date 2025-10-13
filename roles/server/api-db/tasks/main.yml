@@ -14,7 +14,7 @@
     msg: "Variable '{{ apidb_user_name }}' is not defined"
   when: apidb_user_name is undefined
 
-- name: install postgres docker app
+- name: Install postgres docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: api-db

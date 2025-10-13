@@ -1,5 +1,5 @@
 ---
-- name: install portainer docker app
+- name: Install portainer docker app
   ansible.builtin.import_tasks: ../../../server/docker_compose_setup/main.yml
   vars:
     app_name: portainer

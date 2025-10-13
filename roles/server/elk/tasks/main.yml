@@ -14,7 +14,7 @@
     msg: "Variable '{{ logstash_domain }}' is not defined"
   when: logstash_domain is undefined
 
-- name: install elk docker app
+- name: Install elk docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: elk

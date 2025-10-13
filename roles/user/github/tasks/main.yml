@@ -39,7 +39,7 @@
   failed_when: confirm.user_input not in ['yes', 'y', 'Y']
   when: key_file.stat.exists == false
 
-- name: check existing secret key
+- name: Check existing secret key
   ansible.builtin.shell: gpg --list-secret-keys | grep 'me@statox.fr'
   register: gpg_key_check
   failed_when: false

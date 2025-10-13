@@ -9,7 +9,7 @@
     msg: "Variable '{{ glance_domain }}' is not defined"
   when: glance_domain is undefined
 
-- name: install glance docker app
+- name: Install glance docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: glance

@@ -1,11 +1,11 @@
 ---
-- name: install fontconfig
+- name: Install fontconfig
   become: true
   ansible.builtin.package:
     state: present
     name: fontconfig
 
-- name: ensure local fonts directory is present
+- name: Ensure local fonts directory is present
   ansible.builtin.file:
     dest: "$HOME/.local/share/fonts"
     state: directory
@@ -19,6 +19,6 @@
     src: "{{role_path}}/files/AurulentSansMono"
   register: installed_font
 
-- name: reset font cache
+- name: Reset font cache
   ansible.builtin.command: fc-cache -f $HOME/.local/share/fonts
   when: installed_font.changed

@@ -4,7 +4,7 @@
     msg: "Variable '{{ traefik_dashboard_domain }}' is not defined"
   when: traefik_dashboard_domain is undefined
 
-- name: install traefik docker app
+- name: Install traefik docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: traefik

@@ -4,7 +4,7 @@
     msg: "Variable '{{ portainer_ui_domain }}' is not defined"
   when: portainer_ui_domain is undefined
 
-- name: install portainer docker app
+- name: Install portainer docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: portainer
