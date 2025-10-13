@@ -8,4 +8,4 @@
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: traefik
-    local_docker_path: "{{role_path}}/files/docker/"
+    local_docker_path: "{{ role_path }}/files/docker/"

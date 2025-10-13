@@ -11,11 +11,11 @@
 - name: Disable password for sudo group
   ansible.builtin.copy:
     dest: /etc/sudoers.d/sudo
-    src: "{{role_path}}/files/sudo"
+    src: "{{ role_path }}/files/sudo"
     mode: "0440"
 
 - name: Add user to sudo group
   ansible.builtin.user:
-    name: "{{ lookup('env','USER') }}"
+    name: "{{ lookup('env', 'USER') }}"
     groups: sudo
     append: true

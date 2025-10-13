@@ -11,7 +11,7 @@
 
 - name: Copy default template for gpg key generation to /tmp/
   ansible.builtin.template:
-    src: "{{role_path}}/templates/gen-key-script"
+    src: "{{ role_path }}/templates/gen-key-script"
     dest: "/tmp/gen-key-script"
   when: gpgkeys is defined and not gpgkeys.stdout
   changed_when: false

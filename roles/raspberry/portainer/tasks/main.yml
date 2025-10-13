@@ -3,4 +3,4 @@
   ansible.builtin.import_tasks: ../../../server/docker_compose_setup/main.yml
   vars:
     app_name: portainer
-    local_docker_path: "{{role_path}}/files/docker/"
+    local_docker_path: "{{ role_path }}/files/docker/"

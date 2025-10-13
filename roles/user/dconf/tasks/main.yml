@@ -21,9 +21,9 @@
       value: "false"
     - key: /org/gnome/terminal/legacy/theme-variant
       value: "'dark'" # The single quotes are needed otherwise dconf returns an error
-    - key: /org/gnome/terminal/legacy/profiles:/{{term_profile.stdout}}font
+    - key: /org/gnome/terminal/legacy/profiles:/{{ term_profile.stdout }}font
       value: "'AurulentSansMono Nerd Font 12'"
-    - key: /org/gnome/terminal/legacy/profiles:/{{term_profile.stdout}}scrollbar-policy
+    - key: /org/gnome/terminal/legacy/profiles:/{{ term_profile.stdout }}scrollbar-policy
       value: "'never'"
   loop_control:
     loop_var: item

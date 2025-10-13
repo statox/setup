@@ -4,7 +4,7 @@
 - name: Install dependencies
   become: true
   ansible.builtin.apt:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
     update_cache: true
   loop:
@@ -33,13 +33,13 @@
   become: true
   ansible.builtin.copy:
     dest: /etc/apt/sources.list.d/kubernetes.list
-    src: "{{role_path}}/files/kubernetes.list"
+    src: "{{ role_path }}/files/kubernetes.list"
   when: repo_file.stat.exists == false
 
 - name: Install kubectl
   become: true
   ansible.builtin.apt:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
     update_cache: true
   loop:

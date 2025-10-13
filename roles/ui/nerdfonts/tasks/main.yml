@@ -16,7 +16,7 @@
 - name: Copy font files
   ansible.builtin.copy:
     dest: "$HOME/.local/share/fonts"
-    src: "{{role_path}}/files/AurulentSansMono"
+    src: "{{ role_path }}/files/AurulentSansMono"
   register: installed_font
 
 - name: Reset font cache

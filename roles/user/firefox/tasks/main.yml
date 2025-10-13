@@ -7,6 +7,6 @@
   ansible.builtin.copy:
     backup: true
     force: true
-    dest: "~/.mozilla/firefox/{{profile_name.stdout}}/chrome/userChrome.css"
-    src: "{{role_path}}/files/userChrome.css"
+    dest: "~/.mozilla/firefox/{{ profile_name.stdout }}/chrome/userChrome.css"
+    src: "{{ role_path }}/files/userChrome.css"
   changed_when: false

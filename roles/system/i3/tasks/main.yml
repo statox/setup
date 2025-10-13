@@ -17,7 +17,7 @@
   # IMPORTANT This settings are not applied read next task comment
   ansible.builtin.copy:
     dest: /etc/X11/xorg.conf.d/90-touchpad.conf
-    src: "{{role_path}}/files/90-touchpad.conf"
+    src: "{{ role_path }}/files/90-touchpad.conf"
   register: settings
 
 # Necessary to have the touchpad settings activated

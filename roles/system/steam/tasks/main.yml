@@ -2,7 +2,7 @@
 - name: Enable multi architecture for Steam
   ansible.builtin.lineinfile:
     dest: /var/lib/dpkg/arch
-    line: "{{item}}"
+    line: "{{ item }}"
     create: true
   with_items:
     - amd64

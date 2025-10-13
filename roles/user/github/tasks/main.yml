@@ -10,7 +10,7 @@
   when: key_file.stat.exists == true
 
 - name: Generate SSH Key
-  ansible.builtin.shell: "ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519_github"
+  ansible.builtin.command: "ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519_github"
   args:
     creates: "~/.ssh/id_ed25519_github"
   when: key_file.stat.exists == false

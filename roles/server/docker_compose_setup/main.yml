@@ -27,7 +27,7 @@
 - name: Copy templates to remote host
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ docker_app_home }}/{{ item.path | regex_replace('.j2','') }}"
+    dest: "{{ docker_app_home }}/{{ item.path | regex_replace('.j2', '') }}"
   with_filetree: "{{ local_docker_path }}"
   when:
     - item.state == 'file'

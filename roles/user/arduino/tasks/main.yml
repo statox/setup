@@ -22,5 +22,5 @@
   when: arduino_cli_yaml.stat.exists == false
 
 - name: Add arduino-cli configuration file
-  ansible.builtin.shell: arduino-cli config init
+  ansible.builtin.command: arduino-cli config init
   when: arduino_cli_yaml.stat.exists == false

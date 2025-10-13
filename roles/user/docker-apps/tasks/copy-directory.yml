@@ -5,7 +5,7 @@
 
 - name: Define variables
   ansible.builtin.set_fact:
-    local_app_path: "{{role_path}}/files/{{ app_name }}"
+    local_app_path: "{{ role_path }}/files/{{ app_name }}"
     remote_app_path: "{{ docker_apps_home }}/{{ app_name }}"
 
 - name: Create docker app directory for {{ app_name }}
@@ -31,7 +31,7 @@
 - name: Copy and replace template files
   ansible.builtin.template:
     src: "{{ file.path }}"
-    dest: "{{ remote_app_path }}/{{ file.path | relpath(local_app_path) | regex_replace('.j2','') }}"
+    dest: "{{ remote_app_path }}/{{ file.path | relpath(local_app_path) | regex_replace('.j2', '') }}"
   loop: "{{ found_templates.files }}"
   loop_control:
     loop_var: file

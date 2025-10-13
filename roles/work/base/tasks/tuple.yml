@@ -24,7 +24,7 @@
     method: user
 
 - name: Update flatpaks
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: flatpak update --noninteractive
 
 - name: Install the tuple.app flatpak
