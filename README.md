@@ -33,6 +33,13 @@ touch "install_$(hostname).yml"
    - This uses `uv` to invoke the `ansible-playbook` installed in the local environment
 1. ⚠ Check the logs some tasks add a message saying what to do next
 
+### Linting
+
+`uv` has `ansible-lint` installed so we can check the repo with
+```bash
+uv run -- ansible-lint --fix
+```
+
 ## Playbooks using secrets
 
 The secrets are stored in [`/vars/secrets.yml.enc`](vars/secrets.yml.enc) which is managed with the built-in [`ansible-vault`](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-files-with-ansible-vault).
