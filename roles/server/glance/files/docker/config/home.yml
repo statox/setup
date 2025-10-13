@@ -1,3 +1,4 @@
+---
 - name: Home
   # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
   hide-desktop-navigation: true
@@ -81,29 +82,29 @@
         - type: split-column
           max-columns: 3
           widgets:
-          - type: repository
-            cache: 1h
-            repository: statox/api.statox.fr
-            pull-requests-limit: 10
-            commits-limit: 2
-            issues-limit: -1
-            token: ${GITHUB_TOKEN}
+            - type: repository
+              cache: 1h
+              repository: statox/api.statox.fr
+              pull-requests-limit: 10
+              commits-limit: 2
+              issues-limit: -1
+              token: ${GITHUB_TOKEN}
 
-          - type: repository
-            cache: 1h
-            repository: statox/apps.statox.fr
-            pull-requests-limit: 10
-            commits-limit: 2
-            issues-limit: -1
-            token: ${GITHUB_TOKEN}
+            - type: repository
+              cache: 1h
+              repository: statox/apps.statox.fr
+              pull-requests-limit: 10
+              commits-limit: 2
+              issues-limit: -1
+              token: ${GITHUB_TOKEN}
 
-          - type: repository
-            cache: 1h
-            repository: statox/blog
-            pull-requests-limit: 10
-            commits-limit: 2
-            issues-limit: -1
-            token: ${GITHUB_TOKEN}
+            - type: repository
+              cache: 1h
+              repository: statox/blog
+              pull-requests-limit: 10
+              commits-limit: 2
+              issues-limit: -1
+              token: ${GITHUB_TOKEN}
 
         - type: bookmarks
           groups:
@@ -136,7 +137,6 @@
           title: La derniere
           playlists:
             - PL9wDNu3ZrVQ4N-MrQP2hNlPgpt7KOW-2E # La derniere
-
 
     - size: small
       widgets:
