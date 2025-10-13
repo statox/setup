@@ -5,8 +5,8 @@
 
 - name: Setup SSH key for gitlab
   ansible.builtin.import_tasks: ssh.yml
-  when: skip_gitlab_ssh != true
+  when: not skip_gitlab_ssh
 
 - name: Setup GPG key for gitlab
   ansible.builtin.import_tasks: gpg.yml
-  when: skip_gitlab_gpg != true
+  when: not skip_gitlab_gpg

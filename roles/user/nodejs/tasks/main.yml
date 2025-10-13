@@ -5,7 +5,7 @@
   ignore_errors: true # We rely on the fact that command fails to trigger the install
 
 - name: Install nvm
-  ansible.builtin.command: "{{role_path}}/files/install_nvm.sh"
+  ansible.builtin.command: "{{ role_path }}/files/install_nvm.sh"
   when: node_installed.failed
 
 - name: Install node stable

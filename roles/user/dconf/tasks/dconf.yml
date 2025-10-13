@@ -1,9 +1,9 @@
 ---
-- name: Read dconf {{item.key}}
-  ansible.builtin.command: "dconf read \"{{item.key}}\""
+- name: Read dconf {{ item.key }}
+  ansible.builtin.command: "dconf read \"{{ item.key }}\""
   register: dconf
   changed_when: false
 
-- name: Write dconf {{item.key}}
-  ansible.builtin.command: "dconf write \"{{item.key}}\" \"{{item.value}}\""
+- name: Write dconf {{ item.key }}
+  ansible.builtin.command: "dconf write \"{{ item.key }}\" \"{{ item.value }}\""
   changed_when: ( dconf.stdout | string ) != ( item.value | string )

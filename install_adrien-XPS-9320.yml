@@ -1,5 +1,6 @@
 ---
-- hosts: local
+- name: Setup personal machine
+  hosts: local
   become: false
   vars_files:
     - "./vars/config.local"

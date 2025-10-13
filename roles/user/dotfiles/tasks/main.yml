@@ -9,7 +9,7 @@
 - name: "[IMPORTANT] Dotfile repository cloned"
   ansible.builtin.debug:
     msg: "The dotfiles repository was cloned. You should run the setup script"
-  when: clone_dotfiles.changed == true
+  when: clone_dotfiles.changed
 
 - name: Create directory for tmux tpm (TODO probably should be somewhere else)
   ansible.builtin.file:
@@ -26,4 +26,4 @@
 
 - name: "Install tmux plugins"
   ansible.builtin.shell: $HOME/.tmux/plugins/tpm/bin/install_plugins
-  when: clone_tpm.changed == true
+  when: clone_tpm.changed

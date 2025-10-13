@@ -22,12 +22,12 @@
   register: genkey
 
 - name: Get public key ID
-  ansible.builtin.shell: "gpg --list-secret-keys --keyid-format LONG {{gpg_useremail}} | grep sec | sed -e 's;^.*/;;' -e 's; .*;;'"
+  ansible.builtin.shell: "gpg --list-secret-keys --keyid-format LONG {{ gpg_useremail }} | grep sec | sed -e 's;^.*/;;' -e 's; .*;;'"
   register: public_key_id
   when: genkey.changed
 
 - name: Export public key
-  ansible.builtin.shell: "gpg --armor --export {{public_key_id.stdout}} > ./gpg.gitlab.pub"
+  ansible.builtin.shell: "gpg --armor --export {{ public_key_id.stdout }} > ./gpg.gitlab.pub"
   when: genkey.changed
 
 - name: "[IMPORTANT] GPG key configuration to update at https://gitlab.dashlane.com/-/profile/gpg_keys"

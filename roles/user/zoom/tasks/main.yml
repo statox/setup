@@ -8,4 +8,4 @@
 - name: "[IMPORTANT] A new version of Zoom has been insalled"
   ansible.builtin.debug:
     msg: "Restart zoom to finish update"
-  when: zoom_install.changed == true
+  when: zoom_install.changed

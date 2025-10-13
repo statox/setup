@@ -5,7 +5,8 @@
 # - A task requires a reboot which has to be done manually
 # - Stuff should be passed as parameter to the roles
 ---
-- hosts: raspberry
+- name: Setup Raspberry machine
+  hosts: raspberry
   become: false
   vars_files:
     - "./vars/config.local"

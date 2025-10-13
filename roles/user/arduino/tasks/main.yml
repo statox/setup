@@ -19,8 +19,8 @@
 - name: Install arduino-cli
   ansible.builtin.shell: >
     curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.bin sh
-  when: arduino_cli_yaml.stat.exists == false
+  when: not arduino_cli_yaml.stat.exists
 
 - name: Add arduino-cli configuration file
   ansible.builtin.command: arduino-cli config init
-  when: arduino_cli_yaml.stat.exists == false
+  when: not arduino_cli_yaml.stat.exists

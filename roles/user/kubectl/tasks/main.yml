@@ -22,7 +22,7 @@
   become: true
   ansible.builtin.shell: >
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg
-  when: key_file.stat.exists == false
+  when: not key_file.stat.exists
 
 - name: Check if the repo source exists
   ansible.builtin.stat:
@@ -34,7 +34,7 @@
   ansible.builtin.copy:
     dest: /etc/apt/sources.list.d/kubernetes.list
     src: "{{ role_path }}/files/kubernetes.list"
-  when: repo_file.stat.exists == false
+  when: not repo_file.stat.exists
 
 - name: Install kubectl
   become: true

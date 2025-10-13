@@ -7,13 +7,13 @@
 - name: "Check if SSH Key file exists (2/2)"
   ansible.builtin.debug:
     msg: "The key ~/.ssh/id_ed25519_github will not be overriden. Delete it if you want to create a new SSH key for Github"
-  when: key_file.stat.exists == true
+  when: key_file.stat.exists
 
 - name: Generate SSH Key
   ansible.builtin.command: "ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519_github"
   args:
     creates: "~/.ssh/id_ed25519_github"
-  when: key_file.stat.exists == false
+  when: not key_file.stat.exists
 
 - name: Insert/Update SSH keys in ~/.ssh/config
   ansible.builtin.blockinfile:
@@ -25,19 +25,19 @@
           User git
           Hostname github.com
           IdentityFile ~/.ssh/id_ed25519_github
-  when: key_file.stat.exists == false
+  when: not key_file.stat.exists
 
 - name: "[IMPORTANT] Configuration to update at https://github.com/settings/keys"
   ansible.builtin.debug:
     msg: "A new SSH key has been generated, add the public key in Github interface"
-  when: key_file.stat.exists == false
+  when: not key_file.stat.exists
 
 - name: We are pausing until you add the SSH key to your Github profile (This will not pause next time the playbook is run, unless the key file is deleted)
   ansible.builtin.pause:
     prompt: "Do you want to continue? ('yes'/'y' to continue, otherwise stop the playbook)"
   register: confirm_continue
   failed_when: confirm.user_input not in ['yes', 'y', 'Y']
-  when: key_file.stat.exists == false
+  when: not key_file.stat.exists
 
 - name: Check existing secret key
   ansible.builtin.shell: gpg --list-secret-keys | grep 'me@statox.fr'

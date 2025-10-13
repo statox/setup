@@ -1,3 +1,3 @@
 ---
 - name: Install neovim
-  ansible.builtin.command: "{{role_path}}/files/install_nvim.sh"
+  ansible.builtin.command: "{{ role_path }}/files/install_nvim.sh"
