@@ -267,3 +267,11 @@ services:
       interval: 30s
       timeout: 15s
       retries: 5
+
+  # test-bastion:
+  #   container_name: secure-bastion
+  #   image: ubuntu:latest
+  #   command: tail -f /dev/null
+  #   networks:
+  #     - elastic
+  #     - reverse-proxy
