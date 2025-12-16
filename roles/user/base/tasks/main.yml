@@ -37,6 +37,7 @@
       - clamav
       - btop
       - intel-gpu-tools # Provides `sudo intel_gpu_top` to monitor integrated intel GPU chipset
+      - screenkey # Display key presses during a screen recording
 
       - ubuntu-restricted-extras
       - chromium-browser
