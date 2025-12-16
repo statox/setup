@@ -21,7 +21,14 @@
 # - redshift has to be replaced with gammastep
 # - i3-fancy-lock has to be replaced with swaylock
 # - picom probably doesn't work anymore
+# - rofi needs to be replaced with for example tofi
+# - arandr needs to be replaced
 # - And probably other stuff I forgot
+#
+# Some useful resources:
+# Lists of replacement for x11 tools
+#   https://github.com/swaywm/sway/wiki/Useful-add-ons-for-sway
+#   https://wiki.hypr.land/Useful-Utilities/
 
 - name: Install swaywm and other wm packages
   ansible.builtin.apt:
