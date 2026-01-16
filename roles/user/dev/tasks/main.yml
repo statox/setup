@@ -7,3 +7,65 @@
       - shellcheck
       - ripgrep
       - python3-venv # To be able to install ruff with Mason
+
+# Recreating instructions at https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+
+- name: Install GitHub CLI dependencies
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+
+- name: Create /etc/apt/keyrings directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Check if the GitHub CLI key exists
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  register: key_file
+
+- name: Add GitHub CLI's official GPG key
+  become: true
+  ansible.builtin.shell: >
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  when: not key_file.stat.exists
+
+- name: Set permissions on GitHub CLI keyring
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    mode: '0644'
+  when: not key_file.stat.exists
+
+- name: Check if the GitHub CLI repo source exists
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/github-cli.list
+  register: repo_file
+
+- name: Get architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: arch
+  changed_when: false
+
+- name: Add GitHub CLI repository
+  become: true
+  ansible.builtin.template:
+    dest: /etc/apt/sources.list.d/github-cli.list
+    src: "{{ role_path }}/files/github-cli.list.j2"
+  when: not repo_file.stat.exists
+
+- name: Install GitHub CLI
+  become: true
+  ansible.builtin.apt:
+    name: gh
+    state: present
+    update_cache: true
