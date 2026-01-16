@@ -12,6 +12,8 @@
       become: true
     - role: system/firewall
       become: true
+      vars:
+        open_ports: []
     - role: system/i3
       become: true
     - role: system/docker
