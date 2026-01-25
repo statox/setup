@@ -1,0 +1,5 @@
+- name: Install Gitea docker app
+  ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: gitea
+    local_docker_path: "{{ role_path }}/files/docker/"

@@ -1,0 +1,34 @@
+networks:
+  reverse-proxy:
+    external: true
+
+services:
+  # At first connection, the UI allows to create a user which is used as admin
+  # TODO See if that can be automated to have the creds in this repo
+  #
+  # The initial Github migration was done with the script github_migration.sh
+  # in this repo.
+  # For now future repos will have to be synced manually
+  server:
+    image: docker.gitea.com/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    expose:
+      - 3000
+      # - 22
+    labels:
+      - "traefik.enable=true"
+      # TODO Extract the host to a variable like in other playbooks
+      - "traefik.http.routers.gitea.rule=Host(`git.statox.fr`)"
+      - "traefik.http.routers.gitea.entrypoints=websecure"
+      - "traefik.http.routers.gitea.tls=true"
+      - "traefik.http.services.gitea.loadbalancer.server.port=3000"
