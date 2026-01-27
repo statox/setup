@@ -10,20 +10,3 @@
   ansible.builtin.debug:
     msg: "The dotfiles repository was cloned. You should run the setup script"
   when: clone_dotfiles.changed
-
-- name: Create directory for tmux tpm (TODO probably should be somewhere else)
-  ansible.builtin.file:
-    path: $HOME/.tmux/plugins/tpm
-    state: directory
-    mode: "0755"
-
-- name: Install tmux tpm (TODO probably should be somewhere else)
-  ansible.builtin.git:
-    repo: "git@github.com:tmux-plugins/tpm.git"
-    dest: $HOME/.tmux/plugins/tpm
-    update: false
-  register: clone_tpm
-
-- name: "Install tmux plugins"
-  ansible.builtin.shell: $HOME/.tmux/plugins/tpm/bin/install_plugins
-  when: clone_tpm.changed
