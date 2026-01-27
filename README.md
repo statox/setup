@@ -57,7 +57,6 @@ To run a playbook using this the secrets:
 
 - `./run install_raccoon.yml -e @vars/secrets.yml.enc --vault-password-file vars/get-vault-password.sh`
 - The variables in `vars/secrets.yml.enc` can be used as regular Ansible variables `{{ transmission_user }}`
-- Note that for the docker-apps module we can create `*.j2` template files using the `{{ encrypted_variable }}` syntax, the module will copy the template and inject the variable
 
 ## TODO
 
