@@ -42,6 +42,19 @@ Nginx is configured to have `/` password protected and exposing the download dir
 
 The secrets are stored in the `vars/secrets.yml.enc` ansible-vault file
 
+### SSH
 
 - The user configured for sftp access is `remote`, its password is stored in the ansible-vault file and injected in `users.conf` which is then read by the atmoz/sftp container.
 - We also provide some SSH host key files to the container so that recreating the container doesn't change the host keys and avoid giving MITM alerts to clients
+- The port to use is `2222` the config for this has several parts:
+    - `server/firewall` in `install_panda.yml` opens the port 2222
+    - `roles/server/traefik/files/docker/traefik.yml` creates an entrypoint named `ssh` using this port.
+    - `roles/server/transmission/files/docker/docker-compose.yml` uses the entrypoint `ssh` for the container to redirect to it port 22
+        - Note that the ssh router has to use ```HostSNI(`*`)``` because it can't handle filtering on hostname.
+        - Also note that the DNS record can't go through CloudFlare proxied mode
+
+Use this command to connect with the password `transmission_remote_sftp_password` from the secrets file
+
+```bash
+sftp -P 2222 remote@media_sftp.statox.fr
+```
