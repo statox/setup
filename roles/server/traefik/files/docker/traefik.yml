@@ -22,6 +22,8 @@ entryPoints:
     address: ":443"
   ssh:
     address: ":2222"
+  ssh_gitea:
+    address: ":2223"
   mysql:
     address: ":3306"
 

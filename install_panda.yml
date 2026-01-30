@@ -17,7 +17,8 @@
       vars:
         open_ports:
           - 443
-          - 2222
+          - 2222 # For media_sftp.statox.fr
+          - 2223 # For gitea.statox.fr ssh cloning
     - role: server/traefik
       vars:
         traefik_dashboard_domain: "panda-traefik.statox.fr"
