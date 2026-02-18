@@ -30,3 +30,4 @@
     - role: user/zsh
     - role: user/dev
     - role: user/kubectl
+    - role: work/1password

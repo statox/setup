@@ -1,0 +1,39 @@
+---
+# Recreating instructions at https://developer.1password.com/docs/cli/get-started
+
+- name: Check if the key exists
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/1password-archive-keyring.gpg
+  register: key_file
+
+- name: Add 1Password's official GPG key
+  ansible.builtin.shell: >
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
+  when: not key_file.stat.exists
+  become: true
+
+- name: Check if the repo source exists
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/1password.list
+  register: repo_file
+
+- name: Get architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: arch
+  changed_when: false
+
+- name: Add 1Password's repository
+  ansible.builtin.template:
+    dest: /etc/apt/sources.list.d/1password.list
+    src: "{{ role_path }}/files/1password.list.j2"
+  when: not repo_file.stat.exists
+  become: true
+
+- name: Install 1Password cli
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - 1password-cli
+  become: true
