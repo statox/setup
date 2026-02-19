@@ -6,7 +6,7 @@ networks:
 
 services:
   reverse-proxy:
-    image: traefik:v3.2
+    image: traefik:v3
     container_name: reverse-proxy
     ports:
       - "443:443"
