@@ -94,6 +94,8 @@ services:
       - "traefik.http.routers.planka.rule=Host(`${PLANKA_UI_DOMAIN}`)"
       - "traefik.http.routers.planka.entrypoints=websecure"
       - "traefik.http.routers.planka.tls=true"
+      # Since the container has 2 networks we need to specify which one should be used by traefik
+      - "traefik.docker.network=reverse-proxy"
 
   postgres:
     image: postgres:16-alpine
