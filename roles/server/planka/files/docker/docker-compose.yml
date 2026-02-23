@@ -1,0 +1,123 @@
+# See documentation
+# https://docs.planka.cloud/docs/installation/docker/production-version/
+
+networks:
+  reverse-proxy:
+    external: true
+  planka:
+    name: planka
+    external: false
+
+services:
+  planka:
+    image: ghcr.io/plankanban/planka:latest
+    container_name: planka
+    restart: on-failure
+    volumes:
+      - data:/app/data
+      # - ./terms:/app/terms/custom
+    # Optionally override this to your user/group
+    # user: 1000:1000
+    # tmpfs:
+    #   - /app/.tmp:mode=770,uid=1000,gid=1000
+    expose:
+      - 1337
+    environment:
+      - BASE_URL=https://${PLANKA_UI_DOMAIN}
+      - DATABASE_URL=postgresql://postgres:postgres@planka_postgres/planka
+
+      # Optionally store the database password in secrets:
+      # - DATABASE_URL=postgresql://postgres:$${DATABASE_PASSWORD}@postgres/planka
+      # - DATABASE_PASSWORD__FILE=/run/secrets/database_password
+      # And add the following to the service:
+      # secrets:
+      #   - database_password
+
+      - SECRET_KEY=${PLANKA_SECRET_KEY}
+
+      # - LOG_LEVEL=warn
+
+      # - TRUST_PROXY=true
+      # - MAX_UPLOAD_FILE_SIZE=
+      # - TOKEN_EXPIRES_IN=365 # In days
+
+      # - STORAGE_LIMIT=
+      # - ACTIVE_USERS_LIMIT=
+
+      # related: https://github.com/knex/knex/issues/2354
+      # As knex does not pass query parameters from the connection string,
+      # we have to use environment variables in order to pass the desired values, e.g.
+      # - PGSSLMODE=<value>
+
+      # Configure knex to accept SSL certificates
+      # - KNEX_REJECT_UNAUTHORIZED_SSL_CERTIFICATE=false
+
+      # The default application language used as a fallback when a user's language is not set.
+      # This language is also used for per-board notifications.
+      # - DEFAULT_LANGUAGE=en-US
+
+      # Do not comment out DEFAULT_ADMIN_EMAIL if you want to prevent this user from being edited/deleted
+      - DEFAULT_ADMIN_EMAIL=${PLANKA_ADMIN_EMAIL}
+      - DEFAULT_ADMIN_PASSWORD=${PLANKA_ADMIN_PASSWORD}
+      - DEFAULT_ADMIN_USERNAME=${PLANKA_ADMIN_USERNAME}
+      - DEFAULT_ADMIN_NAME=Admin
+
+      # Set to true to show more detailed authentication error messages.
+      # It should not be enabled without a rate limiter for security reasons.
+      # - SHOW_DETAILED_AUTH_ERRORS=false
+
+      # All outgoing HTTP requests (SMTP, webhooks, Apprise notifications, favicon fetching, etc.)
+      # will be sent through this proxy if set.
+      # If commented out, an internal Squid proxy will be started inside the container,
+      # which you can control via OUTGOING_BLOCKED_* and OUTGOING_ALLOWED_* below.
+      # - OUTGOING_PROXY=http://proxy:3128
+
+      # --------------------------------------------------------------------
+      # Outgoing traffic control (internal Squid proxy)
+      # --------------------------------------------------------------------
+
+      # These IPs/hostnames will always be blocked (highest priority)
+      # - OUTGOING_BLOCKED_IPS=
+      # - OUTGOING_BLOCKED_HOSTS=localhost,postgres
+
+      # Only these IPs/hostnames will be reachable
+      # - OUTGOING_ALLOWED_IPS=
+      # - OUTGOING_ALLOWED_HOSTS=
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - reverse-proxy
+      - planka
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.planka.rule=Host(`${PLANKA_UI_DOMAIN}`)"
+      - "traefik.http.routers.planka.entrypoints=websecure"
+      - "traefik.http.routers.planka.tls=true"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: planka_postgres
+    restart: on-failure
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=planka
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - 5432
+    networks:
+      - planka
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d planka"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  data:
+    driver: local
+  db-data:
+    driver: local

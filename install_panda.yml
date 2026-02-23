@@ -37,3 +37,6 @@
         logstash_domain: "logs.statox.fr"
     - role: server/api-db
     - role: server/gitea
+    - role: server/planka
+      vars:
+        planka_ui_domain: "kanban.statox.fr"

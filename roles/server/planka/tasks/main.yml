@@ -1,0 +1,12 @@
+---
+- name: Fail if planka_ui_domain is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'planka_ui_domain' is not defined"
+  when: planka_ui_domain is undefined
+
+- name: Install planka docker app
+  ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: planka
+    local_docker_path: "{{ role_path }}/files/docker/"
+
