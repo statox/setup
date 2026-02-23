@@ -18,6 +18,8 @@ providers:
     exposedByDefault: false
 
 entryPoints:
+  webnonsecure:
+    address: ":80"
   websecure:
     address: ":443"
   ssh:

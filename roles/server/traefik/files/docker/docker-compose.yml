@@ -9,6 +9,8 @@ services:
     image: traefik:v3
     container_name: reverse-proxy
     ports:
+      # Kept while the environment sensors need to access the API without https
+      - "80:80"
       - "443:443"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
