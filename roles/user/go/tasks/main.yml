@@ -1,0 +1,44 @@
+---
+- name: Clone goenv
+  ansible.builtin.git:
+    repo: "https://github.com/go-nv/goenv.git"
+    dest: "{{ ansible_env.HOME }}/.goenv"
+    depth: 1
+    update: false
+
+- name: Symlink goenv binary to ~/.bin
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.goenv/bin/goenv"
+    dest: "{{ ansible_env.HOME }}/.bin/goenv"
+    state: link
+
+- name: Check if Go {{ go_default_version }} is already installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.goenv/versions/{{ go_default_version }}"
+  register: go_version_installed
+
+- name: Install Go {{ go_default_version }}
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.goenv/bin/goenv install {{ go_default_version }}"
+  when: not go_version_installed.stat.exists
+
+- name: Set Go {{ go_default_version }} as global default
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.goenv/bin/goenv global {{ go_default_version }}"
+  when: not go_version_installed.stat.exists
+
+- name: Check if goenv is initialized in ~/.zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(goenv init -)"'
+    state: present
+  check_mode: true
+  register: zshrc_goenv_check
+
+- name: "[IMPORTANT] Make sure zshrc is updated"
+  ansible.builtin.debug:
+    msg: |
+      goenv is not initialized in your ~/.zshrc. Add these lines to your dotfiles:
+        export PATH="$HOME/.goenv/bin:$PATH"
+        eval "$(goenv init -)"
+  when: zshrc_goenv_check.changed

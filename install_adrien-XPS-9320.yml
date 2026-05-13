@@ -21,6 +21,7 @@
     #- role: system/podman
     - role: user/base
     - role: user/nodejs
+    - role: user/go
     - role: ui/nerdfonts # Must happen before user/dconf
     - role: user/dconf
     - role: user/espanso
