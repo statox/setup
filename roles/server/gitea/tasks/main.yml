@@ -1,3 +1,4 @@
+---
 - name: Install Gitea docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:

@@ -9,4 +9,3 @@
   vars:
     app_name: planka
     local_docker_path: "{{ role_path }}/files/docker/"
-

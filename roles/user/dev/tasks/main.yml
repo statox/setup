@@ -26,7 +26,7 @@
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Check if the GitHub CLI key exists
   ansible.builtin.stat:
@@ -43,7 +43,7 @@
   become: true
   ansible.builtin.file:
     path: /etc/apt/keyrings/githubcli-archive-keyring.gpg
-    mode: '0644'
+    mode: "0644"
   when: not key_file.stat.exists
 
 - name: Check if the GitHub CLI repo source exists

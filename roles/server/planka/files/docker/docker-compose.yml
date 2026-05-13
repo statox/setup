@@ -1,3 +1,4 @@
+---
 # See documentation
 # https://docs.planka.cloud/docs/installation/docker/production-version/
 
@@ -62,27 +63,27 @@ services:
       - DEFAULT_ADMIN_USERNAME=${PLANKA_ADMIN_USERNAME}
       - DEFAULT_ADMIN_NAME=Admin
 
-      # Set to true to show more detailed authentication error messages.
-      # It should not be enabled without a rate limiter for security reasons.
-      # - SHOW_DETAILED_AUTH_ERRORS=false
+    # Set to true to show more detailed authentication error messages.
+    # It should not be enabled without a rate limiter for security reasons.
+    # - SHOW_DETAILED_AUTH_ERRORS=false
 
-      # All outgoing HTTP requests (SMTP, webhooks, Apprise notifications, favicon fetching, etc.)
-      # will be sent through this proxy if set.
-      # If commented out, an internal Squid proxy will be started inside the container,
-      # which you can control via OUTGOING_BLOCKED_* and OUTGOING_ALLOWED_* below.
-      # - OUTGOING_PROXY=http://proxy:3128
+    # All outgoing HTTP requests (SMTP, webhooks, Apprise notifications, favicon fetching, etc.)
+    # will be sent through this proxy if set.
+    # If commented out, an internal Squid proxy will be started inside the container,
+    # which you can control via OUTGOING_BLOCKED_* and OUTGOING_ALLOWED_* below.
+    # - OUTGOING_PROXY=http://proxy:3128
 
-      # --------------------------------------------------------------------
-      # Outgoing traffic control (internal Squid proxy)
-      # --------------------------------------------------------------------
+    # --------------------------------------------------------------------
+    # Outgoing traffic control (internal Squid proxy)
+    # --------------------------------------------------------------------
 
-      # These IPs/hostnames will always be blocked (highest priority)
-      # - OUTGOING_BLOCKED_IPS=
-      # - OUTGOING_BLOCKED_HOSTS=localhost,postgres
+    # These IPs/hostnames will always be blocked (highest priority)
+    # - OUTGOING_BLOCKED_IPS=
+    # - OUTGOING_BLOCKED_HOSTS=localhost,postgres
 
-      # Only these IPs/hostnames will be reachable
-      # - OUTGOING_ALLOWED_IPS=
-      # - OUTGOING_ALLOWED_HOSTS=
+    # Only these IPs/hostnames will be reachable
+    # - OUTGOING_ALLOWED_IPS=
+    # - OUTGOING_ALLOWED_HOSTS=
     depends_on:
       postgres:
         condition: service_healthy
