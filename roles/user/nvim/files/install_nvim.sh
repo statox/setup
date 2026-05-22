@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e # This is important to have curl issues failing the script and in turn failing the ansible role
 
 BIN_DIRECTORY="$HOME/.bin"
 BIN_PATH="$BIN_DIRECTORY/nvim"
@@ -22,7 +23,7 @@ if [ -f "$BIN_PATH" ]; then
         exit 0
     fi
     echo 'Saving old version'
-    cp "$BIN_PATH" "$BIN_PATH"_previous
+    cp "$BIN_PATH" "${BIN_PATH}_previous_$(date +%Y%m%d_%H%M%S)"
 fi
 
 echo 'Installing new version'
