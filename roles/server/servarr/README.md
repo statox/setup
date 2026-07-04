@@ -89,3 +89,9 @@ one-time manual steps are needed after the first deploy:
    `/data/library/movies`.
 4. In **Prowlarr**, add your indexers, then connect Sonarr and Radarr under
    Settings > Apps so indexers sync to both automatically.
+5. If an indexer fails with a Cloudflare-related error (e.g. "Unable to
+   access ..., blocked by CloudFlare Protection"), configure the bundled
+   [Byparr](https://github.com/ThePhaseless/Byparr) FlareSolverr-compatible
+   proxy: in Prowlarr, Settings > Indexers > FlareSolverr Proxies > add one
+   with URL `http://byparr:8191`, then tag the failing indexer with that
+   proxy under its own settings.

@@ -86,6 +86,13 @@ services:
       - "traefik.http.routers.radarr.entrypoints=websecure"
       - "traefik.http.routers.radarr.tls=true"
 
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: byparr
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+
   servarr-jellyfin:
     image: jellyfin/jellyfin
     container_name: servarr-jellyfin
