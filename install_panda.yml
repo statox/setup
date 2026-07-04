@@ -19,6 +19,7 @@
           - 443
           - 2222 # For media_sftp.statox.fr
           - 2223 # For gitea.statox.fr ssh cloning
+          - 51414 # For servarr-transmission P2P
     - role: server/traefik
       vars:
         traefik_dashboard_domain: "panda-traefik.statox.fr"
@@ -40,3 +41,10 @@
     - role: server/planka
       vars:
         planka_ui_domain: "kanban.statox.fr"
+    - role: server/servarr
+      vars:
+        prowlarr_ui_domain: "prowlarr.statox.fr"
+        sonarr_ui_domain: "sonarr.statox.fr"
+        radarr_ui_domain: "radarr.statox.fr"
+        servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
+        servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
