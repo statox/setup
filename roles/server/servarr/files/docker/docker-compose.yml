@@ -1,0 +1,108 @@
+---
+networks:
+  reverse-proxy:
+    external: true
+
+services:
+  servarr-transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: servarr-transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - USER=${SERVARR_TRANSMISSION_USER}
+      - PASS=${SERVARR_TRANSMISSION_PASSWORD}
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/transmission:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    expose:
+      - 9091
+    ports:
+      - 51414:51414
+      - 51414:51414/udp
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.servarr-transmission.rule=Host(`${SERVARR_TRANSMISSION_UI_DOMAIN}`)"
+      - "traefik.http.routers.servarr-transmission.entrypoints=websecure"
+      - "traefik.http.routers.servarr-transmission.tls=true"
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/prowlarr:/config
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`${PROWLARR_UI_DOMAIN}`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls=true"
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/sonarr:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`${SONARR_UI_DOMAIN}`)"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.tls=true"
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/radarr:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`${RADARR_UI_DOMAIN}`)"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.tls=true"
+
+  servarr-jellyfin:
+    image: jellyfin/jellyfin
+    container_name: servarr-jellyfin
+    networks:
+      - reverse-proxy
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/jellyfin:/config
+      - ${SERVARR_HOME_DIR}/cache/jellyfin:/cache
+      - type: bind
+        source: ${SERVARR_HOME_DIR}/data/library
+        target: /media
+        read_only: true
+    restart: unless-stopped
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://${SERVARR_JELLYFIN_DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.servarr-jellyfin.rule=Host(`${SERVARR_JELLYFIN_DOMAIN}`)"
+      - "traefik.http.routers.servarr-jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.servarr-jellyfin.tls=true"
