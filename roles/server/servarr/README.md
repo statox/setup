@@ -1,4 +1,4 @@
-# Servarr stack (Prowlarr + Sonarr + Radarr + Transmission + Jellyfin)
+# Servarr stack (Prowlarr + Sonarr + Radarr + Bazarr + Transmission + Jellyfin)
 
 This role installs a self-contained "servarr" stack to find and automatically
 fetch torrents for TV shows and movies, and make them available in a media
@@ -27,6 +27,7 @@ This role needs other roles to have run:
     radarr_ui_domain: "radarr.statox.fr"
     servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
     servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
+    bazarr_ui_domain: "bazarr.statox.fr"
 ```
 
 Plus two secrets that must exist in `vars/secrets.yml.enc` (see the main repo
@@ -64,15 +65,18 @@ All data lives under `/home/servarr`, created by this role with owner/group
 │   ├── prowlarr
 │   ├── sonarr
 │   ├── radarr
-│   └── jellyfin
+│   ├── jellyfin
+│   └── bazarr
 └── cache
     └── jellyfin
 ```
 
-`servarr-transmission`, `sonarr` and `radarr` all mount the entire
+`servarr-transmission`, `sonarr`, `radarr` and `bazarr` all mount the entire
 `/home/servarr/data` directory to `/data` inside the container — this is
 required for hardlinks/atomic moves to work between the torrents and library
-folders (see the [servarr docker guide](https://wiki.servarr.com/docker-guide)).
+folders (see the [servarr docker guide](https://wiki.servarr.com/docker-guide)),
+and for `bazarr` to see files at the exact same paths Sonarr/Radarr report,
+avoiding the need for remote path mappings.
 `servarr-jellyfin` only mounts `/home/servarr/data/library`, read-only.
 
 ## Manual first-time configuration
@@ -95,3 +99,9 @@ one-time manual steps are needed after the first deploy:
    proxy: in Prowlarr, Settings > Indexers > FlareSolverr Proxies > add one
    with URL `http://byparr:8191`, then tag the failing indexer with that
    proxy under its own settings.
+6. In **Bazarr**, connect it to Sonarr and Radarr under Settings > Sonarr /
+   Settings > Radarr: host `sonarr` (or `radarr`), port `8989` (or `7878`),
+   and the API key from each app's Settings > General. Then under
+   Settings > Languages, create a Languages Profile with French as the
+   first (cutoff) priority and English as fallback, and set it as the
+   default profile so it applies to newly added series/movies.

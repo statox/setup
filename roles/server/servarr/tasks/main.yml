@@ -24,6 +24,11 @@
     msg: "Variable '{{ servarr_jellyfin_domain }}' is not defined"
   when: servarr_jellyfin_domain is undefined
 
+- name: Fail if bazarr_ui_domain is undefined
+  ansible.builtin.fail:
+    msg: "Variable '{{ bazarr_ui_domain }}' is not defined"
+  when: bazarr_ui_domain is undefined
+
 - name: Create servarr data and config directories
   become: true
   ansible.builtin.file:
@@ -43,6 +48,7 @@
     - /home/servarr/config/sonarr
     - /home/servarr/config/radarr
     - /home/servarr/config/jellyfin
+    - /home/servarr/config/bazarr
     - /home/servarr/cache/jellyfin
 
 - name: Install servarr docker app

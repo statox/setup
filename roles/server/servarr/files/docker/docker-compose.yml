@@ -86,6 +86,25 @@ services:
       - "traefik.http.routers.radarr.entrypoints=websecure"
       - "traefik.http.routers.radarr.tls=true"
 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/bazarr:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.rule=Host(`${BAZARR_UI_DOMAIN}`)"
+      - "traefik.http.routers.bazarr.entrypoints=websecure"
+      - "traefik.http.routers.bazarr.tls=true"
+
   byparr:
     image: ghcr.io/thephaseless/byparr:latest
     container_name: byparr

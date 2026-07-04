@@ -48,3 +48,4 @@
         radarr_ui_domain: "radarr.statox.fr"
         servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
         servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
+        bazarr_ui_domain: "bazarr.statox.fr"
