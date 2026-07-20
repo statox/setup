@@ -8,7 +8,7 @@
 - name: Add Cloudflare repository
   become: true
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64] https://pkg.cloudflareclient.com/ jammy main
+    repo: deb [arch=amd64] https://pkg.cloudflareclient.com/ noble main
     state: present
     filename: cloudflare.list
 

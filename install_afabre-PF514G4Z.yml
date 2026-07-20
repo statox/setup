@@ -31,3 +31,4 @@
     - role: user/dev
     - role: user/kubectl
     - role: work/1password
+    - role: work/cloudflare-warp
