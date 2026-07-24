@@ -4,6 +4,16 @@
     msg: "Variable 'immich_ui_domain' is not defined"
   when: immich_ui_domain is undefined
 
+- name: Fail if immich_backup_s3_access_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_backup_s3_access_key' is not defined"
+  when: immich_backup_s3_access_key is undefined
+
+- name: Fail if immich_backup_s3_secret_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_backup_s3_secret_key' is not defined"
+  when: immich_backup_s3_secret_key is undefined
+
 - name: Create immich data directories
   become: true
   ansible.builtin.file:

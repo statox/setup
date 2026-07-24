@@ -63,3 +63,14 @@ services:
       disable: false
     networks:
       - immich
+
+  backup:
+    container_name: immich_backup
+    restart: unless-stopped
+    build:
+      dockerfile: ./builder/backup/Dockerfile
+    volumes:
+      - ${UPLOAD_LOCATION}:/library:ro
+    environment:
+      - AWS_ACCESS_KEY_ID=${IMMICH_BACKUP_S3_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${IMMICH_BACKUP_S3_SECRET_KEY}

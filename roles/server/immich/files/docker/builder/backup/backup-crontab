@@ -1,0 +1,6 @@
+# Update the path to make sure aws is available
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# Run every day at 4:40, after Immich's own 02:00 DB dump job and offset
+# from api-db's 03:30 snapshotter so the two backups don't run concurrently
+40 4 * * * /backup-script.sh >> /var/log/cron.log 2>&1
