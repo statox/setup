@@ -1,0 +1,23 @@
+---
+- name: Fail if immich_ui_domain is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ui_domain' is not defined"
+  when: immich_ui_domain is undefined
+
+- name: Create immich data directories
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: "0755"
+  loop:
+    - /home/immich/library
+    - /home/immich/postgres
+
+- name: Install immich docker app
+  ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
+  vars:
+    app_name: immich
+    local_docker_path: "{{ role_path }}/files/docker/"

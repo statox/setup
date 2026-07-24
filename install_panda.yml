@@ -49,3 +49,6 @@
         servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
         servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
         bazarr_ui_domain: "bazarr.statox.fr"
+    - role: server/immich
+      vars:
+        immich_ui_domain: "immich.statox.fr"
