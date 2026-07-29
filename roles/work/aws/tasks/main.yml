@@ -1,6 +1,8 @@
 ---
-# Required by server-shell-utils
-- name: Install aws session manager
-  ansible.builtin.apt:
-    deb: https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb
+# Install aws-cli
+- name: Install aws-cli manager
   become: true
+  community.general.snap:
+    name:
+      - aws-cli
+    classic: true

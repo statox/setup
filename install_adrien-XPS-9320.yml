@@ -33,6 +33,7 @@
     - role: user/dev
     - role: user/arduino
     - role: user/terraform
+    - role: work/aws
     # - role: work/base
     #- role: work/gitlab
     #- role: work/vault
@@ -41,7 +42,6 @@
     # TODO: Check how to cache the deb file
     # These roles are not idempotent they should be run only once.
     # - role: user/zoom
-    # - role: work/aws
     # - role: work/sdm
 # TODO:
 # aws-cli
