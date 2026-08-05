@@ -6,6 +6,7 @@ This is a collection of ansible scripts I use to setup my workstation as well as
 
 1. Run `sudo ./bootstrap` to install dependencies
    - This installs [uv](https://docs.astral.sh/uv/) which is used to install and run ansible
+   - Running bash script tests via `npx bats` additionally requires Node.js/npm to already be installed - `bootstrap` does not install it
 1. If needed update the `inventory` file
 1. Update the `vars/config.local` file
 1. Create a file for the new PC
@@ -39,6 +40,17 @@ touch "install_$(hostname).yml"
 ```bash
 uv run -- ansible-lint --fix
 ```
+
+### Testing bash scripts
+
+Some roles ship bash scripts alongside `bats` tests (`*.bats` files under a
+`tests/` directory next to the script). Run a role's suite with:
+
+```bash
+npx --yes bats path/to/role/files/.../tests/
+```
+
+`npx` fetches `bats` on demand - no persistent install is added to the repo.
 
 ## Playbooks using secrets
 

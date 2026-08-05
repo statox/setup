@@ -1,0 +1,93 @@
+---
+- name: Fail if immich_ml_orchestrator_immich_url is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_immich_url' is not defined"
+  when: immich_ml_orchestrator_immich_url is undefined
+
+- name: Fail if immich_ml_orchestrator_immich_api_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_immich_api_key' is not defined"
+  when: immich_ml_orchestrator_immich_api_key is undefined
+
+- name: Fail if immich_ml_orchestrator_aws_access_key_id is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_aws_access_key_id' is not defined"
+  when: immich_ml_orchestrator_aws_access_key_id is undefined
+
+- name: Fail if immich_ml_orchestrator_aws_secret_access_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_aws_secret_access_key' is not defined"
+  when: immich_ml_orchestrator_aws_secret_access_key is undefined
+
+- name: Fail if immich_ml_orchestrator_ecs_cluster is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_ecs_cluster' is not defined"
+  when: immich_ml_orchestrator_ecs_cluster is undefined
+
+- name: Fail if immich_ml_orchestrator_ecs_service is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_ecs_service' is not defined"
+  when: immich_ml_orchestrator_ecs_service is undefined
+
+- name: Fail if immich_ml_orchestrator_route53_zone_id is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'immich_ml_orchestrator_route53_zone_id' is not defined"
+  when: immich_ml_orchestrator_route53_zone_id is undefined
+
+- name: Fail if immich_ml_orchestrator_route53_zone_id looks like an unfilled placeholder
+  ansible.builtin.fail:
+    msg: >-
+      Variable 'immich_ml_orchestrator_route53_zone_id' does not look like a Route53
+      hosted zone ID (expected it to start with 'Z'); it looks like the inventory
+      placeholder was never replaced with the real
+      'terraform output immich_ml_route53_zone_id' value.
+  when: not (immich_ml_orchestrator_route53_zone_id is match('^Z'))
+
+- name: Install aws-cli
+  ansible.builtin.include_role:
+    name: work/aws
+
+- name: Create orchestrator install directories
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: "0755"
+  loop:
+    - /home/immich/ml_orchestrator/lib
+    - /home/immich/ml_orchestrator/state
+
+- name: Copy orchestrator script and libraries
+  become: true
+  ansible.builtin.copy:
+    src: "orchestrator/{{ item }}"
+    dest: "/home/immich/ml_orchestrator/{{ item }}"
+    owner: "1000"
+    group: "1000"
+    mode: "0755"
+  loop:
+    - run.sh
+    - lib/decide.sh
+    - lib/immich_api.sh
+    - lib/ecs_api.sh
+    - lib/route53_api.sh
+    - lib/state.sh
+
+- name: Render orchestrator .env config
+  become: true
+  ansible.builtin.template:
+    src: orchestrator.env.j2
+    dest: /home/immich/ml_orchestrator/.env
+    owner: "1000"
+    group: "1000"
+    mode: "0600"
+
+- name: Install orchestrator cron job
+  ansible.builtin.cron:
+    name: "immich ml orchestrator"
+    minute: "*/5"
+    job: >-
+      set -a && . /home/immich/ml_orchestrator/.env && set +a &&
+      /home/immich/ml_orchestrator/run.sh >> /home/immich/ml_orchestrator/orchestrator.log 2>&1
