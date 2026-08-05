@@ -52,3 +52,9 @@
     - role: server/immich
       vars:
         immich_ui_domain: "immich.statox.fr"
+    - role: server/immich_ml_orchestrator
+      vars:
+        immich_ml_orchestrator_immich_url: "https://immich.statox.fr"
+        immich_ml_orchestrator_ecs_cluster: "immich-ml" # matches terraform output immich_ml_ecs_cluster_name
+        immich_ml_orchestrator_ecs_service: "immich-machine-learning" # matches terraform output immich_ml_ecs_service_name
+        immich_ml_orchestrator_route53_zone_id: "Z004510817OJYQIQFIMQ2"
