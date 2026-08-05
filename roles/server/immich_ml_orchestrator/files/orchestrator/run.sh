@@ -32,16 +32,16 @@ resync_all_queues() {
 }
 
 run_tick() {
-    local failed_count desired_count idle_since scaled_up_since now action
+    local pending_count desired_count idle_since scaled_up_since now action
 
-    failed_count="$(immich_failed_job_count)"
+    pending_count="$(immich_pending_job_count)"
     desired_count="$(ecs_get_desired_count)"
     idle_since="$(state_read_idle_since "${STATE_FILE}")"
     scaled_up_since="$(state_read_scaled_up_since "${STATE_FILE}")"
     now="$(date +%s)"
 
     # Cost safety net: if the service has been continuously scaled up for
-    # too long (e.g. the NLB target never becomes healthy, so failed_count
+    # too long (e.g. the ML task never drains its backlog, so pending_count
     # never drops and decide_action keeps returning noop forever), force a
     # scale-down instead of leaving Fargate billing to run away unbounded.
     if [ "${desired_count}" -ne 0 ] && [ "$(should_force_scale_down "${scaled_up_since}" "${now}" "${MAX_SCALED_UP_SECONDS}")" = "true" ]; then
@@ -52,11 +52,11 @@ run_tick() {
         return 0
     fi
 
-    action="$(decide_action "${failed_count}" "${desired_count}" "${idle_since}" "${now}" "${IDLE_GRACE_SECONDS}")"
+    action="$(decide_action "${pending_count}" "${desired_count}" "${idle_since}" "${now}" "${IDLE_GRACE_SECONDS}")"
 
     case "${action}" in
         scale_up)
-            echo "[immich-ml-orchestrator] failed_count=${failed_count}, scaling ECS service up"
+            echo "[immich-ml-orchestrator] pending_count=${pending_count}, scaling ECS service up"
             ecs_set_desired_count 1
             if [ -z "${scaled_up_since}" ]; then
                 state_write_scaled_up_since "${STATE_FILE}" "${now}"
@@ -77,8 +77,8 @@ run_tick() {
             state_write_idle_since "${STATE_FILE}" ""
             ;;
         noop)
-            if [ "${failed_count}" -gt 0 ]; then
-                echo "[immich-ml-orchestrator] failed_count=${failed_count}, service already scaling up, retrying resync"
+            if [ "${pending_count}" -gt 0 ]; then
+                echo "[immich-ml-orchestrator] pending_count=${pending_count}, service already scaling up, retrying resync"
                 resync_all_queues
             fi
             state_write_idle_since "${STATE_FILE}" ""

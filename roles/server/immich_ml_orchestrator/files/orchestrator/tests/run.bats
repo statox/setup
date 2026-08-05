@@ -23,12 +23,12 @@ teardown() {
     rm -rf "${TMP_STATE_DIR}"
 }
 
-@test "run_tick scales up, updates DNS, and resyncs queues when ML jobs have failed" {
+@test "run_tick scales up, updates DNS, and resyncs queues when ML jobs are pending" {
     curl() {
         if [[ "$*" == *"-X PUT"* ]]; then
             echo "$@" >> "${TMP_STATE_DIR}/resync_calls.log"
         else
-            echo '{"smartSearch":{"jobCounts":{"failed":2}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+            echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
         fi
     }
     aws() {
@@ -65,7 +65,7 @@ teardown() {
 
 @test "run_tick starts the idle timer when queues are empty and the service is up" {
     curl() {
-        echo '{"smartSearch":{"jobCounts":{"failed":0}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+        echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
     }
     aws() {
         case "$*" in
@@ -85,7 +85,7 @@ teardown() {
     state_write_idle_since "${STATE_FILE}" "100"
 
     curl() {
-        echo '{"smartSearch":{"jobCounts":{"failed":0}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+        echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
     }
     aws() {
         case "$*" in
@@ -110,7 +110,7 @@ teardown() {
         if [[ "$*" == *"-X PUT"* ]]; then
             echo "$@" >> "${TMP_STATE_DIR}/resync_calls.log"
         else
-            echo '{"smartSearch":{"jobCounts":{"failed":2}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+            echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
         fi
     }
     aws() {
@@ -136,8 +136,8 @@ teardown() {
     state_write_scaled_up_since "${STATE_FILE}" "1000"
 
     curl() {
-        # Target never becomes healthy: failed_count never drops to 0.
-        echo '{"smartSearch":{"jobCounts":{"failed":2}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+        # Backlog never drains: pending_count never drops to 0.
+        echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
     }
     aws() {
         case "$*" in
@@ -164,7 +164,7 @@ teardown() {
         if [[ "$*" == *"-X PUT"* ]]; then
             echo "$@" >> "${TMP_STATE_DIR}/resync_calls.log"
         else
-            echo '{"smartSearch":{"jobCounts":{"failed":2}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+            echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
         fi
     }
     aws() {
@@ -186,7 +186,24 @@ teardown() {
 
 @test "run_tick does nothing when there is no pending work and the service is already down" {
     curl() {
-        echo '{"smartSearch":{"jobCounts":{"failed":0}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+        echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
+    }
+    aws() {
+        case "$*" in
+            *"describe-services"*) echo '{"services":[{"desiredCount":0}]}' ;;
+            *"update-service"*) echo "$*" >> "${TMP_STATE_DIR}/aws_calls.log" ;;
+        esac
+    }
+    date() { echo 1000; }
+
+    run run_tick
+    [ "$status" -eq 0 ]
+    [ ! -f "${TMP_STATE_DIR}/aws_calls.log" ]
+}
+
+@test "run_tick does nothing when the only queue with waiting jobs is paused" {
+    curl() {
+        echo '{"smartSearch":{"queueStatus":{"isPaused":true},"jobCounts":{"waiting":10}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
     }
     aws() {
         case "$*" in

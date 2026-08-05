@@ -5,28 +5,40 @@ setup() {
     source "${DIR}/../lib/immich_api.sh"
 }
 
-@test "parse_failed_job_count sums failed counts across the three ML queues" {
-    json='{"smartSearch":{"jobCounts":{"failed":2}},"faceDetection":{"jobCounts":{"failed":1}},"duplicateDetection":{"jobCounts":{"failed":0}},"metadataExtraction":{"jobCounts":{"failed":99}}}'
-    run parse_failed_job_count "${json}"
+@test "parse_pending_job_count sums waiting counts across the three ML queues" {
+    json='{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":1}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"metadataExtraction":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":99}}}'
+    run parse_pending_job_count "${json}"
     [ "$status" -eq 0 ]
     [ "$output" -eq 3 ]
 }
 
-@test "parse_failed_job_count treats missing queues as zero" {
-    json='{"smartSearch":{"jobCounts":{"failed":5}}}'
-    run parse_failed_job_count "${json}"
+@test "parse_pending_job_count treats missing queues as zero" {
+    json='{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":5}}}'
+    run parse_pending_job_count "${json}"
     [ "$output" -eq 5 ]
 }
 
-@test "immich_failed_job_count calls GET /api/jobs and parses the result" {
+@test "parse_pending_job_count excludes waiting counts from a paused queue" {
+    json='{"smartSearch":{"queueStatus":{"isPaused":true},"jobCounts":{"waiting":10}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":2}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
+    run parse_pending_job_count "${json}"
+    [ "$output" -eq 2 ]
+}
+
+@test "parse_pending_job_count returns zero when all relevant queues are paused" {
+    json='{"smartSearch":{"queueStatus":{"isPaused":true},"jobCounts":{"waiting":10}},"faceDetection":{"queueStatus":{"isPaused":true},"jobCounts":{"waiting":5}},"duplicateDetection":{"queueStatus":{"isPaused":true},"jobCounts":{"waiting":1}}}'
+    run parse_pending_job_count "${json}"
+    [ "$output" -eq 0 ]
+}
+
+@test "immich_pending_job_count calls GET /api/jobs and parses the result" {
     export IMMICH_URL="https://immich.example.test"
     export IMMICH_API_KEY="test-key"
 
     curl() {
-        echo '{"smartSearch":{"jobCounts":{"failed":4}},"faceDetection":{"jobCounts":{"failed":0}},"duplicateDetection":{"jobCounts":{"failed":0}}}'
+        echo '{"smartSearch":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":4}},"faceDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}},"duplicateDetection":{"queueStatus":{"isPaused":false},"jobCounts":{"waiting":0}}}'
     }
 
-    run immich_failed_job_count
+    run immich_pending_job_count
     [ "$output" -eq 4 ]
 }
 

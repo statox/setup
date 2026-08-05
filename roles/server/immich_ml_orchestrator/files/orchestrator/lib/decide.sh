@@ -2,17 +2,17 @@
 # Pure decision logic for the immich-ml-orchestrator. Takes no action and
 # performs no I/O - only decides what run.sh should do next.
 
-# decide_action FAILED_COUNT DESIRED_COUNT IDLE_SINCE NOW IDLE_GRACE_SECONDS
+# decide_action PENDING_COUNT DESIRED_COUNT IDLE_SINCE NOW IDLE_GRACE_SECONDS
 # Prints one of: scale_up | scale_down | wait_idle | noop
 # IDLE_SINCE is an empty string when no idle timer is currently running.
 decide_action() {
-    local failed_count="$1"
+    local pending_count="$1"
     local desired_count="$2"
     local idle_since="$3"
     local now="$4"
     local idle_grace_seconds="$5"
 
-    if [ "${failed_count}" -gt 0 ]; then
+    if [ "${pending_count}" -gt 0 ]; then
         if [ "${desired_count}" -eq 0 ]; then
             echo "scale_up"
         else

@@ -3,18 +3,24 @@
 Deploys a cron-driven bash script to panda that scales the on-demand
 `immich-machine-learning` ECS Fargate service (provisioned by Terraform in
 `statox-provisioning/terraform/immich/ml_worker.tf`) up when Immich has
-failed Smart Search / Face Detection / Duplicate Detection jobs, and back
-down after 10 minutes of no such failures.
+Smart Search / Face Detection / Duplicate Detection jobs waiting to be
+processed, and back down after 10 minutes of no such backlog.
 
 The orchestrator runs every 5 minutes via cron: it polls Immich's job
 counts, scales the ECS service (0 -> 1) via `aws ecs update-service` when
-Smart Search/Face Detection/Duplicate Detection jobs have failures, waits
+Smart Search/Face Detection/Duplicate Detection jobs are waiting, waits
 for the task to be running, resolves its public IP and updates the
 `immich-ml.statox.fr` Route53 record to point at it, then re-triggers
 those jobs. It scales back down (1 -> 0) after `IDLE_GRACE_SECONDS` of no
-pending failures, and also force-scales down after `MAX_SCALED_UP_SECONDS`
+pending work, and also force-scales down after `MAX_SCALED_UP_SECONDS`
 as a cost safety net regardless of state. Logs are appended to
 `/home/immich/ml_orchestrator/orchestrator.log` on panda.
+
+Job counts are read from `jobCounts.waiting` (not `.failed`): Immich's job
+runner catches machine-learning-request errors internally and never lets
+them reach the queue as a real failure, so `.failed` never reflects actual
+ML backlog. `.waiting` does, since jobs sit there until a worker dequeues
+them.
 
 ## Required variables
 
