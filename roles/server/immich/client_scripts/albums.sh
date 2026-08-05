@@ -31,7 +31,7 @@ list_albums() {
     curl -fsS "${IMMICH_URL}/api/albums" \
         -H "Accept: application/json" \
         -H "x-api-key: ${API_KEY}" \
-        | jq '[.[] | {name, id}]' > "${ALBUMS_FILE}"
+        | jq '[.[] | {albumName, id}]' > "${ALBUMS_FILE}"
 
     echo "Wrote $(jq 'length' "${ALBUMS_FILE}") album(s) to ${ALBUMS_FILE}"
 }
@@ -47,7 +47,7 @@ share_albums() {
 
     jq -c '.[]' "${SHARE_ALBUMS_FILE}" | while read -r album; do
         id="$(jq -r '.id' <<< "${album}")"
-        name="$(jq -r '.name' <<< "${album}")"
+        name="$(jq -r '.albumName' <<< "${album}")"
 
         echo "Sharing album '${name}' (${id}) with ${SHARED_WITH_USER_ID} as ${SHARED_WITH_ROLE}..."
         curl -fsS -X PUT "${IMMICH_URL}/api/albums/${id}/users" \
