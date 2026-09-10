@@ -9,9 +9,12 @@ networks:
     name: immich
     external: false
 
+volumes:
+  model-cache:
+
 services:
   immich-server:
-    image: ghcr.io/immich-app/immich-server:v3.2.0
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION}
     container_name: immich_server
     volumes:
       - ${UPLOAD_LOCATION}:/data
@@ -23,7 +26,7 @@ services:
     depends_on:
       - redis
       - database
-    restart: always
+    restart: unless-stopped
     healthcheck:
       disable: false
     networks:
@@ -37,6 +40,24 @@ services:
       - "traefik.http.services.immich.loadbalancer.server.port=2283"
       # Since the container has 2 networks we need to specify which one should be used by traefik
       - "traefik.docker.network=reverse-proxy"
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION}
+    container_name: immich_machine_learning
+    env_file:
+      - .env
+    volumes:
+      - model-cache:/cache
+    restart: unless-stopped
+    healthcheck:
+      disable: false
+    networks:
+      - immich
+
+    mem_limit: 4g
+    mem_reservation: 512m
+    cpuset: "0,1"            # pin to 2 cores (cores 0 and 1)
+    cpu_shares: 256          # loses the CPU tug-of-war vs default-weight (1024) containers under contention
 
   redis:
     image: docker.io/valkey/valkey:9
