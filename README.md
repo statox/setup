@@ -4,8 +4,8 @@ This is a collection of ansible scripts I use to setup my workstation as well as
 
 ## How to use this repo
 
-1. Run `sudo ./bootstrap` to install dependencies
-   - This installs [uv](https://docs.astral.sh/uv/) which is used to install and run ansible
+1. Install [mise](https://mise.jdx.dev/installing-mise.html) which is used to install and run ansible (versions are declared in `mise.toml`)
+1. Run `./bootstrap` to install dependencies
    - Running bash script tests via `npx bats` additionally requires Node.js/npm to already be installed - `bootstrap` does not install it
 1. If needed update the `inventory` file
 1. Update the `vars/config.local` file
@@ -31,14 +31,14 @@ touch "install_$(hostname).yml"
 
 1. Add the roles as needed taking inspiration from the existing files
 1. Run `./run install_[host].yml` (`-C` allows to run in dry mode)
-   - This uses `uv` to invoke the `ansible-playbook` installed in the local environment
+   - This uses `mise` to invoke the `ansible-playbook` installed in the local environment
 1. ⚠ Check the logs some tasks add a message saying what to do next
 
 ### Linting
 
-`uv` has `ansible-lint` installed so we can check the repo with
+`mise` has `ansible-lint` installed so we can check the repo with
 ```bash
-uv run -- ansible-lint --fix
+mise exec -- ansible-lint --fix
 ```
 
 ### Testing bash scripts
@@ -62,7 +62,7 @@ The script [`/vars/get-vault-password.sh`](/vars/get-vault-password.sh) is a hel
 
 ```bash
 # The vault was not created with a --vault-id param
-uv run -- ansible-vault view --vault-password-file vars/get-vault-password.sh vars/secrets.yml.enc
+mise exec -- ansible-vault view --vault-password-file vars/get-vault-password.sh vars/secrets.yml.enc
 ```
 
 To run a playbook using this the secrets:

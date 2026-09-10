@@ -23,8 +23,13 @@ for i in "$@"; do
     esac
 done
 
+command -v mise >/dev/null 2>&1 || {
+    echo "The 'mise' command is not found. Please run the bootstrap script first."
+    exit 1
+}
+
 if [ $CHECK = true ]; then
-    ansible localhost -m include_role -a name="$ROLE" --check
+    mise exec -- ansible localhost -m include_role -a name="$ROLE" --check
 else
-    ansible localhost -m include_role -a name="$ROLE"
+    mise exec -- ansible localhost -m include_role -a name="$ROLE"
 fi

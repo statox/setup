@@ -6,9 +6,9 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Check if uv command exists
-command -v uv >/dev/null 2>&1 || {
-    echo "The 'uv' command is not found. Please run the bootstrap script first."
+# Check if mise command exists
+command -v mise >/dev/null 2>&1 || {
+    echo "The 'mise' command is not found. Please run the bootstrap script first."
     exit 1
 }
 
@@ -25,8 +25,8 @@ fi
 shift
 ansible_args="$*"
 
-# Run ansible-playbook from the uv dependencies
-ansible_command="uv run -- ansible-playbook"
+# Run ansible-playbook from the mise-managed tools
+ansible_command="mise exec -- ansible-playbook"
 
 # Execute the constructed ansible command
 eval "$ansible_command" "$ansible_args" "$playbook_file"

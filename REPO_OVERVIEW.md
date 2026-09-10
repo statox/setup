@@ -51,7 +51,7 @@ This repo is a personal collection of [Ansible](https://docs.ansible.com/) playb
 Example usage, from the [`README.md`](README.md):
 
 ```bash
-sudo ./bootstrap                       # installs uv, which manages ansible
+./bootstrap                            # verifies mise is installed, sets up ansible
 touch "install_$(hostname).yml"        # new machine, new playbook
 ./run install_$(hostname).yml -C       # dry run
 ./run install_$(hostname).yml
@@ -66,12 +66,12 @@ touch "install_$(hostname).yml"        # new machine, new playbook
 ```
 setup/
 ├── install_*.yml        top-level playbooks, one per machine (adrien-XPS-9320, afabre-PF514G4Z, panda, raspberry)
-├── run, run-role         wrapper scripts around `uv run ansible-playbook` / ad-hoc role runs
-├── bootstrap              installs uv, copies inventory.sample -> inventory, installs galaxy collections
+├── run, run-role         wrapper scripts around `mise exec -- ansible-playbook` / ad-hoc role runs
+├── bootstrap              checks mise is installed, copies inventory.sample -> inventory, installs galaxy collections
 ├── ansible.cfg            points ansible at the local `inventory` file
 ├── inventory(.sample)     defines hosts: local, raspberry, panda, temp_ec2
 ├── vars/                  config.local (gitignored, per-machine) + secrets.yml.enc (ansible-vault)
-├── pyproject.toml, uv.lock  Python/uv-managed dependency pin for ansible + ansible-lint
+├── mise.toml              mise-managed tool versions (python, ansible, ansible-lint)
 └── roles/
     ├── system/    root-level OS config shared by workstations + panda (docker, firewall, i3, sudo...)
     ├── user/      non-root workstation setup (dotfiles, shell, editor, dev toolchains)
@@ -206,17 +206,17 @@ Apps: `traefik` (reverse proxy/TLS termination in front of Cloudflare), `portain
 ### Stack & Tooling
 
 - **Language**: Python 3.10+ (per [`.python-version`](.python-version) and [`pyproject.toml`](pyproject.toml)), used only to run Ansible - there is no application code in this language.
-- **Package manager**: [`uv`](https://docs.astral.sh/uv/), standalone repo (not part of a larger workspace). Dependencies are pinned in [`uv.lock`](uv.lock).
-- **System dependencies**: `curl` or `wget` (bootstrap fetches `uv`), and whatever each role installs on the target (Docker, ufw, etc.). No database or queue is needed to run the tooling itself.
+- **Package manager**: [`mise`](https://mise.jdx.dev/), standalone repo (not part of a larger workspace). Tool versions are pinned in [`mise.toml`](mise.toml).
+- **System dependencies**: `mise` must be installed beforehand (`bootstrap` fails if it's missing), and whatever each role installs on the target (Docker, ufw, etc.). No database or queue is needed to run the tooling itself.
 - **Important repo dependencies**: `ansible` (>=10.7.0) and `ansible-lint` (>=25.7.0) per [`pyproject.toml`](pyproject.toml); `community.general` and `community.docker` Ansible Galaxy collections, installed by [`bootstrap`](bootstrap).
 - **Linters/checkers**: `ansible-lint`, configured in [`.ansible-lint.yml`](.ansible-lint.yml) at the `basic` profile. That file's `exclude_paths` still references `roles/server/glance/files/docker/config/glance.yml`, a role that no longer exists in the tree - a stale exclusion left over from a removed role.
-- **CI**: none found. No `.github/workflows`, `.gitlab-ci.yml`, or other CI config exists in the repo. Verification is manual (`uv run -- ansible-lint --fix`, `./run install_<host>.yml -C` dry runs).
+- **CI**: none found. No `.github/workflows`, `.gitlab-ci.yml`, or other CI config exists in the repo. Verification is manual (`mise exec -- ansible-lint --fix`, `./run install_<host>.yml -C` dry runs).
 
 ### Setup
 
 Setup is documented in the [`README.md`](README.md) "How to use this repo" section:
 
-1. `sudo ./bootstrap` - installs `uv` and the Ansible Galaxy collections.
+1. `./bootstrap` - checks `mise` is installed, installs the mise-managed tools and the Ansible Galaxy collections.
 2. Update the `inventory` file (created from [`inventory.sample`](inventory.sample) by `bootstrap`) if needed.
 3. Update `vars/config.local` (created from [`vars/config.local.sample`](vars/config.local.sample) manually - `bootstrap` does not do this step).
 4. Create `install_$(hostname).yml` for a new machine, following an existing playbook as a template.
@@ -232,7 +232,7 @@ Not applicable in the traditional sense - this repo has no compiled artifact. "B
 
 There is no automated test suite. Verification relies on:
 
-- `uv run -- ansible-lint --fix` for static checking (documented in the README).
+- `mise exec -- ansible-lint --fix` for static checking (documented in the README).
 - `./run install_<host>.yml -C` (Ansible's check/dry-run mode) to preview changes before applying.
 - `./run-role [-C] <role-name>` for running a single role ad-hoc via `ansible localhost -m include_role` - the script's own comment warns roles using `ansible_env.USER` can't be run this way, since ad-hoc commands skip fact-gathering.
 
@@ -245,7 +245,7 @@ No coverage measurement applies to an infrastructure-as-code repo like this.
 - **Getting started**: follow the README's "How to use this repo" section directly (see Setup above) - it is accurate and matches the actual scripts.
 - **A representative feature, end to end - deploying a server app**: [`install_panda.yml`](install_panda.yml) (see which roles run and in what order) → [`roles/server/servarr/tasks/main.yml`](roles/server/servarr/tasks/main.yml) (variable guards, then `import_tasks` into the shared deploy role) → [`roles/server/docker_compose_setup/tasks/main.yml`](roles/server/docker_compose_setup/tasks/main.yml) (the actual copy/template/`docker compose up` logic) → [`roles/server/servarr/files/docker/docker-compose.yml`](roles/server/servarr/files/docker/docker-compose.yml) and [`roles/server/servarr/files/docker/.env.j2`](roles/server/servarr/files/docker/.env.j2) (what actually gets deployed). This path shows the shared-role pattern that every `roles/server/*` app follows.
 - **A representative feature, end to end - workstation setup**: [`install_adrien-XPS-9320.yml`](install_adrien-XPS-9320.yml) (full role list with ordering comments) → [`roles/user/github/tasks/main.yml`](roles/user/github/tasks/main.yml) (SSH key generation, manual pause) → [`roles/user/dotfiles/tasks/main.yml`](roles/user/dotfiles/tasks/main.yml) (clones dotfiles using that SSH key) - shows how cross-role ordering is handled by comment-only convention rather than code.
-- **Dev tooling**: `./run <playbook> -C` for dry runs, `./run-role <role>` for isolated ad-hoc role testing (with its fact-gathering caveat), `uv run -- ansible-lint --fix` for linting - all covered above in Setup/Tests, no additional harness exists.
+- **Dev tooling**: `./run <playbook> -C` for dry runs, `./run-role <role>` for isolated ad-hoc role testing (with its fact-gathering caveat), `mise exec -- ansible-lint --fix` for linting - all covered above in Setup/Tests, no additional harness exists.
 
 ### Documentation map
 
@@ -253,7 +253,7 @@ No coverage measurement applies to an infrastructure-as-code repo like this.
 - No `CLAUDE.md`/`AGENT.md` at the repo root for this `setup/` project itself (the `.claude/` directory here holds local settings, not project instructions).
 - [`roles/server/elk/README.md`](roles/server/elk/README.md), [`roles/server/servarr/README.md`](roles/server/servarr/README.md)(referenced in commit history), and [`roles/ui/nerdfonts/README.md`](roles/ui/nerdfonts/README.md) - a few individual roles have their own short READMEs documenting role-specific setup notes (e.g. where the nerdfont files came from).
 - No `docs/` directory.
-- External links surfaced in the README: [uv docs](https://docs.astral.sh/uv/), [ansible-vault guide](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-files-with-ansible-vault), [Dashlane CLI](https://github.com/Dashlane/dashlane-cli). No corporate wiki - this is a personal repo.
+- External links surfaced in the README: [mise docs](https://mise.jdx.dev/), [ansible-vault guide](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-files-with-ansible-vault), [Dashlane CLI](https://github.com/Dashlane/dashlane-cli). No corporate wiki - this is a personal repo.
 
 ## Repo High Level Analysis
 
