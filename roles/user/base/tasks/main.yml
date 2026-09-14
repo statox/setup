@@ -15,6 +15,7 @@
     state: latest
     name:
       - blueman
+      - chafa # Terminal image viewer
       - redshift-gtk
       - brightnessctl
       - flatpak
