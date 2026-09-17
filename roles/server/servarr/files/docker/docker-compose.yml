@@ -112,6 +112,25 @@ services:
     networks:
       - reverse-proxy
 
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    init: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/seerr:/app/config
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.seerr.rule=Host(`${SEERR_UI_DOMAIN}`)"
+      - "traefik.http.routers.seerr.entrypoints=websecure"
+      - "traefik.http.routers.seerr.tls=true"
+
   servarr-jellyfin:
     image: jellyfin/jellyfin:12.0
     container_name: servarr-jellyfin

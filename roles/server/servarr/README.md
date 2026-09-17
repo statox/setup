@@ -1,4 +1,4 @@
-# Servarr stack (Prowlarr + Sonarr + Radarr + Bazarr + Transmission + Jellyfin)
+# Servarr stack (Prowlarr + Sonarr + Radarr + Bazarr + Seerr + Transmission + Jellyfin)
 
 This role installs a self-contained "servarr" stack to find and automatically
 fetch torrents for TV shows and movies, and make them available in a media
@@ -28,6 +28,7 @@ This role needs other roles to have run:
     servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
     servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
     bazarr_ui_domain: "bazarr.statox.fr"
+    seerr_ui_domain: "seerr.statox.fr"
 ```
 
 Plus two secrets that must exist in `vars/secrets.yml.enc` (see the main repo
@@ -66,7 +67,8 @@ All data lives under `/home/servarr`, created by this role with owner/group
 │   ├── sonarr
 │   ├── radarr
 │   ├── jellyfin
-│   └── bazarr
+│   ├── bazarr
+│   └── seerr
 └── cache
     └── jellyfin
 ```
@@ -105,3 +107,9 @@ one-time manual steps are needed after the first deploy:
    Settings > Languages, create a Languages Profile with French as the
    first (cutoff) priority and English as fallback, and set it as the
    default profile so it applies to newly added series/movies.
+7. In **Seerr**, sign in with your Jellyfin credentials, then under
+   Settings > Services add Sonarr (host `sonarr`, port `8989`) and Radarr
+   (host `radarr`, port `7878`) with their API keys and the same root
+   folders/quality profiles configured above, and add Jellyfin (host
+   `servarr-jellyfin`, port `8096`) under Settings > Jellyfin so Seerr can
+   check what's already in the library.
