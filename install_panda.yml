@@ -17,7 +17,6 @@
       vars:
         open_ports:
           - 443
-          - 2222 # For media_sftp.statox.fr
           - 2223 # For gitea.statox.fr ssh cloning
           - 51414 # For servarr-transmission P2P
     - role: server/traefik
@@ -26,11 +25,6 @@
     - role: server/portainer
       vars:
         portainer_ui_domain: "panda-portainer.statox.fr"
-    - role: server/transmission
-      vars:
-        transmission_ui_domain: "transmission.statox.fr"
-        transmission_media_domain: "media.statox.fr"
-        jellyfin_domain: "jellyfin.statox.fr"
     - role: server/elk
       vars:
         elastic_cluster_domain: "elk.statox.fr"
