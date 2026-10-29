@@ -30,6 +30,34 @@ services:
       - "traefik.http.routers.servarr-transmission.entrypoints=websecure"
       - "traefik.http.routers.servarr-transmission.tls=true"
 
+  servarr-qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: servarr-qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=51415
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/qbittorrent:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    expose:
+      - 8080
+    ports:
+      - 51415:51415
+      - 51415:51415/udp
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.servarr-qbittorrent.rule=Host(`${SERVARR_QBITTORRENT_UI_DOMAIN}`)"
+      - "traefik.http.routers.servarr-qbittorrent.entrypoints=websecure"
+      - "traefik.http.routers.servarr-qbittorrent.tls=true"
+      - "traefik.http.services.servarr-qbittorrent.loadbalancer.server.port=8080"
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
