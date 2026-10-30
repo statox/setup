@@ -1,5 +1,18 @@
 # immich_ml_orchestrator
 
+# Likely no longer needed
+
+Since commit `804d8ae` ("Immich - Add ML Container", Sep 2026), the
+`roles/server/immich` docker-compose stack runs an `immich-machine-learning`
+container locally on panda, on the same `immich` docker network as
+`immich-server`. Immich can reach it directly with no DNS indirection, so
+Smart Search / Face Detection / Duplicate Detection now run locally instead
+of needing this ECS-based scale-to-zero worker.
+
+This role, its Terraform-provisioned ECS Fargate service, and the manual
+`update_dns.sh` workaround below are kept around for now as a fallback (not
+torn down), but shouldn't need to be touched during normal use anymore.
+
 Deploys a cron-driven bash script to panda that scales the on-demand
 `immich-machine-learning` ECS Fargate service (provisioned by Terraform in
 `statox-provisioning/terraform/immich/ml_worker.tf`) up when Immich has
