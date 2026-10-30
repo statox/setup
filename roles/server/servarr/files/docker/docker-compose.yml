@@ -114,6 +114,25 @@ services:
       - "traefik.http.routers.radarr.entrypoints=websecure"
       - "traefik.http.routers.radarr.tls=true"
 
+  whisparr:
+    image: ghcr.io/hotio/whisparr:v3
+    container_name: whisparr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${SERVARR_HOME_DIR}/config/whisparr:/config
+      - ${SERVARR_HOME_DIR}/data:/data
+    restart: unless-stopped
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whisparr.rule=Host(`${WHISPARR_UI_DOMAIN}`)"
+      - "traefik.http.routers.whisparr.entrypoints=websecure"
+      - "traefik.http.routers.whisparr.tls=true"
+
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr

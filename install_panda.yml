@@ -41,6 +41,7 @@
         prowlarr_ui_domain: "prowlarr.statox.fr"
         sonarr_ui_domain: "sonarr.statox.fr"
         radarr_ui_domain: "radarr.statox.fr"
+        whisparr_ui_domain: "whisparr.statox.fr"
         servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
         servarr_qbittorrent_ui_domain: "torrent.statox.fr"
         servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"

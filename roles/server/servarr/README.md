@@ -1,4 +1,4 @@
-# Servarr stack (Prowlarr + Sonarr + Radarr + Bazarr + Seerr + Transmission + qBittorrent + Jellyfin)
+# Servarr stack (Prowlarr + Sonarr + Radarr + Whisparr + Bazarr + Seerr + Transmission + qBittorrent + Jellyfin)
 
 This role installs a self-contained "servarr" stack to find and automatically
 fetch torrents for TV shows and movies, and make them available in a media
@@ -29,6 +29,7 @@ This role needs other roles to have run:
     prowlarr_ui_domain: "prowlarr.statox.fr"
     sonarr_ui_domain: "sonarr.statox.fr"
     radarr_ui_domain: "radarr.statox.fr"
+    whisparr_ui_domain: "whisparr.statox.fr"
     servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
     servarr_qbittorrent_ui_domain: "torrent.statox.fr"
     servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
@@ -65,13 +66,15 @@ All data lives under `/home/servarr`, created by this role with owner/group
 │   │       └── tv
 │   └── library
 │       ├── movies
-│       └── tv
+│       ├── tv
+│       └── whisparr
 ├── config
 │   ├── transmission
 │   ├── qbittorrent
 │   ├── prowlarr
 │   ├── sonarr
 │   ├── radarr
+│   ├── whisparr
 │   ├── jellyfin
 │   ├── bazarr
 │   └── seerr
@@ -79,8 +82,8 @@ All data lives under `/home/servarr`, created by this role with owner/group
     └── jellyfin
 ```
 
-`servarr-transmission`, `servarr-qbittorrent`, `sonarr`, `radarr` and `bazarr`
-all mount the entire `/home/servarr/data` directory to `/data` inside the container — this is
+`servarr-transmission`, `servarr-qbittorrent`, `sonarr`, `radarr`, `whisparr`
+and `bazarr` all mount the entire `/home/servarr/data` directory to `/data` inside the container — this is
 required for hardlinks/atomic moves to work between the torrents and library
 folders (see the [servarr docker guide](https://wiki.servarr.com/docker-guide)),
 and for `bazarr` to see files at the exact same paths Sonarr/Radarr report,
@@ -127,7 +130,8 @@ one-time manual steps are needed after the first deploy:
    is seeded by the role from `templates/qBittorrent.conf.j2` and
    `templates/categories.json.j2`:
    - save paths `/data/torrents/complete` and `/data/torrents/incomplete`
-   - the allowed WebUI domain
+   - the allowed WebUI domains: the public domain, and `servarr-qbittorrent`
+     so the other containers (e.g. Whisparr) can reach it by container name
    - the VueTorrent web UI, installed in `/vuetorrent` by the `DOCKER_MODS`
      in `docker-compose.yml`
    - Automatic torrent management by default: each category is saved in its

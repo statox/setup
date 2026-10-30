@@ -14,6 +14,11 @@
     msg: "Variable '{{ radarr_ui_domain }}' is not defined"
   when: radarr_ui_domain is undefined
 
+- name: Fail if whisparr_ui_domain is undefined
+  ansible.builtin.fail:
+    msg: "Variable '{{ whisparr_ui_domain }}' is not defined"
+  when: whisparr_ui_domain is undefined
+
 - name: Fail if servarr_transmission_ui_domain is undefined
   ansible.builtin.fail:
     msg: "Variable '{{ servarr_transmission_ui_domain }}' is not defined"
@@ -53,12 +58,14 @@
     - /home/servarr/data/torrents/complete/tv
     - /home/servarr/data/library/movies
     - /home/servarr/data/library/tv
+    - /home/servarr/data/library/whisparr
     - /home/servarr/config/transmission
     - /home/servarr/config/qbittorrent
     - /home/servarr/config/qbittorrent/qBittorrent
     - /home/servarr/config/prowlarr
     - /home/servarr/config/sonarr
     - /home/servarr/config/radarr
+    - /home/servarr/config/whisparr
     - /home/servarr/config/jellyfin
     - /home/servarr/config/bazarr
     - /home/servarr/config/seerr
