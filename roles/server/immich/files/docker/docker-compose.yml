@@ -21,6 +21,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
+    environment:
+      MACHINE_LEARNING_MODEL_REVISION: v2
     expose:
       - 2283
     depends_on:
