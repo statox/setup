@@ -97,7 +97,7 @@
     - name: Every container on the box has a unit
       ansible.builtin.assert:
         that:
-          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent']
+          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent', 'servarr-player']
         fail_msg: "{{ servarr_storage_box_containers | to_json }}"
 
     - name: Each unit runs its container only while the box is mounted
@@ -137,6 +137,20 @@
           - "'${SERVARR_HOME_DIR}/qbittorrent-data:/data' in qbt.volumes"
           - "'${SERVARR_HOME_DIR}/data:/data' not in qbt.volumes"
         fail_msg: "{{ qbt | to_json }}"
+
+    - name: The player reads the box's completed torrents, read-only
+      vars:
+        player: "{{ compose.services['servarr-player'] }}"
+        media: "{{ player.volumes | selectattr('target', 'defined') | selectattr('target', '==', '/media') | first }}"
+      ansible.builtin.assert:
+        that:
+          - media.source == '${SERVARR_HOME_DIR}/qbittorrent-data/torrents/complete'
+          - media.read_only
+          - "'${SERVARR_HOME_DIR}/config/player:/config' in player.volumes"
+          - "'${SERVARR_HOME_DIR}/cache/player:/cache' in player.volumes"
+          - "'traefik.http.routers.servarr-player.rule=Host(`${SERVARR_PLAYER_DOMAIN}`)' in player.labels"
+          - "'JELLYFIN_PublishedServerUrl=https://${SERVARR_PLAYER_DOMAIN}' in player.environment"
+        fail_msg: "{{ player | to_json }}"
 
 - name: Storage Box - an unreachable box doesn't abort the deploy
   hosts: localhost

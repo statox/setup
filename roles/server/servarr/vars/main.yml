@@ -50,3 +50,5 @@ servarr_storage_box_fstab_regexp: '^\S+\s+{{ servarr_qbittorrent_data_dir | rege
 servarr_storage_box_containers:
   - name: servarr-qbittorrent
     description: qBittorrent
+  - name: servarr-player
+    description: Jellyfin player

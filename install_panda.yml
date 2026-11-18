@@ -45,6 +45,7 @@
         servarr_transmission_ui_domain: "servarr-transmission.statox.fr"
         servarr_qbittorrent_ui_domain: "torrent.statox.fr"
         servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
+        servarr_player_domain: "player.statox.fr"
         bazarr_ui_domain: "bazarr.statox.fr"
         seerr_ui_domain: "seerr.statox.fr"
         # Storage Box created in the provisioning repo

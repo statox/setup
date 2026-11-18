@@ -34,6 +34,11 @@
     msg: "Variable '{{ servarr_jellyfin_domain }}' is not defined"
   when: servarr_jellyfin_domain is undefined
 
+- name: Fail if servarr_player_domain is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'servarr_player_domain' is not defined"
+  when: servarr_player_domain is undefined
+
 - name: Fail if bazarr_ui_domain is undefined
   ansible.builtin.fail:
     msg: "Variable '{{ bazarr_ui_domain }}' is not defined"
@@ -87,9 +92,11 @@
     - /home/servarr/config/radarr
     - /home/servarr/config/whisparr
     - /home/servarr/config/jellyfin
+    - /home/servarr/config/player
     - /home/servarr/config/bazarr
     - /home/servarr/config/seerr
     - /home/servarr/cache/jellyfin
+    - /home/servarr/cache/player
 
 # Only seeds the initial config: qBittorrent rewrites these files itself,
 # so after the first start the qBittorrent UI is the source of truth
