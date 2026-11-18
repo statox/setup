@@ -1,0 +1,52 @@
+---
+servarr_qbittorrent_data_dir: /home/servarr/qbittorrent-data
+# systemd name of the mount generated from the fstab entry
+# (systemd-escape --path /home/servarr/qbittorrent-data)
+servarr_qbittorrent_mount_unit: 'home-servarr-qbittorrent\x2ddata.mount'
+servarr_storage_box_config_dir: /etc/servarr-storage-box
+
+# SSHFS options:
+# - connection: key and pinned host key from servarr_storage_box_config_dir,
+#   reconnect after a network drop, keepalives to detect it, give up
+#   connecting after 10s when the box is unreachable
+# - access: allow_other lets the container user in, default_permissions makes
+#   the kernel enforce the uid/gid/umask below so only that user can
+#   read and write
+# - boot: mounted once the network is up; nofail lets panda boot when the
+#   box is unreachable
+servarr_storage_box_mount_options: "{{ [
+  'port=' ~ servarr_storage_box_port,
+  'IdentityFile=' ~ servarr_storage_box_config_dir ~ '/id_ed25519',
+  'UserKnownHostsFile=' ~ servarr_storage_box_config_dir ~ '/known_hosts',
+  'StrictHostKeyChecking=yes',
+  'BatchMode=yes',
+  'reconnect',
+  'ServerAliveInterval=15',
+  'ServerAliveCountMax=3',
+  'Compression=no',
+  'ConnectTimeout=10',
+  'allow_other',
+  'default_permissions',
+  'uid=' ~ servarr_storage_box_uid,
+  'gid=' ~ servarr_storage_box_gid,
+  'umask=0027',
+  'nosuid',
+  'nodev',
+  'noexec',
+  '_netdev',
+  'nofail',
+  'x-systemd.after=network-online.target',
+] | join(',') }}"
+
+servarr_storage_box_fstab_line: >-
+  {{ servarr_storage_box_user }}@{{ servarr_storage_box_host }}:{{ servarr_storage_box_remote_dir }}
+  {{ servarr_qbittorrent_data_dir }} fuse.sshfs {{ servarr_storage_box_mount_options }} 0 0
+# Matches the fstab entry of the mount point, whatever its options
+servarr_storage_box_fstab_regexp: '^\S+\s+{{ servarr_qbittorrent_data_dir | regex_escape }}\s'
+
+# Containers whose data is on the Storage Box: each one gets a systemd unit
+# (templates/servarr-storage-box-container.service.j2) that runs it only
+# while the box is mounted
+servarr_storage_box_containers:
+  - name: servarr-qbittorrent
+    description: qBittorrent

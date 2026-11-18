@@ -1,0 +1,181 @@
+---
+# Checks the Storage Box variables and templates of the servarr role without
+# touching the machine. Run from the repo root:
+#
+#   mise exec -- ansible-playbook roles/server/servarr/tests/storage_box_test.yml
+- name: Storage Box - fstab line
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ../defaults/main.yml
+    - ../vars/main.yml
+  vars:
+    servarr_storage_box_host: sb.example
+    servarr_storage_box_user: u1
+    expected_options: >-
+      port=23,IdentityFile=/etc/servarr-storage-box/id_ed25519,UserKnownHostsFile=/etc/servarr-storage-box/known_hosts,StrictHostKeyChecking=yes,BatchMode=yes,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,Compression=no,ConnectTimeout=10,allow_other,default_permissions,uid=1000,gid=1000,umask=0027,nosuid,nodev,noexec,_netdev,nofail,x-systemd.after=network-online.target
+  tasks:
+    - name: Fstab line has the expected source, mount point, type and options
+      ansible.builtin.assert:
+        that:
+          - servarr_storage_box_fstab_line == 'u1@sb.example:qbittorrent /home/servarr/qbittorrent-data fuse.sshfs ' + expected_options + ' 0 0'
+        fail_msg: "{{ servarr_storage_box_fstab_line }}"
+
+    - name: Fstab line is matched by the lineinfile regexp of the role
+      ansible.builtin.assert:
+        that:
+          - servarr_storage_box_fstab_line is regex(servarr_storage_box_fstab_regexp)
+          - "'u1@sb.example:qbittorrent /home/servarr/qbittorrent-data fuse.sshfs port=22 0 0' is regex(servarr_storage_box_fstab_regexp)"
+          - "'u1@sb.example:x /home/servarr/qbittorrent-data2 fuse.sshfs port=23 0 0' is not regex(servarr_storage_box_fstab_regexp)"
+
+    - name: Override the owner presented by the mount
+      ansible.builtin.set_fact:
+        servarr_storage_box_uid: 2000
+        servarr_storage_box_gid: 2001
+
+    - name: Fstab line uses the overridden owner
+      ansible.builtin.assert:
+        that:
+          - "',uid=2000,gid=2001,' in servarr_storage_box_fstab_line"
+
+    - name: Use a mount point with regex metacharacters
+      ansible.builtin.set_fact:
+        servarr_qbittorrent_data_dir: /home/a.b+c
+
+    - name: Fstab regexp matches the mount point literally
+      ansible.builtin.assert:
+        that:
+          - "'u1@sb.example:x /home/a.b+c fuse.sshfs port=23 0 0' is regex(servarr_storage_box_fstab_regexp)"
+          - "'u1@sb.example:x /home/aXbbc fuse.sshfs port=23 0 0' is not regex(servarr_storage_box_fstab_regexp)"
+        fail_msg: "{{ servarr_storage_box_fstab_regexp }}"
+
+    # Facts outlive the play: restore the role's mount point for the next ones
+    - name: Restore the mount point
+      ansible.builtin.set_fact:
+        servarr_qbittorrent_data_dir: /home/servarr/qbittorrent-data
+
+- name: Storage Box - read-ahead service
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ../defaults/main.yml
+    - ../vars/main.yml
+  vars:
+    # Literal unit name with its backslash (YAML single quotes keep it as is)
+    mount_unit: 'home-servarr-qbittorrent\x2ddata.mount'
+  tasks:
+    - name: Render the read-ahead unit
+      ansible.builtin.set_fact:
+        unit: "{{ lookup('ansible.builtin.template', '../templates/servarr-storage-box-read-ahead.service.j2') }}"
+
+    - name: Read-ahead unit runs on every mount of the box
+      ansible.builtin.assert:
+        that:
+          - "('BindsTo=' ~ mount_unit) in unit.splitlines()"
+          - "('After=' ~ mount_unit) in unit.splitlines()"
+          - "('WantedBy=' ~ mount_unit) in unit.splitlines()"
+          - "'ExecStart=/usr/local/sbin/servarr-set-read-ahead /home/servarr/qbittorrent-data 4096' in unit.splitlines()"
+          - "'$' not in unit"
+        fail_msg: "{{ unit }}"
+
+- name: Storage Box - container services and compose
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ../defaults/main.yml
+    - ../vars/main.yml
+  vars:
+    # Literal unit name with its backslash (YAML single quotes keep it as is)
+    mount_unit: 'home-servarr-qbittorrent\x2ddata.mount'
+    docker_app_home: /home/ubuntu/.docker-apps/servarr
+    compose_cmd: /usr/bin/docker compose --project-directory /home/ubuntu/.docker-apps/servarr --profile storage-box
+    compose: "{{ lookup('ansible.builtin.file', '../files/docker/docker-compose.yml') | from_yaml }}"
+  tasks:
+    - name: Every container on the box has a unit
+      ansible.builtin.assert:
+        that:
+          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent']
+        fail_msg: "{{ servarr_storage_box_containers | to_json }}"
+
+    - name: Each unit runs its container only while the box is mounted
+      vars:
+        container_unit: "{{ lookup('ansible.builtin.template', '../templates/servarr-storage-box-container.service.j2') }}"
+      ansible.builtin.assert:
+        that:
+          - "('BindsTo=' ~ mount_unit) in container_unit.splitlines()"
+          - "'Requires=docker.service servarr-storage-box-read-ahead.service' in container_unit.splitlines()"
+          - "('After=docker.service ' ~ mount_unit ~ ' servarr-storage-box-read-ahead.service') in container_unit.splitlines()"
+          - "('ExecStart=' ~ compose_cmd ~ ' up -d --force-recreate ' ~ servarr_box_container.name) in container_unit.splitlines()"
+          - "('ExecStop=' ~ compose_cmd ~ ' stop ' ~ servarr_box_container.name) in container_unit.splitlines()"
+          - "('WantedBy=' ~ mount_unit ~ ' multi-user.target') in container_unit.splitlines()"
+          - "'Type=oneshot' in container_unit.splitlines()"
+          - "'RemainAfterExit=yes' in container_unit.splitlines()"
+        fail_msg: "{{ container_unit }}"
+      loop: "{{ servarr_storage_box_containers }}"
+      loop_control:
+        loop_var: servarr_box_container
+        label: "{{ servarr_box_container.name }}"
+
+    - name: Each container on the box is only started by its unit
+      vars:
+        service: "{{ compose.services[item] }}"
+      ansible.builtin.assert:
+        that:
+          - service.restart == 'on-failure'
+          - service.profiles == ['storage-box']
+        fail_msg: "{{ service | to_json }}"
+      loop: "{{ servarr_storage_box_containers | map(attribute='name') | list }}"
+
+    - name: The qBittorrent container uses the box
+      vars:
+        qbt: "{{ compose.services['servarr-qbittorrent'] }}"
+      ansible.builtin.assert:
+        that:
+          - "'${SERVARR_HOME_DIR}/qbittorrent-data:/data' in qbt.volumes"
+          - "'${SERVARR_HOME_DIR}/data:/data' not in qbt.volumes"
+        fail_msg: "{{ qbt | to_json }}"
+
+- name: Storage Box - an unreachable box doesn't abort the deploy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    storage_box_tasks: "{{ lookup('ansible.builtin.file', '../tasks/storage_box.yml') | from_yaml }}"
+    main_tasks: "{{ lookup('ansible.builtin.file', '../tasks/main.yml') | from_yaml }}"
+    # Names of the tasks run inside a block that has a rescue
+    rescued_storage_box: "{{ storage_box_tasks | selectattr('rescue', 'defined') | map(attribute='block') | flatten | map(attribute='name') | list }}"
+    rescued_main: "{{ main_tasks | selectattr('rescue', 'defined') | map(attribute='block') | flatten | map(attribute='name') | list }}"
+  tasks:
+    - name: Mounting the box and starting its containers are rescued
+      ansible.builtin.assert:
+        that:
+          - "'Mount Storage Box' in rescued_storage_box"
+          - "'Apply read-ahead to the mounted box' in rescued_storage_box"
+          - "'Enable and restart the box containers services' in rescued_main"
+          - "'Create the box folders' in rescued_storage_box"
+        fail_msg: "{{ rescued_storage_box + rescued_main }}"
+
+    - name: The rescues only warn when the box is not mounted, and fail otherwise
+      vars:
+        rescues:
+          - "{{ storage_box_tasks | selectattr('rescue', 'defined') | map(attribute='rescue') | first }}"
+          - "{{ main_tasks | selectattr('rescue', 'defined') | map(attribute='rescue') | first }}"
+        fail_task: "{{ item | selectattr('name', 'match', 'Fail on errors') | first }}"
+        warn_task: "{{ item | selectattr('name', 'match', 'Warn that') | first }}"
+      ansible.builtin.assert:
+        that:
+          - fail_task.when is search('rc == 0')
+          - warn_task.when is search('rc != 0')
+        fail_msg: "{{ item | to_json }}"
+      loop: "{{ rescues }}"
+
+    - name: The box folders the containers bind are created on the box
+      vars:
+        create_task: "{{ storage_box_tasks | selectattr('rescue', 'defined') | map(attribute='block') | flatten | selectattr('name', '==', 'Create the box folders') | first }}"
+      ansible.builtin.assert:
+        that:
+          - create_task.loop == ['library/movies', 'library/tv', 'torrents/complete', 'torrents/incomplete']
+        fail_msg: "{{ create_task | to_json }}"

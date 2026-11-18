@@ -44,6 +44,26 @@
     msg: "Variable '{{ seerr_ui_domain }}' is not defined"
   when: seerr_ui_domain is undefined
 
+- name: Fail if servarr_storage_box_host is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'servarr_storage_box_host' is not defined"
+  when: servarr_storage_box_host is undefined
+
+- name: Fail if servarr_storage_box_user is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'servarr_storage_box_user' is not defined"
+  when: servarr_storage_box_user is undefined
+
+- name: Fail if servarr_storage_box_host_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'servarr_storage_box_host_key' is not defined"
+  when: servarr_storage_box_host_key is undefined
+
+- name: Fail if servarr_storage_box_ssh_private_key is undefined
+  ansible.builtin.fail:
+    msg: "Variable 'servarr_storage_box_ssh_private_key' is not defined"
+  when: servarr_storage_box_ssh_private_key is undefined
+
 - name: Create servarr data and config directories
   become: true
   ansible.builtin.file:
@@ -86,8 +106,64 @@
     - qBittorrent.conf
     - categories.json
 
+- name: Mount the Storage Box holding qBittorrent's data
+  ansible.builtin.import_tasks: storage_box.yml
+  become: true
+
 - name: Install servarr docker app
   ansible.builtin.import_tasks: ../../docker_compose_setup/main.yml
   vars:
     app_name: servarr
     local_docker_path: "{{ role_path }}/files/docker/"
+
+# docker_compose_setup leaves out the containers on the Storage Box (compose
+# profile storage-box): their systemd units run them while the box is mounted.
+# Restarting the units recreates the containers with the config deployed above.
+- name: Install the box containers services
+  become: true
+  ansible.builtin.template:
+    src: servarr-storage-box-container.service.j2
+    dest: "/etc/systemd/system/{{ servarr_box_container.name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ servarr_storage_box_containers }}"
+  loop_control:
+    loop_var: servarr_box_container
+    label: "{{ servarr_box_container.name }}"
+
+# Fails when the Storage Box is not mounted: the warning reports it and the
+# deploy goes on. Any other error (the box is mounted) fails the deploy.
+- name: Start the box containers
+  block:
+    - name: Enable and restart the box containers services
+      become: true
+      ansible.builtin.systemd_service:
+        name: "{{ item.name }}.service"
+        enabled: true
+        daemon_reload: true
+        state: restarted
+      loop: "{{ servarr_storage_box_containers }}"
+      loop_control:
+        label: "{{ item.name }}"
+  rescue:
+    - name: Check whether the Storage Box is mounted after the failure
+      become: true
+      ansible.builtin.command: mountpoint -q {{ servarr_qbittorrent_data_dir }}
+      register: servarr_storage_box_mounted
+      changed_when: false
+      failed_when: false
+
+    - name: Fail on errors other than an unmounted box
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result.msg | default('') }}"
+      when: servarr_storage_box_mounted.rc == 0
+
+    - name: Warn that the box containers are not running
+      ansible.builtin.debug:
+        msg: >-
+          WARNING: {{ servarr_storage_box_containers | map(attribute='name') | join(', ') }}
+          are not running ({{ ansible_failed_result.msg | default('') }}).
+          They start when the Storage Box is mounted:
+          systemctl start '{{ servarr_qbittorrent_mount_unit }}'
+      when: servarr_storage_box_mounted.rc != 0

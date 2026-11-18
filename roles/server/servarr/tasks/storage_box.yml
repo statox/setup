@@ -1,0 +1,152 @@
+---
+# Mounts the Hetzner Storage Box at servarr_qbittorrent_data_dir with SSHFS.
+# The mount is an /etc/fstab entry, so systemd mounts it at boot as
+# servarr_qbittorrent_mount_unit. Each mount starts
+# servarr-storage-box-read-ahead.service, which raises the mount's read-ahead
+# (see templates/servarr-storage-box-read-ahead.service.j2).
+
+- name: Install sshfs
+  ansible.builtin.apt:
+    name: sshfs
+    state: present
+
+- name: Create Storage Box credentials directory
+  ansible.builtin.file:
+    path: "{{ servarr_storage_box_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Install Storage Box SSH key
+  ansible.builtin.copy:
+    content: "{{ servarr_storage_box_ssh_private_key | trim }}\n"
+    dest: "{{ servarr_storage_box_config_dir }}/id_ed25519"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+
+- name: Pin Storage Box host key
+  ansible.builtin.copy:
+    content: "{{ servarr_storage_box_host_key | trim }}\n"
+    dest: "{{ servarr_storage_box_config_dir }}/known_hosts"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Check whether the Storage Box is mounted
+  ansible.builtin.command: findmnt -n --mountpoint {{ servarr_qbittorrent_data_dir }}
+  register: servarr_storage_box_findmnt
+  changed_when: false
+  failed_when: false
+
+# Owned by root and only managed while unmounted (once mounted, the path is
+# the box itself). With the box absent, the container user can't write to
+# panda's disk through this directory.
+- name: Create Storage Box mount point
+  ansible.builtin.file:
+    path: "{{ servarr_qbittorrent_data_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: servarr_storage_box_findmnt.rc != 0
+
+- name: Install read-ahead script
+  ansible.builtin.copy:
+    src: storage-box/set-read-ahead.sh
+    dest: /usr/local/sbin/servarr-set-read-ahead
+    owner: root
+    group: root
+    mode: "0755"
+  register: servarr_storage_box_read_ahead_script
+
+- name: Install read-ahead service
+  ansible.builtin.template:
+    src: servarr-storage-box-read-ahead.service.j2
+    dest: /etc/systemd/system/servarr-storage-box-read-ahead.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: servarr_storage_box_read_ahead_unit
+
+# Enabled before the first mount, so that mount already triggers it
+- name: Enable read-ahead service on every mount of the box
+  ansible.builtin.systemd_service:
+    name: servarr-storage-box-read-ahead.service
+    enabled: true
+    daemon_reload: true
+
+- name: Add Storage Box to fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: "{{ servarr_storage_box_fstab_regexp }}"
+    line: "{{ servarr_storage_box_fstab_line }}"
+  register: servarr_storage_box_fstab
+
+- name: Regenerate the mount unit from fstab
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  when: servarr_storage_box_fstab is changed
+
+# Stopping the mount unit first stops the units bound to it (qBittorrent),
+# then unmounts, so the new options apply on the next mount
+- name: Unmount Storage Box to apply the new fstab options
+  ansible.builtin.systemd_service:
+    name: "{{ servarr_qbittorrent_mount_unit }}"
+    state: stopped
+  when:
+    - servarr_storage_box_fstab is changed
+    - servarr_storage_box_findmnt.rc == 0
+
+# An unreachable box leaves the box containers stopped and the deploy goes on
+# with the rest of the stack; the warning below reports it. Any other error
+# (the box is mounted) fails the deploy.
+- name: Mount Storage Box and set its read-ahead
+  block:
+    - name: Mount Storage Box
+      ansible.builtin.systemd_service:
+        name: "{{ servarr_qbittorrent_mount_unit }}"
+        state: started
+
+    # Applies a new read-ahead script or value to the current mount
+    - name: Apply read-ahead to the mounted box
+      ansible.builtin.systemd_service:
+        name: servarr-storage-box-read-ahead.service
+        state: restarted
+      when: >-
+        servarr_storage_box_read_ahead_script is changed
+        or servarr_storage_box_read_ahead_unit is changed
+
+    # Folders the containers bind (the long-syntax binds of the Jellyfins
+    # need them to exist). Through the mount: the box presents them as owned
+    # by servarr_storage_box_uid/gid.
+    - name: Create the box folders
+      ansible.builtin.file:
+        path: "{{ servarr_qbittorrent_data_dir }}/{{ item }}"
+        state: directory
+      loop:
+        - library/movies
+        - library/tv
+        - torrents/complete
+        - torrents/incomplete
+  rescue:
+    - name: Check whether the Storage Box is mounted after the failure
+      ansible.builtin.command: mountpoint -q {{ servarr_qbittorrent_data_dir }}
+      register: servarr_storage_box_mounted
+      changed_when: false
+      failed_when: false
+
+    - name: Fail on errors other than an unreachable box
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result.msg | default('') }}"
+      when: servarr_storage_box_mounted.rc == 0
+
+    - name: Warn that the Storage Box is not mounted
+      ansible.builtin.debug:
+        msg: >-
+          WARNING: the Storage Box is not mounted ({{ ansible_failed_result.msg | default('') }}),
+          the box containers stay stopped. Once the box is reachable:
+          systemctl start '{{ servarr_qbittorrent_mount_unit }}'
+      when: servarr_storage_box_mounted.rc != 0

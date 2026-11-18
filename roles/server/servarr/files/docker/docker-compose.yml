@@ -3,6 +3,14 @@ networks:
   reverse-proxy:
     external: true
 
+# Services with the `storage-box` profile use the Hetzner Storage Box mounted
+# at ${SERVARR_HOME_DIR}/qbittorrent-data. Each one has its own systemd unit
+# (servarr_storage_box_containers in vars/main.yml, from
+# templates/servarr-storage-box-container.service.j2) that starts and stops it
+# with the box mount, and `docker compose up` without the profile leaves them
+# out. `restart: on-failure` restarts a crashed container but, unlike
+# `unless-stopped`, not on a Docker daemon restart, when the box may be
+# unmounted.
 services:
   servarr-transmission:
     image: lscr.io/linuxserver/transmission:latest
@@ -33,6 +41,8 @@ services:
   servarr-qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: servarr-qbittorrent
+    profiles:
+      - storage-box
     environment:
       - PUID=1000
       - PGID=1000
@@ -42,13 +52,13 @@ services:
       - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
     volumes:
       - ${SERVARR_HOME_DIR}/config/qbittorrent:/config
-      - ${SERVARR_HOME_DIR}/data:/data
+      - ${SERVARR_HOME_DIR}/qbittorrent-data:/data
     expose:
       - 8080
     ports:
       - 51415:51415
       - 51415:51415/udp
-    restart: unless-stopped
+    restart: on-failure
     networks:
       - reverse-proxy
     labels:

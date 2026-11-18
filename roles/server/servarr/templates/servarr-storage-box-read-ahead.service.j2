@@ -1,0 +1,21 @@
+# Sets the read-ahead of the Storage Box mount ({{ servarr_qbittorrent_data_dir }}).
+#
+# The kernel resets a mount's read-ahead to 128 KB each time it is mounted.
+# SSHFS waits one network round trip per read request, so a larger read-ahead
+# keeps more requests in flight: 128 KB reads at ~16 MB/s, 4096 KB at the
+# link's ~115 MB/s.
+#
+# WantedBy= the mount unit starts this service each time the box is mounted
+# (at boot or by hand); BindsTo= stops it when the box is unmounted.
+[Unit]
+Description=Set read-ahead on the servarr Storage Box mount
+BindsTo={{ servarr_qbittorrent_mount_unit }}
+After={{ servarr_qbittorrent_mount_unit }}
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/servarr-set-read-ahead {{ servarr_qbittorrent_data_dir }} {{ servarr_storage_box_read_ahead_kb }}
+
+[Install]
+WantedBy={{ servarr_qbittorrent_mount_unit }}

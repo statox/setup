@@ -1,0 +1,28 @@
+# Runs the {{ servarr_box_container.name }} container while the Storage Box is mounted.
+#
+# The container's data is on the box ({{ servarr_qbittorrent_data_dir }}), so
+# it runs only when the box is there:
+# - WantedBy= the mount unit: each mount of the box (at boot or by hand)
+#   starts the container, after the read-ahead is set.
+# - BindsTo= the mount unit: stopping the mount unit stops the container
+#   first, then unmounts.
+# - up --force-recreate: the container always binds the current mount.
+#
+# The container has the compose profile `storage-box`: this unit is what
+# starts it. Docker only restarts it after a crash (`restart: on-failure`).
+# Manual control:
+#   systemctl start|stop|restart {{ servarr_box_container.name }}
+[Unit]
+Description=servarr {{ servarr_box_container.description }} on the Storage Box
+Requires=docker.service servarr-storage-box-read-ahead.service
+BindsTo={{ servarr_qbittorrent_mount_unit }}
+After=docker.service {{ servarr_qbittorrent_mount_unit }} servarr-storage-box-read-ahead.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker compose --project-directory {{ docker_app_home }} --profile storage-box up -d --force-recreate {{ servarr_box_container.name }}
+ExecStop=/usr/bin/docker compose --project-directory {{ docker_app_home }} --profile storage-box stop {{ servarr_box_container.name }}
+
+[Install]
+WantedBy={{ servarr_qbittorrent_mount_unit }} multi-user.target

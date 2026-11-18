@@ -47,6 +47,14 @@
         servarr_jellyfin_domain: "servarr-jellyfin.statox.fr"
         bazarr_ui_domain: "bazarr.statox.fr"
         seerr_ui_domain: "seerr.statox.fr"
+        # Storage Box created in the provisioning repo
+        servarr_storage_box_host: "servarr-storage.statox.fr"
+        # TODO Put that in the vault
+        servarr_storage_box_user: "u706669"
+        # Box host key, a known_hosts line: output of
+        # `ssh-keyscan -p 23 -t ed25519 servarr-storage.statox.fr`, checked against
+        # the fingerprint panda saw on its first connection to the box
+        servarr_storage_box_host_key: "[servarr-storage.statox.fr]:23 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIICf9svRenC/PLKIL9nk6K/pxQgoiFC41wTNvoIncOxs"
     - role: server/immich
       vars:
         immich_ui_domain: "immich.statox.fr"

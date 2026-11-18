@@ -1,0 +1,18 @@
+---
+# Hetzner Storage Box holding qBittorrent's data, mounted with SSHFS.
+# Required, no default:
+#   servarr_storage_box_host            box hostname
+#   servarr_storage_box_user            box username (Terraform output)
+#   servarr_storage_box_host_key        box host key, a full known_hosts line
+#   servarr_storage_box_ssh_private_key box SSH private key (vault)
+servarr_storage_box_port: 23
+# Folder of the box mounted as qBittorrent's /data
+servarr_storage_box_remote_dir: qbittorrent
+# Owner of every file on the mount, as seen on panda: the UID/GID the
+# qBittorrent container runs as on the host (PUID/PGID with rootful Docker)
+servarr_storage_box_uid: 1000
+servarr_storage_box_gid: 1000
+# Kernel read-ahead of the mount, in KB. SSHFS reads one request per network
+# round trip, so a large read-ahead keeps enough requests in flight to use
+# the whole link (measured: 128 KB -> 16 MB/s, 4096 KB -> 115 MB/s)
+servarr_storage_box_read_ahead_kb: 4096
