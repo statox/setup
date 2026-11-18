@@ -200,16 +200,18 @@ services:
   servarr-jellyfin:
     image: jellyfin/jellyfin:12.0
     container_name: servarr-jellyfin
+    profiles:
+      - storage-box
     networks:
       - reverse-proxy
     volumes:
       - ${SERVARR_HOME_DIR}/config/jellyfin:/config
       - ${SERVARR_HOME_DIR}/cache/jellyfin:/cache
       - type: bind
-        source: ${SERVARR_HOME_DIR}/data/library
+        source: ${SERVARR_HOME_DIR}/qbittorrent-data/library
         target: /media
         read_only: true
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - JELLYFIN_PublishedServerUrl=https://${SERVARR_JELLYFIN_DOMAIN}
     labels:

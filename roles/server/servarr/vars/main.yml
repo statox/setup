@@ -58,3 +58,5 @@ servarr_storage_box_containers:
     description: Radarr
   - name: bazarr
     description: Bazarr
+  - name: servarr-jellyfin
+    description: Jellyfin

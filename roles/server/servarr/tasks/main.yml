@@ -81,8 +81,6 @@
     - /home/servarr/data/torrents/incomplete
     - /home/servarr/data/torrents/complete/movies
     - /home/servarr/data/torrents/complete/tv
-    - /home/servarr/data/library/movies
-    - /home/servarr/data/library/tv
     - /home/servarr/data/library/whisparr
     - /home/servarr/config/transmission
     - /home/servarr/config/qbittorrent

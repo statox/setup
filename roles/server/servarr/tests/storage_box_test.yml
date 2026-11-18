@@ -97,7 +97,7 @@
     - name: Every container on the box has a unit
       ansible.builtin.assert:
         that:
-          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent', 'servarr-player', 'sonarr', 'radarr', 'bazarr']
+          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent', 'servarr-player', 'sonarr', 'radarr', 'bazarr', 'servarr-jellyfin']
         fail_msg: "{{ servarr_storage_box_containers | to_json }}"
 
     - name: Each unit runs its container only while the box is mounted
@@ -151,6 +151,17 @@
         - sonarr
         - radarr
         - bazarr
+
+    - name: The servarr Jellyfin reads the box's library, read-only, at the same paths
+      vars:
+        jellyfin: "{{ compose.services['servarr-jellyfin'] }}"
+        media: "{{ jellyfin.volumes | selectattr('target', 'defined') | selectattr('target', '==', '/media') | first }}"
+      ansible.builtin.assert:
+        that:
+          - media.source == '${SERVARR_HOME_DIR}/qbittorrent-data/library'
+          - media.read_only
+          - "'${SERVARR_HOME_DIR}/config/jellyfin:/config' in jellyfin.volumes"
+        fail_msg: "{{ jellyfin | to_json }}"
 
     - name: The player reads the box's completed torrents, read-only
       vars:
