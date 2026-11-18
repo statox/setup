@@ -52,3 +52,9 @@ servarr_storage_box_containers:
     description: qBittorrent
   - name: servarr-player
     description: Jellyfin player
+  - name: sonarr
+    description: Sonarr
+  - name: radarr
+    description: Radarr
+  - name: bazarr
+    description: Bazarr

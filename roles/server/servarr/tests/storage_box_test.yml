@@ -97,7 +97,7 @@
     - name: Every container on the box has a unit
       ansible.builtin.assert:
         that:
-          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent', 'servarr-player']
+          - servarr_storage_box_containers | map(attribute='name') | list == ['servarr-qbittorrent', 'servarr-player', 'sonarr', 'radarr', 'bazarr']
         fail_msg: "{{ servarr_storage_box_containers | to_json }}"
 
     - name: Each unit runs its container only while the box is mounted
@@ -137,6 +137,20 @@
           - "'${SERVARR_HOME_DIR}/qbittorrent-data:/data' in qbt.volumes"
           - "'${SERVARR_HOME_DIR}/data:/data' not in qbt.volumes"
         fail_msg: "{{ qbt | to_json }}"
+
+    - name: Sonarr, Radarr and Bazarr use the box, at the same paths as qBittorrent
+      vars:
+        service: "{{ compose.services[item] }}"
+      ansible.builtin.assert:
+        that:
+          - "'${SERVARR_HOME_DIR}/qbittorrent-data:/data' in service.volumes"
+          - "'${SERVARR_HOME_DIR}/data:/data' not in service.volumes"
+          - "('${SERVARR_HOME_DIR}/config/' ~ item ~ ':/config') in service.volumes"
+        fail_msg: "{{ service | to_json }}"
+      loop:
+        - sonarr
+        - radarr
+        - bazarr
 
     - name: The player reads the box's completed torrents, read-only
       vars:

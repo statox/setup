@@ -86,17 +86,20 @@ services:
       - "traefik.http.routers.prowlarr.entrypoints=websecure"
       - "traefik.http.routers.prowlarr.tls=true"
 
+  # Same /data as qBittorrent: imports into /data/library/tv are hardlinks
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
+    profiles:
+      - storage-box
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
       - ${SERVARR_HOME_DIR}/config/sonarr:/config
-      - ${SERVARR_HOME_DIR}/data:/data
-    restart: unless-stopped
+      - ${SERVARR_HOME_DIR}/qbittorrent-data:/data
+    restart: on-failure
     networks:
       - reverse-proxy
     labels:
@@ -105,17 +108,20 @@ services:
       - "traefik.http.routers.sonarr.entrypoints=websecure"
       - "traefik.http.routers.sonarr.tls=true"
 
+  # Same /data as qBittorrent: imports into /data/library/movies are hardlinks
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
+    profiles:
+      - storage-box
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
       - ${SERVARR_HOME_DIR}/config/radarr:/config
-      - ${SERVARR_HOME_DIR}/data:/data
-    restart: unless-stopped
+      - ${SERVARR_HOME_DIR}/qbittorrent-data:/data
+    restart: on-failure
     networks:
       - reverse-proxy
     labels:
@@ -143,17 +149,20 @@ services:
       - "traefik.http.routers.whisparr.entrypoints=websecure"
       - "traefik.http.routers.whisparr.tls=true"
 
+  # Same /data as Sonarr and Radarr: sees their files at the paths they report
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
+    profiles:
+      - storage-box
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
       - ${SERVARR_HOME_DIR}/config/bazarr:/config
-      - ${SERVARR_HOME_DIR}/data:/data
-    restart: unless-stopped
+      - ${SERVARR_HOME_DIR}/qbittorrent-data:/data
+    restart: on-failure
     networks:
       - reverse-proxy
     labels:

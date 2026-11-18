@@ -11,8 +11,8 @@ entirely at any time without affecting it.
 qBittorrent (with the [VueTorrent](https://github.com/VueTorrent/VueTorrent)
 web UI) runs in parallel with Transmission, with its own P2P port (`51415`).
 Its data lives on a Hetzner Storage Box mounted on panda (see
-[Storage Box](#storage-box)). Sonarr/Radarr use Transmission. A second
-Jellyfin, `servarr-player` at `servarr_player_domain`, plays the completed
+[Storage Box](#storage-box)). Sonarr and Radarr use qBittorrent and keep
+their libraries on the box too. A second Jellyfin, `servarr-player` at `servarr_player_domain`, plays the completed
 torrents straight from the box.
 
 ## Dependencies
@@ -98,7 +98,7 @@ Data lives under `/home/servarr`, created by this role with owner/group
 │       ├── movies
 │       ├── tv
 │       └── whisparr
-├── qbittorrent-data       Storage Box mount, qBittorrent's /data
+├── qbittorrent-data       Storage Box mount, /data of qBittorrent, Sonarr, Radarr, Bazarr
 │   ├── torrents
 │   │   ├── incomplete
 │   │   └── complete/<category>
@@ -121,15 +121,18 @@ Data lives under `/home/servarr`, created by this role with owner/group
     └── player
 ```
 
-`servarr-transmission`, `sonarr`, `radarr`, `whisparr` and `bazarr` all mount
-the entire `/home/servarr/data` directory to `/data` inside the container — this is
-required for hardlinks/atomic moves to work between the torrents and library
-folders (see the [servarr docker guide](https://wiki.servarr.com/docker-guide)),
-and for `bazarr` to see files at the exact same paths Sonarr/Radarr report,
-avoiding the need for remote path mappings.
-`servarr-qbittorrent` mounts `/home/servarr/qbittorrent-data` (the Storage
-Box) to `/data`. The other containers don't see qBittorrent's files: Whisparr,
-which uses qBittorrent as download client, can't import its downloads.
+`servarr-transmission` and `whisparr` mount the entire `/home/servarr/data`
+directory to `/data` inside the container.
+`servarr-qbittorrent`, `sonarr`, `radarr` and `bazarr` mount
+`/home/servarr/qbittorrent-data` (the Storage Box) to `/data`. Sharing one
+`/data` is required for hardlinks/atomic moves to work between the torrents
+and library folders (see the [servarr docker guide](https://wiki.servarr.com/docker-guide)):
+Sonarr and Radarr import qBittorrent's downloads from
+`/data/torrents/complete/<category>` into `/data/library/tv` and
+`/data/library/movies` as hardlinks on the box. It also lets `bazarr` see
+files at the exact same paths Sonarr/Radarr report, avoiding the need for
+remote path mappings. Whisparr, which uses qBittorrent as download client,
+doesn't see the box and can't import its downloads.
 `servarr-jellyfin` only mounts `/home/servarr/data/library`, read-only.
 `servarr-player` only mounts the box's `torrents/complete`
 (`/home/servarr/qbittorrent-data/torrents/complete`) to `/media`, read-only.
@@ -143,9 +146,10 @@ one-time manual steps are needed after the first deploy:
    (Prowlarr, Sonarr, Radarr, Jellyfin all prompt for this). For
    `servarr-player`, the first-launch wizard also adds the library: add
    `/media` as a library folder.
-2. In **Sonarr**, add `servarr-transmission` as a download client:
-   host `servarr-transmission`, port `9091`, category `tv`. Set the root
-   folder to `/data/library/tv`.
+2. In **Sonarr**, add `servarr-qbittorrent` as a download client:
+   host `servarr-qbittorrent`, port `8080`, the qBittorrent WebUI username
+   and password, category `tv` (qBittorrent saves its torrents in
+   `/data/torrents/complete/tv`). Set the root folder to `/data/library/tv`.
 3. In **Radarr**, same as Sonarr but category `movies` and root folder
    `/data/library/movies`.
 4. In **Prowlarr**, add your indexers, then connect Sonarr and Radarr under
@@ -190,7 +194,7 @@ one-time manual steps are needed after the first deploy:
 
 ## Storage Box
 
-qBittorrent's `/data` (and `servarr-player`'s media) is a [Hetzner Storage Box](https://www.hetzner.com/storage/storage-box)
+The `/data` of qBittorrent, Sonarr, Radarr and Bazarr (and `servarr-player`'s media) is a [Hetzner Storage Box](https://www.hetzner.com/storage/storage-box)
 mounted on panda with SSHFS at `/home/servarr/qbittorrent-data`
 (`tasks/storage_box.yml`). Three pieces work together:
 
@@ -198,7 +202,7 @@ mounted on panda with SSHFS at `/home/servarr/qbittorrent-data`
 |---|---|
 | `/etc/fstab` entry (`vars/main.yml`) | Mounts the box at boot as the systemd unit `home-servarr-qbittorrent\x2ddata.mount`. Reconnects after network drops; `nofail` lets panda boot when the box is unreachable |
 | `servarr-storage-box-read-ahead.service` | Started by each mount of the box. Sets the mount's read-ahead to `servarr_storage_box_read_ahead_kb` (4 MB): SSHFS waits one round trip per read request, and the kernel's 128 KB default limits reads to ~16 MB/s, 4 MB reaches the link's ~115 MB/s |
-| `servarr-qbittorrent.service`, `servarr-player.service` | One unit per container on the box (`servarr_storage_box_containers` in `vars/main.yml`, template `templates/servarr-storage-box-container.service.j2`). Started by each mount of the box, after the read-ahead: `docker compose up --force-recreate` of the container. Stopping the mount unit stops them first. The containers have the compose profile `storage-box`, so these units are the only thing that starts them. `restart: on-failure` restarts a crashed container, but not on a Docker daemon restart, when the box may be unmounted. Each deploy of the role restarts them |
+| `servarr-qbittorrent.service`, `servarr-player.service`, `sonarr.service`, `radarr.service`, `bazarr.service` | One unit per container on the box (`servarr_storage_box_containers` in `vars/main.yml`, template `templates/servarr-storage-box-container.service.j2`). Started by each mount of the box, after the read-ahead: `docker compose up --force-recreate` of the container. Stopping the mount unit stops them first. The containers have the compose profile `storage-box`, so these units are the only thing that starts them. `restart: on-failure` restarts a crashed container, but not on a Docker daemon restart, when the box may be unmounted. Each deploy of the role restarts them |
 
 Security:
 
@@ -219,21 +223,21 @@ Security:
 
 | Situation | What happens |
 |---|---|
-| Panda boots, box reachable | Box mounted, read-ahead set, qBittorrent and the player started |
+| Panda boots, box reachable | Box mounted, read-ahead set, qBittorrent, the player, Sonarr, Radarr and Bazarr started |
 | Panda boots, box unreachable | Boot continues, the box containers stay stopped. `systemctl start 'home-servarr-qbittorrent\x2ddata.mount'` once the box is back mounts it and starts them |
 | Deploy while the box is unreachable | The mount gives up after 10 s, the rest of the stack deploys, the box containers stay stopped and the deploy prints a warning |
 | Deploy fails on the box while it is mounted (e.g. a container doesn't start) | The deploy fails with the error |
 | Short network drop | SSHFS reconnects. Files qBittorrent had open return I/O errors: their torrents go into error. Force a recheck / resume them in the UI |
 | SSHFS process dies | The mount stays but every access fails ("Transport endpoint is not connected"). Run `umount -l /home/servarr/qbittorrent-data` (this stops the box containers) then `systemctl start 'home-servarr-qbittorrent\x2ddata.mount'` |
-| A box container crashes | Docker restarts it. If it keeps crashing: `systemctl restart <container>` (`servarr-qbittorrent`, `servarr-player`) |
+| A box container crashes | Docker restarts it. If it keeps crashing: `systemctl restart <container>` (`servarr-qbittorrent`, `servarr-player`, `sonarr`, `radarr`, `bazarr`) |
 
 Useful commands:
 
 ```bash
 findmnt -o TARGET,FSTYPE,OPTIONS /home/servarr/qbittorrent-data
 cat /sys/class/bdi/$(mountpoint -d /home/servarr/qbittorrent-data)/read_ahead_kb
-systemctl status 'home-servarr-qbittorrent\x2ddata.mount' servarr-storage-box-read-ahead servarr-qbittorrent servarr-player
-# Unmount (stops qBittorrent and the player first) / mount (starts them again)
+systemctl status 'home-servarr-qbittorrent\x2ddata.mount' servarr-storage-box-read-ahead servarr-qbittorrent servarr-player sonarr radarr bazarr
+# Unmount (stops the box containers first) / mount (starts them again)
 systemctl stop 'home-servarr-qbittorrent\x2ddata.mount'
 systemctl start 'home-servarr-qbittorrent\x2ddata.mount'
 ```
